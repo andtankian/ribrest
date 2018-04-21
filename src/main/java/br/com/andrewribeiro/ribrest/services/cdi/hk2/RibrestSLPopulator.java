@@ -1,0 +1,39 @@
+package br.com.andrewribeiro.ribrest.services.cdi.hk2;
+
+import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.miner.IMinerFactory;
+import br.com.andrewribeiro.ribrest.services.miner.MinerFactory;
+import javax.inject.Singleton;
+
+import org.glassfish.hk2.api.Context;
+import org.glassfish.hk2.api.DynamicConfiguration;
+import org.glassfish.hk2.api.DynamicConfigurationService;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.BuilderHelper;
+
+/**
+ *
+ * @author Andrew Ribeiro
+ */
+public class RibrestSLPopulator {
+    public static void populate(ServiceLocator locator) {
+        DynamicConfigurationService dcs = locator.getService(DynamicConfigurationService.class);
+        DynamicConfiguration config = dcs.createDynamicConfiguration();
+
+        config.bind(BuilderHelper.link(FlowContainer.class).
+                in(RequestScope.class.getName()).
+                build());
+
+        config.bind(BuilderHelper.link(RequestContext.class).
+                to(Context.class).
+                in(Singleton.class.getName()).
+                build());
+
+        config.bind(BuilderHelper.link(MinerFactory.class)
+                .to(IMinerFactory.class)
+                .build());
+
+        config.commit();
+    }
+
+}
