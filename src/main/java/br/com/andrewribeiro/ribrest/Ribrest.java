@@ -11,10 +11,12 @@ import java.util.List;
 import br.com.andrewribeiro.ribrest.annotations.RibrestResource;
 import br.com.andrewribeiro.ribrest.controller.Facade;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
+import br.com.andrewribeiro.ribrest.services.PersistenceUnitWrapper;
 import br.com.andrewribeiro.ribrest.services.cdi.hk2.RibrestSLPopulator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,7 +46,6 @@ public class Ribrest {
      * Function to init all the Ribrest configuration
      */
     public void init() {
-
         /*
         Let's get and starts a server with
         1) An array of all package names who contains classes annotated with @RibrestResource
@@ -61,6 +62,7 @@ public class Ribrest {
     }
     
     public void shutdown(){
+        serviceLocator.getService(EntityManagerFactory.class).close();
         server.shutdown();
     }
 
@@ -79,10 +81,16 @@ public class Ribrest {
         
         /*
         SETTING UP ALL HK2 CDI
-        */
-        
+        */        
         serviceLocator = ServiceLocatorFactory.getInstance().create(null);
         RibrestSLPopulator.populate(serviceLocator);
+        
+        /**
+         *  SETTING UP CODE RELATED TO PERSISTENCE 
+         */
+        PersistenceUnitWrapper puw = serviceLocator.getService(PersistenceUnitWrapper.class);
+        puw.setPu("ribrest");
+        serviceLocator.getService(EntityManagerFactory.class);
         
         /*
         FINDING ALL @RibrestModel classes to create its respective dynamic resources.

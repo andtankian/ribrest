@@ -1,9 +1,14 @@
 package br.com.andrewribeiro.ribrest.services.cdi.hk2;
 
+import br.com.andrewribeiro.ribrest.services.EMFFactory;
+import br.com.andrewribeiro.ribrest.services.EMFactory;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.PersistenceUnitWrapper;
 import br.com.andrewribeiro.ribrest.services.miner.IMinerFactory;
 import br.com.andrewribeiro.ribrest.services.miner.MinerFactory;
 import javax.inject.Singleton;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.glassfish.hk2.api.Context;
 import org.glassfish.hk2.api.DynamicConfiguration;
@@ -16,9 +21,24 @@ import org.glassfish.hk2.utilities.BuilderHelper;
  * @author Andrew Ribeiro
  */
 public class RibrestSLPopulator {
+
     public static void populate(ServiceLocator locator) {
         DynamicConfigurationService dcs = locator.getService(DynamicConfigurationService.class);
         DynamicConfiguration config = dcs.createDynamicConfiguration();
+
+        config.bind(BuilderHelper.link(EMFFactory.class)
+                .to(EntityManagerFactory.class)
+                .in(Singleton.class)
+                .buildFactory());
+
+        config.bind(BuilderHelper.link(EMFactory.class)
+                .to(EntityManager.class)
+                .in(RequestScope.class.getName())
+                .buildFactory());
+
+        config.bind(BuilderHelper.link(PersistenceUnitWrapper.class)
+                .in(Singleton.class)
+                .build());
 
         config.bind(BuilderHelper.link(FlowContainer.class).
                 in(RequestScope.class.getName()).

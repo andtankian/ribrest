@@ -1,6 +1,5 @@
 package br.com.andrewribeiro.ribrest.model;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -10,8 +9,8 @@ import java.util.List;
 public interface IModel {
     
     public void merge();
-    public List<Field> getAllAttributes();
-    public List<Field> getIgnoredAttributes();
+    public List getAllAttributes();
+    public List getIgnoredAttributes();
     
     public Long getId();
     public void setId(Long id);

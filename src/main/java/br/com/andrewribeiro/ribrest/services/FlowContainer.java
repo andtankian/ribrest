@@ -3,6 +3,8 @@ package br.com.andrewribeiro.ribrest.services;
 import br.com.andrewribeiro.ribrest.services.miner.IMiner;
 import br.com.andrewribeiro.ribrest.services.holder.IHolder;
 import br.com.andrewribeiro.ribrest.services.holder.ConcreteHolder;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.ws.rs.container.ContainerRequestContext;
 
 /**
@@ -20,6 +22,9 @@ public class FlowContainer {
     private IMiner miner;
     private IHolder holder;
     private Result result;
+    
+    @Inject
+    private EntityManager em;
 
     private boolean go;
 
@@ -55,6 +60,14 @@ public class FlowContainer {
 
     public void setResult(Result result) {
         this.result = result;
+    }
+    
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
     }
 
 }

@@ -36,22 +36,21 @@ public abstract class AbstractMiner implements IMiner {
 
     @Override
     public Response send(FlowContainer fc) {
+        GsonBuilder gb = new GsonBuilder();
         if (fc.shouldGo()) {
 
             IModel m = (IModel) fc.getHolder().getModels().get(0);
 
             ignored = mineAttributes(m.getIgnoredAttributes(), accepts);
 
-        } else {
+            gb.addDeserializationExclusionStrategy(new GenericExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes fa) {
+                    return ignored.contains(fa.getName());
+                }
+            });
 
         }
-        GsonBuilder gb = new GsonBuilder();
-        gb.addDeserializationExclusionStrategy(new GenericExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(FieldAttributes fa) {
-                return false;
-            }
-        });
 
         Gson g = gb.create();
 
@@ -106,16 +105,6 @@ public abstract class AbstractMiner implements IMiner {
         ignored.removeAll(accepted);
 
         return new ArrayList(ignored);
-    }
-
-    protected RibrestDefaultException getNotSonOfIModelException() {
-        fc.setGo(false);
-        return new RibrestDefaultException(
-                new StringBuilder("The created resource: ")
-                        .append(fc.getHolder().getModels().get(0).getClass().getSimpleName().toLowerCase())
-                        .append(" does not implement IModel. \nRibrest can't operate in this class (yet).")
-                        .toString()
-        );
     }
 
 }

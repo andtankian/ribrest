@@ -56,14 +56,7 @@ import org.glassfish.hk2.api.ServiceHandle;
  * 
  * @author jwells
  */
-public class RequestContext implements Context<RequestScope> {
-
-    public RequestContext() {
-        
-        System.out.println("RequestContext Created");
-    }
-    
-    
+public class RequestContext implements Context<RequestScope> {       
     
     private final HashMap<ActiveDescriptor<?>, Object> requestScopedEntities = new HashMap<ActiveDescriptor<?>, Object>();
     

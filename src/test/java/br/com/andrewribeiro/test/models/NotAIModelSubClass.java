@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.test.resources;
+package br.com.andrewribeiro.test.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 
