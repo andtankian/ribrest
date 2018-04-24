@@ -12,9 +12,9 @@ public class RibrestLogsFormatter extends Formatter{
     @Override
     public String format(LogRecord lr) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\nRibrest ");
+        sb.append("Ribrest ");
         sb.append(lr.getLevel()).append(": ");
-        sb.append(lr.getMessage());
+        sb.append(lr.getMessage()).append("\n");
         return sb.toString();
     }
 }

@@ -27,6 +27,11 @@ public class RibrestDefaultExceptionFactory {
                 .append(" does not implement IModel.\nRibrest can't operate in this class (yet).")
                 .toString()
         );
+        map.put(RibrestDefaultExceptionConstants.RESOURCE_ISNT_AN_ENTITY, new StringBuilder("The created resource: ")
+                .append("{{rn}}")
+                .append(" isn't an entity. Try to annotate it with @Entity.")
+                .toString()
+        );
     }
 
     public static RibrestDefaultException getRibrestDefaultException(String type, String rn) {

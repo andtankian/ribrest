@@ -1,9 +1,9 @@
 package br.com.andrewribeiro.ribrest.services.cdi.hk2;
 
-import br.com.andrewribeiro.ribrest.services.EMFFactory;
-import br.com.andrewribeiro.ribrest.services.EMFactory;
+import br.com.andrewribeiro.ribrest.services.orm.EMFFactory;
+import br.com.andrewribeiro.ribrest.services.orm.EMFactory;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
-import br.com.andrewribeiro.ribrest.services.PersistenceUnitWrapper;
+import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
 import br.com.andrewribeiro.ribrest.services.miner.IMinerFactory;
 import br.com.andrewribeiro.ribrest.services.miner.MinerFactory;
 import javax.inject.Singleton;

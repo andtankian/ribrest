@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.ribrest.services;
+package br.com.andrewribeiro.ribrest.services.orm;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;

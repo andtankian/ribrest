@@ -1,5 +1,7 @@
 package br.com.andrewribeiro.ribrest.controller;
 
+import br.com.andrewribeiro.ribrest.dao.CRUDCenter;
+import br.com.andrewribeiro.ribrest.dao.IPersistenceCenter;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.miner.IMiner;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
@@ -71,13 +73,18 @@ public class Facade {
              * Calling setup entity will verify if is possible to get a real instance
              * of the current IModel subclass or will throw an exception
              */
-            fc.getHolder().setupEntity(c);
+            fc.setupEntity(c);
             
             /**
              * Extracting all the information of ContainerRequest and populate to
              * real instance of IModel subclass (if there is one)
              */
             m.extract(cr);
+            
+            /**
+             * Run the main flow
+             */
+            run();
         } catch (Exception e) {
             if(!(e instanceof RibrestDefaultException)){
                 e = new RibrestDefaultException(e.getCause() != null ? e.getCause().toString() : "Unknown");
@@ -92,6 +99,13 @@ public class Facade {
         }
     }
     
+    private void run() throws RibrestDefaultException{
+        
+        IPersistenceCenter pc = new CRUDCenter();
+        sl.inject(pc);
+        pc.perform();
+    }
+    
     /**
      * The inject method will automatically start the RequestContext.
      * This method is also automatically called by the HK2 @PostConstruct mechanism.
@@ -101,6 +115,7 @@ public class Facade {
     @PostConstruct
     private void injected(){
         ((RequestContext)sl.getService(RequestContext.class)).startRequest();
+        fc.setMethod(cr.getMethod());
     }
     
     /**

@@ -7,8 +7,8 @@ import java.util.List;
  * @author Andrew Ribeiro
  */
 public interface IHolder {
-    
+
     public List getModels();
+
     public void setModels(List models);
-    public void setupEntity(Class classType) throws Exception;
 }

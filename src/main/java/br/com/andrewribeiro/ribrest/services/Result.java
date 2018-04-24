@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 public class Result {
 
     public Result() {
+        this.status = Response.Status.OK;
     }
 
     public Result(Response.Status status, String cause, IHolder holder) {

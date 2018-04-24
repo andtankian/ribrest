@@ -1,14 +1,10 @@
-package br.com.andrewribeiro.ribrest.services;
+package br.com.andrewribeiro.ribrest.services.orm;
 
 /**
  *
  * @author Andrew Ribeiro
  */
 public class PersistenceUnitWrapper {
-    
-    public PersistenceUnitWrapper(){
-        System.out.println("PersistenceUnitWrapper created");
-    }
     
     private String pu;
 

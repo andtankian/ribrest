@@ -39,7 +39,7 @@ public abstract class AbstractMiner implements IMiner {
         GsonBuilder gb = new GsonBuilder();
         if (fc.shouldGo()) {
 
-            IModel m = (IModel) fc.getHolder().getModels().get(0);
+            IModel m = (IModel) fc.getModel();
 
             ignored = mineAttributes(m.getIgnoredAttributes(), accepts);
 
@@ -51,6 +51,8 @@ public abstract class AbstractMiner implements IMiner {
             });
 
         }
+        
+        fc.getResult().setHolder(fc.getHolder());
 
         Gson g = gb.create();
 
