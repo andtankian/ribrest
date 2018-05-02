@@ -1,9 +1,9 @@
 package br.com.andrewribeiro.test.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.IModel;
 import java.lang.reflect.Field;
 import java.util.List;
+import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 
 /**
  *
@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @RibrestModel
-public class NotImplementsIModelAbstractMethods implements IModel{
+public class NotImplementsIModelAbstractMethods implements Model{
     
     private String name;
 

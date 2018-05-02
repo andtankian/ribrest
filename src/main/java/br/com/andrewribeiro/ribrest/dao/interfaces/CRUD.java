@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.ribrest.dao;
+package br.com.andrewribeiro.ribrest.dao.interfaces;
 
 import br.com.andrewribeiro.ribrest.services.Result;
 
@@ -6,7 +6,7 @@ import br.com.andrewribeiro.ribrest.services.Result;
  *
  * @author Andrew Ribeiro
  */
-public interface ICRUD {
+public interface CRUD {
 
     public void create();
 

@@ -1,7 +1,7 @@
-package br.com.andrewribeiro.ribrest.services.miner;
+package br.com.andrewribeiro.ribrest.services.miner.abstracts;
 
+import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.model.IModel;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -15,12 +15,14 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.server.ContainerRequest;
+import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.services.miner.util.GenericExclusionStrategy;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public abstract class AbstractMiner implements IMiner {
+public abstract class AbstractMiner implements Miner {
 
     @Inject
     protected FlowContainer fc;
@@ -39,7 +41,7 @@ public abstract class AbstractMiner implements IMiner {
         GsonBuilder gb = new GsonBuilder();
         if (fc.shouldGo()) {
 
-            IModel m = (IModel) fc.getModel();
+            Model m = (Model) fc.getModel();
 
             ignored = mineAttributes(m.getIgnoredAttributes(), accepts);
 
@@ -66,7 +68,7 @@ public abstract class AbstractMiner implements IMiner {
         setupData(cr);
     }
 
-    protected void fill(IModel model) throws IllegalArgumentException, IllegalAccessException {
+    protected void fill(Model model) throws IllegalArgumentException, IllegalAccessException {
         List<Field> l = model.getAllAttributes();
         for (Field attribute : l) {
             attribute.setAccessible(true);

@@ -1,5 +1,7 @@
-package br.com.andrewribeiro.ribrest.dao;
+package br.com.andrewribeiro.ribrest.dao.abstracts;
 
+import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
+import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultExceptionConstants;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultExceptionFactory;
@@ -12,10 +14,10 @@ import org.glassfish.hk2.api.ServiceLocator;
  *
  * @author Andrew Ribeiro
  */
-public abstract class AbstractPersistenceCenter implements IPersistenceCenter {
+public abstract class AbstractPersistenceCenter implements PersistenceCenter {
 
     
-    private IDAO dao;
+    private DAO dao;
     
     @Inject
     private ServiceLocator sl;

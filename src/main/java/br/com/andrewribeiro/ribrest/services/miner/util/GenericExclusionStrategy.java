@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.ribrest.services.miner;
+package br.com.andrewribeiro.ribrest.services.miner.util;
 
 import com.google.gson.ExclusionStrategy;
 

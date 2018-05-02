@@ -2,15 +2,15 @@ package br.com.andrewribeiro.ribrest.services;
 
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultExceptionConstants;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultExceptionFactory;
-import br.com.andrewribeiro.ribrest.model.IModel;
-import br.com.andrewribeiro.ribrest.services.miner.IMiner;
-import br.com.andrewribeiro.ribrest.services.holder.IHolder;
-import br.com.andrewribeiro.ribrest.services.holder.ConcreteHolder;
+import br.com.andrewribeiro.ribrest.services.holder.HolderImpl;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import java.lang.reflect.Modifier;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.ws.rs.container.ContainerRequestContext;
+import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
+import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.services.holder.interfaces.Holder;
 
 /**
  *
@@ -20,12 +20,12 @@ public class FlowContainer {
 
     public FlowContainer() {
         go = true;
-        holder = new ConcreteHolder();
+        holder = new HolderImpl();
         result = new Result();
     }
 
-    private IMiner miner;
-    private IHolder holder;
+    private Miner miner;
+    private Holder holder;
     private Object model;
 
     private Result result;
@@ -38,19 +38,19 @@ public class FlowContainer {
 
     ContainerRequestContext cr;
 
-    public IMiner getMiner() {
+    public Miner getMiner() {
         return miner;
     }
 
-    public void setMiner(IMiner miner) {
+    public void setMiner(Miner miner) {
         this.miner = miner;
     }
 
-    public IHolder getHolder() {
+    public Holder getHolder() {
         return holder;
     }
 
-    public void setHolder(IHolder holder) {
+    public void setHolder(Holder holder) {
         this.holder = holder;
     }
 

@@ -208,15 +208,19 @@ public class Ribrest {
         Set resources = new HashSet();
         classes = classes != null ? classes : new ArrayList();
         for (final Object clazz : classes) {
-            Resource.Builder rb = Resource.builder(RibrestUtils.getResourceName((Class)clazz));
+            Resource.Builder rb = Resource.builder(RibrestUtils.getResourceName((Class) clazz));
             rb.addMethod("GET")
                     .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
                 @Override
                 public Response apply(ContainerRequestContext data) {
-                    Facade f = new Facade((ContainerRequest) data, clazz.toString());
-                    serviceLocator.inject(f);
-                    serviceLocator.postConstruct(f);
-                    return f.process();
+                    return produceValidFacade((ContainerRequest)data, clazz.toString()).process();
+                }
+            });
+            rb.addMethod("POST")
+                    .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
+                @Override
+                public Response apply(ContainerRequestContext data) {
+                   return produceValidFacade((ContainerRequest)data, clazz.toString()).process();
                 }
             });
             resources.add(rb.build());
@@ -273,12 +277,24 @@ public class Ribrest {
         return packages;
     }
 
+    private Facade produceValidFacade(ContainerRequest cr, String className) {
+        Facade f = new Facade(cr, className);
+        serviceLocator.inject(f);
+        serviceLocator.postConstruct(f);
+        return f;
+    }
+
     public boolean isDebug() {
         return debug;
     }
 
-    public Ribrest setDebug(boolean debug) {
+    public Ribrest debug(boolean debug) {
         this.debug = debug;
+        return instance;
+    }
+
+    public Ribrest baseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
         return instance;
     }
 

@@ -2,6 +2,7 @@ package br.com.andrewribeiro.test;
 
 import br.com.andrewribeiro.test.models.NotAIModelSubClass;
 import br.com.andrewribeiro.ribrest.Ribrest;
+import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.models.AbstractModel;
 import br.com.andrewribeiro.test.models.ConcreteModelMapped;
 import br.com.andrewribeiro.test.models.ConcreteModelNotMapped;
@@ -17,6 +18,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static br.com.andrewribeiro.ribrest.utils.RibrestUtils.*;
+import br.com.andrewribeiro.test.models.InsertConcreteModel;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -90,13 +94,22 @@ public class ResourcesTest {
 
         assertEquals(200, r.getStatus());
     }
+    
+    @Test
+    public void testCreateModel() throws JSONException {
+        WebTarget wt = buildWebTarget(InsertConcreteModel.class);
+        
+        Response r = wt.request(MediaType.APPLICATION_JSON).post(Entity.form(new Form().param("name", "Andrew Ribeiro")));
+        
+        assertEquals(200, r.getStatus());
+    }
 
     private static void init() {
-        Ribrest.getInstance().setDebug(true).init();
+        Ribrest.getInstance().debug(true).init();
     }
 
     private WebTarget buildWebTarget(Class sub) {
-        return c.target(APP_URL + (sub.getSimpleName() + "s").toLowerCase());
+        return c.target(APP_URL + RibrestUtils.getResourceName(sub));
     }
 
     @AfterClass

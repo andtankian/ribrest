@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.ribrest.dao;
+package br.com.andrewribeiro.ribrest.dao.interfaces;
 
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 
@@ -6,9 +6,9 @@ import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
  *
  * @author Andrew Ribeiro
  */
-public interface IPersistenceCenter {
+public interface PersistenceCenter {
     
     public void perform() throws RibrestDefaultException;
-    public IDAO create();
+    public DAO create();
     
 }

@@ -1,18 +1,18 @@
 package br.com.andrewribeiro.ribrest.controller;
 
 import br.com.andrewribeiro.ribrest.dao.CRUDCenter;
-import br.com.andrewribeiro.ribrest.dao.IPersistenceCenter;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.services.miner.IMiner;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.cdi.hk2.RequestContext;
-import br.com.andrewribeiro.ribrest.services.miner.IMinerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ContainerRequest;
+import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
+import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
+import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFactory;
 
 /**
  *
@@ -35,7 +35,7 @@ public class Facade {
     FlowContainer fc;
     
     @Inject
-    IMinerFactory mf;
+    MinerFactory mf;
     
     @Inject
     private ServiceLocator sl;  
@@ -51,7 +51,7 @@ public class Facade {
      * @return Response that will be processed by http grizzly server and returned to the requester.
      */
     public Response process() {
-        IMiner m = null;
+        Miner m = null;
         try {
 
             /**
@@ -101,7 +101,7 @@ public class Facade {
     
     private void run() throws RibrestDefaultException{
         
-        IPersistenceCenter pc = new CRUDCenter();
+        PersistenceCenter pc = new CRUDCenter();
         sl.inject(pc);
         pc.perform();
     }

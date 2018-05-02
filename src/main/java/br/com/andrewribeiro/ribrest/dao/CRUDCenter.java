@@ -1,5 +1,8 @@
 package br.com.andrewribeiro.ribrest.dao;
 
+import br.com.andrewribeiro.ribrest.dao.abstracts.AbstractPersistenceCenter;
+import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
+
 
 /**
  *
@@ -9,7 +12,7 @@ public class CRUDCenter extends AbstractPersistenceCenter {
 
    
     @Override
-    public IDAO create() {
+    public DAO create() {
         return new ConcreteCRUDDAO();
     }
 

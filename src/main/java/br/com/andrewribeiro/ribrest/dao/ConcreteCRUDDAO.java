@@ -1,13 +1,15 @@
 package br.com.andrewribeiro.ribrest.dao;
 
-import java.util.List;
+import br.com.andrewribeiro.ribrest.dao.abstracts.AbstractDAO;
+import br.com.andrewribeiro.ribrest.dao.interfaces.CRUD;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class ConcreteCRUDDAO extends AbstractDAO implements ICRUD {
+public class ConcreteCRUDDAO extends AbstractDAO implements CRUD {
 
     @Override
     public void perform() {
@@ -25,15 +27,20 @@ public class ConcreteCRUDDAO extends AbstractDAO implements ICRUD {
 
     @Override
     public void create() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        em.getTransaction().begin();
+        em.persist(m);
+        em.getTransaction().commit();
     }
 
     @Override
-    public void read() {        
-        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        cq.select(cq.from(m.getClass())); 
-        List l = em.createQuery(cq).getResultList();        
-        fc.getHolder().setModels(l);
+    public void read() {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery cmodel = cb.createQuery();
+        cmodel.select(cmodel.from(m.getClass()));
+        fc.getHolder().setModels(em.createQuery(cmodel).setFirstResult(sm.getOffset()).setMaxResults(sm.getLimit()).getResultList());
+        CriteriaQuery<Long> ccount = cb.createQuery(Long.class);
+        ccount.select(cb.count(ccount.from(m.getClass())));
+        fc.getHolder().setTotal(em.createQuery(ccount).getSingleResult());
     }
 
     @Override

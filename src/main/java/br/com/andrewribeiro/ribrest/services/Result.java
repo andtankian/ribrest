@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.ribrest.services;
 
-import br.com.andrewribeiro.ribrest.services.holder.IHolder;
 import javax.ws.rs.core.Response;
+import br.com.andrewribeiro.ribrest.services.holder.interfaces.Holder;
 
 /**
  *
@@ -13,7 +13,7 @@ public class Result {
         this.status = Response.Status.OK;
     }
 
-    public Result(Response.Status status, String cause, IHolder holder) {
+    public Result(Response.Status status, String cause, Holder holder) {
         this.status = status;
         this.cause = cause;
         this.holder = holder;
@@ -28,7 +28,7 @@ public class Result {
 
     private String cause;
 
-    private IHolder holder;
+    private Holder holder;
 
     public Response.Status getStatus() {
         return status;
@@ -46,11 +46,11 @@ public class Result {
         this.cause = cause;
     }
 
-    public IHolder getHolder() {
+    public Holder getHolder() {
         return holder;
     }
 
-    public void setHolder(IHolder holder) {
+    public void setHolder(Holder holder) {
         this.holder = holder;
     }
 

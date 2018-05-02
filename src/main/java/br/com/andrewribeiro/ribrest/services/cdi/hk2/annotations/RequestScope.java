@@ -38,7 +38,7 @@
  * holder.
  */
 
-package br.com.andrewribeiro.ribrest.services.cdi.hk2;
+package br.com.andrewribeiro.ribrest.services.cdi.hk2.annotations;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;

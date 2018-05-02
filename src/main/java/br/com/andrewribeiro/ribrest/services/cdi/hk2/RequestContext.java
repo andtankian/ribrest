@@ -40,6 +40,7 @@
 
 package br.com.andrewribeiro.ribrest.services.cdi.hk2;
 
+import br.com.andrewribeiro.ribrest.services.cdi.hk2.annotations.RequestScope;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
