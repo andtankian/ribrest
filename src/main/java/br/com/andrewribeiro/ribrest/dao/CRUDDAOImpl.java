@@ -2,14 +2,16 @@ package br.com.andrewribeiro.ribrest.dao;
 
 import br.com.andrewribeiro.ribrest.dao.abstracts.AbstractDAO;
 import br.com.andrewribeiro.ribrest.dao.interfaces.CRUD;
+import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.ws.rs.core.Response;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class ConcreteCRUDDAO extends AbstractDAO implements CRUD {
+public class CRUDDAOImpl extends AbstractDAO implements CRUD {
 
     @Override
     public void perform() {
@@ -27,9 +29,11 @@ public class ConcreteCRUDDAO extends AbstractDAO implements CRUD {
 
     @Override
     public void create() {
-        em.getTransaction().begin();
+        beginInactiveTransaction();
         em.persist(m);
         em.getTransaction().commit();
+        fc.getResult().setStatus(Response.Status.CREATED);
+        fc.getHolder().getModels().add(m);
     }
 
     @Override
@@ -45,12 +49,22 @@ public class ConcreteCRUDDAO extends AbstractDAO implements CRUD {
 
     @Override
     public void update() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        beginInactiveTransaction();
+        em.getTransaction().commit();
+        fc.getResult().setStatus(Response.Status.OK);
+        fc.getHolder().getModels().add(m);
     }
 
     @Override
     public void delete() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        update();
+    }
+    
+    private void beginInactiveTransaction(){
+        EntityTransaction t = em.getTransaction();
+        if(!t.isActive()){
+            t.begin();
+        }
     }
 
 }

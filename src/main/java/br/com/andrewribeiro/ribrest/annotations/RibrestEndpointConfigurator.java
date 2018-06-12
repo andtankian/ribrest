@@ -8,7 +8,8 @@ import java.lang.annotation.RetentionPolicy;
  * @author Andrew Ribeiro
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RibrestModel {
+public @interface RibrestEndpointConfigurator {
     public String value() default "";
-    public RibrestEndpointConfigurator[] ribrestConfigurators() default {};
+    public Class[] beforeCommands() default {};
+    public Class[] afterCommands() default {};
 }

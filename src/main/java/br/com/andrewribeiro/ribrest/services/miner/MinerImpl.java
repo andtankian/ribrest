@@ -17,11 +17,11 @@ import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 public class MinerImpl extends AbstractMiner {
 
     @Override
-    public void extract(ContainerRequest cr) throws RibrestDefaultException {
+    public void extractDataFromRequest(ContainerRequest cr) throws RibrestDefaultException {
         try {
-            super.extract(cr);
+            super.extractDataFromRequest(cr);
             Model m = (Model) fc.getModel();
-            fill(m);            
+            fillModel(m);            
         } catch (ClassCastException cce) {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_IS_NOT_IMODEL_SUBCLASS, RibrestUtils.getResourceName(fc.getModel().getClass()));
         } catch (IllegalArgumentException ex) {

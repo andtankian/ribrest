@@ -2,9 +2,9 @@ package br.com.andrewribeiro.test;
 
 import br.com.andrewribeiro.test.models.NotAIModelSubClass;
 import br.com.andrewribeiro.ribrest.Ribrest;
+import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.models.AbstractModel;
-import br.com.andrewribeiro.test.models.ConcreteModelMapped;
 import br.com.andrewribeiro.test.models.ConcreteModelNotMapped;
 import br.com.andrewribeiro.test.models.NotImplementsIModelAbstractMethods;
 import javax.ws.rs.client.Client;
@@ -18,11 +18,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static br.com.andrewribeiro.ribrest.utils.RibrestUtils.*;
-import br.com.andrewribeiro.test.models.InsertConcreteModel;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
+import br.com.andrewribeiro.test.models.NotAnnotatedWithRibrestModelAnnotationModel;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -42,7 +39,7 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testNotAIModelSubClass() throws JSONException {
+    public void testNotAIModelSubClass() throws JSONException, RibrestDefaultException {
 
         WebTarget wt = buildWebTarget(NotAIModelSubClass.class);
 
@@ -54,7 +51,7 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testNotImplementesIModelAbstractMethods() throws JSONException {
+    public void testNotImplementesIModelAbstractMethods() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(NotImplementsIModelAbstractMethods.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
@@ -65,7 +62,7 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testAbstractModel() throws JSONException {
+    public void testAbstractModel() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(AbstractModel.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
@@ -76,40 +73,41 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testConcreteModelNotMapped() throws JSONException {
+    public void testConcreteModelNotMapped() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(ConcreteModelNotMapped.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
         assertEquals(417, r.getStatus());
-        
+
         JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(ConcreteModelNotMapped.class) + " isn't an entity. Try to annotate it with @Entity.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
     
-    @Test
-    public void testConcreteModelMapped() throws JSONException {
-        WebTarget wt = buildWebTarget(ConcreteModelMapped.class);
-
-        Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
-
-        assertEquals(200, r.getStatus());
+     @Test
+    public void testNotAnnotatedWithRibrestModelAnnotationModel() {
+        try {
+            WebTarget wt = buildWebTarget(NotAnnotatedWithRibrestModelAnnotationModel.class);
+        }catch(RuntimeException rte){
+            assertEquals("Ribrest could'nt get a valid resource name by the class: " + NotAnnotatedWithRibrestModelAnnotationModel.class.getName() + "\nHave you annotated it with @RibrestModel?",
+                    rte.getMessage());
+        }
     }
-    
-    @Test
-    public void testCreateModel() throws JSONException {
-        WebTarget wt = buildWebTarget(InsertConcreteModel.class);
-        
-        Response r = wt.request(MediaType.APPLICATION_JSON).post(Entity.form(new Form().param("name", "Andrew Ribeiro")));
-        
-        assertEquals(200, r.getStatus());
-    }
+   
 
     private static void init() {
         Ribrest.getInstance().debug(true).init();
     }
 
     private WebTarget buildWebTarget(Class sub) {
-        return c.target(APP_URL + RibrestUtils.getResourceName(sub));
+        WebTarget wt = null;
+        try {
+            wt = c.target(APP_URL + RibrestUtils.getResourceName(sub));
+        } catch (Exception e) {
+            if (e instanceof RibrestDefaultException) {
+                throw new RuntimeException(((RibrestDefaultException) e).getError());
+            }
+        }
+        return wt;
     }
 
     @AfterClass

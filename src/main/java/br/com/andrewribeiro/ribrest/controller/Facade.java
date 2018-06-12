@@ -12,6 +12,7 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
+import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
 import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFactory;
 
 /**
@@ -19,11 +20,12 @@ import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFacto
  * @author Andrew Ribeiro
  */
 public class Facade {
-    
+
     /**
-     * Facade Constructor. 
-     * 
-     * @param cr is the main object coming from the requester. It contains all data information about the request itself.
+     * Facade Constructor.
+     *
+     * @param cr is the main object coming from the requester. It contains all
+     * data information about the request itself.
      * @param entity The name of the entity being requested.
      */
     public Facade(ContainerRequest cr, String entity) {
@@ -33,100 +35,106 @@ public class Facade {
 
     @Inject
     FlowContainer fc;
-    
+
+    @Inject
+    Dispatcher dispatcher;
+
     @Inject
     MinerFactory mf;
-    
+
     @Inject
-    private ServiceLocator sl;  
-             
+    private ServiceLocator sl;
+
     ContainerRequest cr;
     private final String entity;
-    
-    
+
     /**
-     * Method that process the Ribrest core mechanism.
-     * This method is called by resources to process an http request.
-     * 
-     * @return Response that will be processed by http grizzly server and returned to the requester.
+     * Method that process the Ribrest core mechanism. This method is called by
+     * resources to process an http request.
+     *
+     * @return Response that will be processed by http grizzly server and
+     * returned to the requester.
      */
     public Response process() {
         Miner m = null;
+        Response response;
         try {
 
             /**
-             * Getting a class resource instance that will be used to process all
-             * the code about it
+             * Getting a class resource instance that will be used to process
+             * all the code about it
              */
             Class c = Class.forName(entity);
-            
+
             /**
              * mf must return a IMiner concrete instance that will be used to
-             * extract all information of the ContainerRequest and populate
-             * the model instance
+             * extract all information of the ContainerRequest and populate the
+             * model instance
              */
             m = mf.getMinerInstance(c);
             sl.inject(m); //Inject all the services to IMiner concrete instance.
-            
+            fc.setMiner(m);
+
             /**
              * Until here, we don't get any concrete instance of IModel subclass
-             * Calling setup entity will verify if is possible to get a real instance
-             * of the current IModel subclass or will throw an exception
+             * Calling setup entity will verify if is possible to get a real
+             * instance of the current IModel subclass or will throw an
+             * exception
              */
-            fc.setupEntity(c);
-            
+            fc.initModelInstance(c);
+
             /**
-             * Extracting all the information of ContainerRequest and populate to
-             * real instance of IModel subclass (if there is one)
+             * Extracting all the information of ContainerRequest and populate
+             * to real instance of IModel subclass (if there is one)
              */
-            m.extract(cr);
-            
+            m.extractDataFromRequest(cr);
+
             /**
              * Run the main flow
              */
             run();
         } catch (Exception e) {
-            if(!(e instanceof RibrestDefaultException)){
+            if (!(e instanceof RibrestDefaultException)) {
                 e = new RibrestDefaultException(e.getCause() != null ? e.getCause().toString() : "Unknown");
             }
             fc.setGo(false);
             fc.getResult().setStatus(Response.Status.EXPECTATION_FAILED);
-            fc.getResult().setCause(((RibrestDefaultException)e).getError());
+            fc.getResult().setCause(((RibrestDefaultException) e).getError());
         } finally {
-            Response r = m.send(fc);
+            response = dispatcher.send(fc);
             sl.preDestroy(this);
-            return r;
         }
+        return response;
     }
-    
-    private void run() throws RibrestDefaultException{
-        
+
+    private void run() throws RibrestDefaultException {
+
         PersistenceCenter pc = new CRUDCenter();
         sl.inject(pc);
         pc.perform();
     }
-    
+
     /**
-     * The inject method will automatically start the RequestContext.
-     * This method is also automatically called by the HK2 @PostConstruct mechanism.
-     * 
+     * The inject method will automatically start the RequestContext. This
+     * method is also automatically called by the HK2 @PostConstruct mechanism.
+     *
      * @return void.
      */
     @PostConstruct
-    private void injected(){
-        ((RequestContext)sl.getService(RequestContext.class)).startRequest();
+    private void injected() {
+        ((RequestContext) sl.getService(RequestContext.class)).startRequest();
         fc.setMethod(cr.getMethod());
     }
-    
+
     /**
-     * The inject method will automatically stop the RequestContext.
-     * This method is also automatically called by the HK2 @PostConstruct mechanism.
+     * The inject method will automatically stop the RequestContext. This method
+     * is also automatically called by the HK2 @PostConstruct mechanism.
+     *
      * @return void.
      */
     @PreDestroy
-    private void destroyed(){
+    private void destroyed() {
         sl.getService(RequestContext.class).stopRequest();
     }
-    
 
 }

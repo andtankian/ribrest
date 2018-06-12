@@ -20,6 +20,7 @@ public abstract class AbstractHolder implements Holder {
     private List models;
     private SearchModel sm;
     private Long total;
+    private List acceptedFields;
 
     @Override
     public List getModels() {
@@ -50,5 +51,19 @@ public abstract class AbstractHolder implements Holder {
     public void setTotal(Long total) {
         this.total = total;
     }
+
+    @Override
+    public List getAcceptedFields() {
+        return acceptedFields;
+    }
+
+    @Override
+    public void setAcceptedFields(List accepted) {
+        this.acceptedFields = accepted;
+    }
+    
+    
+    
+    
     
 }

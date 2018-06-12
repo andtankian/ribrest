@@ -26,7 +26,7 @@ public class FlowContainer {
 
     private Miner miner;
     private Holder holder;
-    private Object model;
+    private Model model;
 
     private Result result;
     private String method;
@@ -62,11 +62,11 @@ public class FlowContainer {
         this.go = go;
     }
     
-    public Object getModel() {
+    public Model getModel() {
         return model;
     }
 
-    public void setModel(Object model) {
+    public void setModel(Model model) {
         this.model = model;
     }
 
@@ -94,11 +94,15 @@ public class FlowContainer {
         this.method = method;
     }
     
-    public void setupEntity(Class classType) throws Exception{
+    public void initModelInstance(Class classType) throws Exception{
         if(Modifier.isAbstract(classType.getModifiers())){
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_IS_ABSTRACT, RibrestUtils.getResourceName(classType));
         }
-        this.model = classType.newInstance();
+        Object tempInstance = classType.newInstance();
+        if(!(tempInstance instanceof Model)) {
+            throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_IS_NOT_IMODEL_SUBCLASS, RibrestUtils.getResourceName(classType));
+        }
+        this.model = (Model)tempInstance;
     }
 
 }

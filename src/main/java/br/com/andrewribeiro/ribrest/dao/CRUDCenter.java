@@ -13,7 +13,7 @@ public class CRUDCenter extends AbstractPersistenceCenter {
    
     @Override
     public DAO create() {
-        return new ConcreteCRUDDAO();
+        return new CRUDDAOImpl();
     }
 
 }

@@ -14,7 +14,7 @@ public interface Model {
     
     public void merge();
     /**
-     * Method that returns a list of all attributes not static of the current model class.
+     * Method that returns a list of all not static attributes of the current model class.
      * This method works recursively getting the parent class of the current instance class.
      * For each super class, this method get all the declared fields and test each field for being not static field.
      * If the field is not static, it's added to the list and the list is returned at the end.

@@ -20,4 +20,8 @@ public interface Holder {
     public Long getTotal();
     
     public void setTotal(Long total);
+    
+    public List getAcceptedFields();
+    
+    public void setAcceptedFields(List acceptedFields);
 }

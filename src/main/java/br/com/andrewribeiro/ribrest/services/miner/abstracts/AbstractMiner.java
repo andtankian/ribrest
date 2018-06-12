@@ -3,20 +3,15 @@ package br.com.andrewribeiro.ribrest.services.miner.abstracts;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
-import br.com.andrewribeiro.ribrest.services.miner.util.GenericExclusionStrategy;
 
 /**
  *
@@ -37,44 +32,17 @@ public abstract class AbstractMiner implements Miner {
     private List ignored;
 
     @Override
-    public Response send(FlowContainer fc) {
-        GsonBuilder gb = new GsonBuilder();
-        if (fc.shouldGo()) {
-
-            Model m = (Model) fc.getModel();
-
-            ignored = mineAttributes(m.getIgnoredAttributes(), accepts);
-
-            gb.addDeserializationExclusionStrategy(new GenericExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes fa) {
-                    return ignored.contains(fa.getName());
-                }
-            });
-
-        }
-        
-        fc.getResult().setHolder(fc.getHolder());
-
-        Gson g = gb.create();
-
-        return Response.status(fc.getResult().getStatus()).entity(g.toJson(fc.getResult()))
-                .build();
-
+    public void extractDataFromRequest(ContainerRequest cr) throws RibrestDefaultException {
+        prepareDataObjects(cr);
     }
 
-    @Override
-    public void extract(ContainerRequest cr) throws RibrestDefaultException {
-        setupData(cr);
-    }
-
-    protected void fill(Model model) throws IllegalArgumentException, IllegalAccessException {
+    protected void fillModel(Model model) throws IllegalArgumentException, IllegalAccessException {
         List<Field> l = model.getAllAttributes();
         for (Field attribute : l) {
             attribute.setAccessible(true);
 
             /*Firstly, let's check for String types*/
-            if (attribute.getClass().getSimpleName().equals("String")) {
+            if (attribute.getType().getSimpleName().equals("String")){
                 /*Fill the equivalent name to the model attribute*/
                 String value = form.getFirst(attribute.getName());
                 attribute.set(model, value);
@@ -82,7 +50,7 @@ public abstract class AbstractMiner implements Miner {
         }
     }
 
-    private void setupData(ContainerRequest cr) {
+    private void prepareDataObjects(ContainerRequest cr) {
         /*Populating form attribute with data coming from ContainerRequest*/
         Form f = cr.readEntity(Form.class);
         form = f.asMap();
@@ -102,11 +70,12 @@ public abstract class AbstractMiner implements Miner {
         accepts = accepts != null ? accepts : new ArrayList();
     }
 
-    protected List mineAttributes(List ignored, List accepted) {
+    @Override
+    public List extractIgnoredFields() {
         ignored = ignored != null ? ignored : new ArrayList();
-        accepted = accepted != null ? accepted : new ArrayList();
+        accepts = accepts != null ? accepts : new ArrayList();
 
-        ignored.removeAll(accepted);
+        ignored.removeAll(accepts);
 
         return new ArrayList(ignored);
     }

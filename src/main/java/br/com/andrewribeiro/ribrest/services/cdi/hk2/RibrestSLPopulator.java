@@ -4,6 +4,8 @@ import br.com.andrewribeiro.ribrest.services.cdi.hk2.annotations.RequestScope;
 import br.com.andrewribeiro.ribrest.services.orm.EMFFactory;
 import br.com.andrewribeiro.ribrest.services.orm.EMFactory;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
+import br.com.andrewribeiro.ribrest.services.dispatcher.DispatcherImpl;
 import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
 import br.com.andrewribeiro.ribrest.services.miner.factory.MinerFactoryImpl;
 import javax.inject.Singleton;
@@ -52,6 +54,10 @@ public class RibrestSLPopulator {
 
         config.bind(BuilderHelper.link(MinerFactoryImpl.class)
                 .to(MinerFactory.class)
+                .build());
+        
+        config.bind(BuilderHelper.link(DispatcherImpl.class)
+                .to(Dispatcher.class)
                 .build());
 
         config.commit();

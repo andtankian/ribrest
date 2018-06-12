@@ -19,7 +19,7 @@ public class EMFFactory implements Factory<EntityManagerFactory>{
 
     @Override
     public EntityManagerFactory provide() {
-        emf = emf != null ? emf : Persistence.createEntityManagerFactory(puw.getPu());
+        emf = emf != null ? emf : Persistence.createEntityManagerFactory(puw.getPersistenceUnitName());
         return emf;
     }
 

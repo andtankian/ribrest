@@ -6,14 +6,14 @@ package br.com.andrewribeiro.ribrest.services.orm;
  */
 public class PersistenceUnitWrapper {
     
-    private String pu;
+    private String persistenceUnitName;
 
-    public String getPu() {
-        return pu;
+    public String getPersistenceUnitName() {
+        return persistenceUnitName;
     }
 
-    public void setPu(String pu) {
-        this.pu = pu;
+    public void setPersistenceUnitName(String persistenceUnitName) {
+        this.persistenceUnitName = persistenceUnitName;
     }
     
 }
