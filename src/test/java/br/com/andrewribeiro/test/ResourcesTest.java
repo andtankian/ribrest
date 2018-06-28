@@ -45,7 +45,7 @@ public class ResourcesTest {
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
-        assertEquals(417, r.getStatus());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
         JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotAIModelSubClass.class) + " does not implement IModel.\nRibrest can't operate in this class (yet).\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
@@ -56,7 +56,7 @@ public class ResourcesTest {
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
-        assertEquals(417, r.getStatus());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
         JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotImplementsIModelAbstractMethods.class) + " is a IModel subclass but not implements its abstract methods.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
@@ -67,7 +67,7 @@ public class ResourcesTest {
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
-        assertEquals(417, r.getStatus());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
         JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(AbstractModel.class) + " can't be an abstract class.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
@@ -78,7 +78,7 @@ public class ResourcesTest {
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
-        assertEquals(417, r.getStatus());
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
         JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(ConcreteModelNotMapped.class) + " isn't an entity. Try to annotate it with @Entity.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }

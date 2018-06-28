@@ -45,6 +45,7 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
         CriteriaQuery<Long> ccount = cb.createQuery(Long.class);
         ccount.select(cb.count(ccount.from(m.getClass())));
         fc.getHolder().setTotal(em.createQuery(ccount).getSingleResult());
+        setStatusToNoContentIfModelsEmpty();
     }
 
     @Override
@@ -65,6 +66,16 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
         if(!t.isActive()){
             t.begin();
         }
+    }
+    
+    private void setStatusToNoContentIfModelsEmpty(){
+        if(isModelsEmpty()){
+            fc.getResult().setStatus(Response.Status.NO_CONTENT);
+        }
+    }
+    
+    private boolean isModelsEmpty(){
+        return fc.getHolder().getModels().isEmpty();
     }
 
 }

@@ -1,5 +1,7 @@
 package br.com.andrewribeiro.test;
 
+import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.models.ConcreteModelMapped;
 import br.com.andrewribeiro.test.models.ModelCrud;
 import javax.ws.rs.core.Form;
@@ -23,8 +25,7 @@ public class CRUDTest extends RibrestTest {
 
         Response r = get(ConcreteModelMapped.class);
 
-        assertEquals(200, r.getStatus());
-
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
     }
 
     @Test
@@ -36,11 +37,10 @@ public class CRUDTest extends RibrestTest {
     }
 
     @Test
-    public void testUpdateModel() throws JSONException {
+    public void testUpdateModel() throws JSONException, RibrestDefaultException {
         MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
         parameters.add("name", "Andrew Ribeiro Santos");
-        parameters.add("id", "1");
-        Response r = put(ModelCrud.class, new Form(parameters));
+        Response r = put(RibrestUtils.getResourceName(ModelCrud.class) + "/1", new Form(parameters));
         
         assertEquals(200, r.getStatus());
     }

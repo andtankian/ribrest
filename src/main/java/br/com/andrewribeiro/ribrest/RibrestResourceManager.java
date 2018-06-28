@@ -1,62 +1,39 @@
 package br.com.andrewribeiro.ribrest;
 
+import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.controller.Facade;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
+import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.ws.rs.container.ContainerRequestContext;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import org.glassfish.jersey.process.Inflector;
-import org.glassfish.jersey.server.ContainerRequest;
 import org.glassfish.jersey.server.model.Resource;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-class RibrestResourceManager extends AbstractRibrestConfigurator{
-    
-    Set createResources(List classes) {
+class RibrestResourceManager extends AbstractRibrestConfigurator {
+
+    Resource.Builder resourceBuilder;
+    Class currentClassResource;
+    List beforeCommands;
+    List afterCommands;
+
+    Set getProgrammaticallyResources(List classes) {
         RibrestLog.log("Creating resources based on scanned models...");
         Set resources = new HashSet();
         classes = classes != null ? classes : new ArrayList();
-        for (final Object clazz : classes) {
+        for (Object clazz : classes) {
             try {
-                Resource.Builder rb = Resource.builder(RibrestUtils.getResourceName((Class) clazz));
-                rb.addMethod("GET")
-                        .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
-                    @Override
-                    public Response apply(ContainerRequestContext data) {
-                        return produceValidFacade((ContainerRequest) data, clazz.toString()).process();
-                    }
-                });
-                rb.addMethod("POST")
-                        .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
-                    @Override
-                    public Response apply(ContainerRequestContext data) {
-                        return produceValidFacade((ContainerRequest) data, clazz.toString()).process();
-                    }
-                });
-                rb.addMethod("PUT")
-                        .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
-                    @Override
-                    public Response apply(ContainerRequestContext data) {
-                        return produceValidFacade((ContainerRequest) data, clazz.toString()).process();
-                    }
-                });
-                rb.addMethod("DELETE")
-                        .produces(MediaType.APPLICATION_JSON).handledBy(new Inflector<ContainerRequestContext, Response>() {
-                    @Override
-                    public Response apply(ContainerRequestContext data) {
-                        return produceValidFacade((ContainerRequest) data, clazz.toString()).process();
-                    }
-                });
-                resources.add(rb.build());
+                resources.add(createResource((Class) clazz));
                 RibrestLog.log(new StringBuilder("Resource created at: ").append(ribrest.getBaseUrl()).append(((Class) clazz).getSimpleName().toLowerCase()).append("s").toString());
             } catch (RibrestDefaultException ex) {
                 throw new RuntimeException(ex.getError());
@@ -64,12 +41,103 @@ class RibrestResourceManager extends AbstractRibrestConfigurator{
         }
         return resources;
     }
-    
-    private Facade produceValidFacade(ContainerRequest cr, String className) {
-        Facade f = new Facade(cr, className);
-        ribrest.getServiceLocator().inject(f);
-        ribrest.getServiceLocator().postConstruct(f);
+
+    private Facade produceValidFacade(String className) {
+        Facade f = new Facade(className);
+        f.setBeforeCommandsToCurrentRequest(beforeCommands);
+        f.setAfterCommandsToCurrentRequest(afterCommands);
+        clearCommands();
         return f;
     }
-    
+
+    private Resource.Builder createResourceBuilder(String resourceName) {
+        return Resource.builder(resourceName);
+    }
+
+    private Resource createResource(Class currentClassResource) throws RibrestDefaultException {
+        this.currentClassResource = currentClassResource;
+        resourceBuilder = createResourceBuilder(RibrestUtils.getResourceName(currentClassResource));
+        createAllEndpoints();
+        return resourceBuilder.build();
+    }
+
+    private void createAllEndpoints() {
+        createAllDefaultEndpoints();
+        createEndpointFromConfigurators(getRibrestEndpointConfiguratorsByMethod("POST"));
+        createEndpointFromConfigurators(getRibrestEndpointConfiguratorsByMethod("GET"));
+        createEndpointFromConfigurators(getRibrestEndpointConfiguratorsByMethod("PUT"));
+        createEndpointFromConfigurators(getRibrestEndpointConfiguratorsByMethod("DELETE"));
+    }
+
+    private void createAllDefaultEndpoints() {
+        createEndpointFromConfigurators(getRibrestDefaultEndpointConfigurators());
+    }
+
+    private void createEndpoint(Resource.Builder resourceBuilder, RibrestEndpointConfiguratorContainer endpointConfiguratorContainer) {
+        Resource.Builder tempResourceBuilder;
+        if (isSubresource(endpointConfiguratorContainer)) {
+            tempResourceBuilder = resourceBuilder.addChildResource(endpointConfiguratorContainer.path);
+        } else {
+            tempResourceBuilder = resourceBuilder;
+        }
+        buildEndpoint(tempResourceBuilder, endpointConfiguratorContainer.method);
+    }
+
+    private boolean isSubresource(RibrestEndpointConfiguratorContainer endpointConfiguratorContainer) {
+        return !("".equals(endpointConfiguratorContainer.path));
+    }
+
+    private void buildEndpoint(Resource.Builder resourceBuilder, String method) {
+        resourceBuilder.addMethod(method).consumes(MediaType.APPLICATION_FORM_URLENCODED)
+                .produces(MediaType.APPLICATION_JSON)
+                .handledBy(new RibrestInflector(ribrest, produceValidFacade(currentClassResource.getCanonicalName())));
+    }
+
+    private void createEndpointFromConfigurators(List<RibrestEndpointConfigurator> endpointConfigurators) {
+        endpointConfigurators.stream()
+                .forEach((endpointConfigurator) -> {
+                    beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
+                    afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
+                    createEndpoint(resourceBuilder,
+                            new RibrestEndpointConfiguratorContainer().fromRibrestEndpointConfigurator(endpointConfigurator));
+                });
+    }
+
+    private List getRibrestEndpointConfiguratorsByMethod(String method) {
+        RibrestModel ribrestModelAnnotation = (RibrestModel) currentClassResource.getAnnotation(RibrestModel.class);
+        return Arrays.asList(ribrestModelAnnotation.endpointsConfigurators()).stream()
+                .filter(ribrestEndpointConfigurator -> ribrestEndpointConfigurator.method().equals(method))
+                .collect(Collectors.toList());
+    }
+
+    private List getRibrestDefaultEndpointConfigurators() {
+        RibrestModel ribrestModelAnnotation = (RibrestModel) currentClassResource.getAnnotation(RibrestModel.class);
+        return Arrays.asList(ribrestModelAnnotation.defaultEndpointsConfigurators());
+    }
+
+    private List getCommandInstancesFromCommandClassesList(List<Class> commandClasses) {
+        return commandClasses.stream()
+                .map((commandClass) -> {
+                    Command commandInstance = null;
+                    try {
+                        commandInstance = getCommandInstanceFromClass(commandClass);
+                    } catch (IllegalAccessException | InstantiationException e) {
+                    }
+                    return commandInstance;
+                }).collect(Collectors.toList());
+    }
+
+    private Command getCommandInstanceFromClass(Class commandClass) throws InstantiationException, IllegalAccessException {
+        Object commandInstance = commandClass.newInstance();
+        if (commandInstance instanceof Command) {
+            return (Command) commandInstance;
+        }
+
+        return null;
+    }
+
+    private void clearCommands() {
+        beforeCommands = new ArrayList();
+        afterCommands = new ArrayList();
+    }
 }

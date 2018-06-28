@@ -21,6 +21,7 @@ public class DispatcherImpl implements Dispatcher{
     public Response send(FlowContainer fc) {
         Miner currentMiner = fc.getMiner();
         setupSerializationStrategy(currentMiner.extractIgnoredFields());
+        setModelsToResult(fc);
         return buildResultResponse(fc.getResult());
     }
     
@@ -36,6 +37,10 @@ public class DispatcherImpl implements Dispatcher{
                     return ignoreFields.contains(fa.getName());
                 }
             });
+    }
+    
+    private void setModelsToResult(FlowContainer flowContainer){
+        flowContainer.getResult().setHolder(flowContainer.getHolder());
     }
     
     

@@ -27,14 +27,19 @@ public class RibrestTest {
         WebTarget wt = buildWebTarget(resource);
         return wt.request(MediaType.APPLICATION_JSON).get();
     }
+    
+    public Response get(Class resource, String path) throws RibrestDefaultException{
+        WebTarget wt = buildWebTarget(APP_URL + RibrestUtils.getResourceName(resource) + path);
+        return wt.request(MediaType.APPLICATION_JSON).get();
+    }
 
     public Response post(Class resource, Form form) {
         WebTarget wt = buildWebTarget(resource);
         return wt.request(MediaType.APPLICATION_JSON).post(Entity.form(form));
     }
 
-    public Response put(Class resource, Form form) {
-        WebTarget wt = buildWebTarget(resource);
+    public Response put(String path, Form form) throws RibrestDefaultException {
+        WebTarget wt = buildWebTarget(APP_URL + path);
         return wt.request(MediaType.APPLICATION_JSON).put(Entity.form(form));
     }
 
@@ -62,6 +67,12 @@ public class RibrestTest {
                 throw new RuntimeException(((RibrestDefaultException) e).getError());
             }
         }
+        return wt;
+    }
+
+    private WebTarget buildWebTarget(String path) {
+        WebTarget wt = null;
+        wt = c.target(path);
         return wt;
     }
 
