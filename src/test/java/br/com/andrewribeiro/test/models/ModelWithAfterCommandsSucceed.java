@@ -14,10 +14,5 @@ import javax.persistence.Entity;
     @RibrestEndpointConfigurator(afterCommands = AfterCommandSucceed.class)
 })
 public class ModelWithAfterCommandsSucceed extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel{
-
-    @Override
-    public void merge() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
 }

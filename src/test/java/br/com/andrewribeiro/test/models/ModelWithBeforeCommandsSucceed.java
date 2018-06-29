@@ -21,11 +21,6 @@ public class ModelWithBeforeCommandsSucceed extends br.com.andrewribeiro.ribrest
 
     private String modelName;
 
-    @Override
-    public void merge() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
     public String getModelName() {
         return modelName;
     }

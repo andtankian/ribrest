@@ -11,9 +11,4 @@ public class NotAnnotatedWithRibrestModelAnnotationModel extends br.com.andrewri
     
     String name;
 
-    @Override
-    public void merge() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

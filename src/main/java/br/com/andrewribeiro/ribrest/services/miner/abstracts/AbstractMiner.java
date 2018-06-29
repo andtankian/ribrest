@@ -12,6 +12,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -36,18 +37,14 @@ public abstract class AbstractMiner implements Miner {
         prepareDataObjects(cr);
     }
 
-    protected void fillModel(Model model) throws IllegalArgumentException, IllegalAccessException {
-        List<Field> l = model.getAllAttributes();
-        for (Field attribute : l) {
-            attribute.setAccessible(true);
+    @Override
+    public List extractIgnoredFields() {
+        ignored = ignored != null ? ignored : new ArrayList();
+        accepts = accepts != null ? accepts : new ArrayList();
 
-            /*Firstly, let's check for String types*/
-            if (attribute.getType().getSimpleName().equals("String")){
-                /*Fill the equivalent name to the model attribute*/
-                String value = form.getFirst(attribute.getName());
-                attribute.set(model, value);
-            }
-        }
+        ignored.removeAll(accepts);
+
+        return new ArrayList(ignored);
     }
 
     private void prepareDataObjects(ContainerRequest cr) {
@@ -70,14 +67,66 @@ public abstract class AbstractMiner implements Miner {
         accepts = accepts != null ? accepts : new ArrayList();
     }
 
-    @Override
-    public List extractIgnoredFields() {
-        ignored = ignored != null ? ignored : new ArrayList();
-        accepts = accepts != null ? accepts : new ArrayList();
+    protected void fillModel(Model model) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        try {
+            model.setId(Long.parseLong(path.getFirst("id")));
+        } catch (NumberFormatException nfe) {}
 
-        ignored.removeAll(accepts);
-
-        return new ArrayList(ignored);
+        for (Field attribute : model.getAllAttributesExceptId()) {
+            fillAttribute(new FieldHelper(attribute, model, attribute.getName()));
+        }
     }
 
+    private void fillAttribute(FieldHelper fieldHelper) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        if (fieldHelper.attribute.getType() == String.class
+                || fieldHelper.attribute.getType() == Long.class) {
+            fieldHelper.fillNonEntityAttribute();
+        } else if (fieldHelper.attribute.isAnnotationPresent(OneToOne.class)) {
+            fieldHelper.fillEntityAttribute();
+        }
+    }
+
+    private void fillChildModel(Model childModel, String parentAttributeName) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        for (Field attribute : childModel.getAllAttributes()) {
+            fillAttribute(new FieldHelper(attribute, childModel, parentAttributeName + "." + attribute.getName()));
+        }
+    }
+
+    class FieldHelper {
+
+        public FieldHelper(Field attribute, Model model, String parameterName) {
+            this.attribute = attribute;
+            this.model = model;
+            this.parameterName = parameterName;
+        }
+
+        Field attribute;
+        Model model;
+        String parameterName;
+        Object parameterValue;
+
+        void fillNonEntityAttribute() throws IllegalArgumentException, IllegalAccessException {
+            parameterValue = form.getFirst(parameterName);
+            fill();
+        }
+
+        void fillEntityAttribute() throws InstantiationException, IllegalAccessException {
+            parameterValue = attribute.getType().newInstance();
+            fillChildModel((Model) parameterValue, attribute.getName());
+            fill();
+        }
+
+        void fill() throws IllegalArgumentException, IllegalAccessException {
+            attribute.setAccessible(true);
+            attribute.set(model, parseBeforeSetParameterValue(parameterValue));
+        }
+
+        Object parseBeforeSetParameterValue(Object parameterValue) {
+            if (attribute.getType() == Long.class) {
+                parameterValue = Long.parseLong((String) parameterValue);
+            }
+
+            return parameterValue;
+        }
+    }
 }

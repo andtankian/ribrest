@@ -1,21 +1,19 @@
 package br.com.andrewribeiro.test.models.commands;
 
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
-import br.com.andrewribeiro.ribrest.services.command.Command;
+import br.com.andrewribeiro.ribrest.services.command.AbstractCommand;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class BeforeCommandFailure implements Command{
+public class BeforeCommandFailure extends AbstractCommand{
 
     @Override
-    public FlowContainer execute(FlowContainer flowContainer) throws Exception {
+    public void execute() throws Exception {
         
         new Long("failure").longValue();
         
         
-        return flowContainer;
     }
     
 }

@@ -3,10 +3,7 @@ package br.com.andrewribeiro.ribrest;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import java.util.List;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
-import br.com.andrewribeiro.ribrest.services.command.Command;
-import java.util.ArrayList;
 import javax.persistence.EntityManagerFactory;
 import org.glassfish.hk2.api.ServiceLocator;
 
@@ -68,18 +65,6 @@ public class Ribrest {
     public void shutdown() {
         serviceLocator.getService(EntityManagerFactory.class).close();
         server.shutdown();
-    }
-
-    private List getCommandsListInstances(List commandsClasses) throws InstantiationException, IllegalAccessException {
-        List commandsInstances = new ArrayList();
-        if (commandsClasses != null) {
-            for (Object commandClass : commandsClasses) {
-                Class innerCommandClass = (Class) commandClass;
-                Command commandInstance = (Command) innerCommandClass.newInstance();
-                commandsInstances.add(commandInstance);
-            }
-        }
-        return commandsInstances;
     }
 
     public boolean isDebug() {

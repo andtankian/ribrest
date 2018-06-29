@@ -11,6 +11,8 @@ import javax.ws.rs.container.ContainerRequestContext;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import br.com.andrewribeiro.ribrest.services.holder.interfaces.Holder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -30,6 +32,7 @@ public class FlowContainer {
 
     private Result result;
     private String method;
+    private final Map extraObjects = new HashMap();
 
     @Inject
     private EntityManager em;
@@ -61,7 +64,7 @@ public class FlowContainer {
     public void setGo(boolean go) {
         this.go = go;
     }
-    
+
     public Model getModel() {
         return model;
     }
@@ -93,16 +96,24 @@ public class FlowContainer {
     public void setMethod(String method) {
         this.method = method;
     }
-    
-    public void initModelInstance(Class classType) throws Exception{
-        if(Modifier.isAbstract(classType.getModifiers())){
+
+    public void initModelInstance(Class classType) throws Exception {
+        if (Modifier.isAbstract(classType.getModifiers())) {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_IS_ABSTRACT, RibrestUtils.getResourceName(classType));
         }
         Object tempInstance = classType.newInstance();
-        if(!(tempInstance instanceof Model)) {
+        if (!(tempInstance instanceof Model)) {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_IS_NOT_IMODEL_SUBCLASS, RibrestUtils.getResourceName(classType));
         }
-        this.model = (Model)tempInstance;
+        this.model = (Model) tempInstance;
+    }
+
+    public Object getExtraObject(String key) {
+        return this.extraObjects.get(key);
+    }
+    
+    public void addExtraObject(String key, Object object){
+        this.extraObjects.put(key, object);
     }
 
 }

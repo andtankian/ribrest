@@ -15,16 +15,6 @@ public class ConcreteModelNotMapped extends AbstractModel{
     
     private String myname;
 
-    @Override
-    public void merge() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List getAllAttributes() {
-        return new ArrayList();
-    }
-
     @Column
     public String getMyname() {
         return myname;

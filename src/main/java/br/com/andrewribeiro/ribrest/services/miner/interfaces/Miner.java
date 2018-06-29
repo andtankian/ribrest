@@ -1,9 +1,7 @@
 package br.com.andrewribeiro.ribrest.services.miner.interfaces;
 
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import java.util.List;
-import javax.ws.rs.core.Response;
 import org.glassfish.jersey.server.ContainerRequest;
 
 /**

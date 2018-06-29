@@ -24,11 +24,6 @@ public class NotImplementsIModelAbstractMethods implements Model{
     }
 
     @Override
-    public void merge() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public List<Field> getAllAttributes() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }   

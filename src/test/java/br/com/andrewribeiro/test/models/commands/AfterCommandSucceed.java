@@ -1,20 +1,18 @@
 package br.com.andrewribeiro.test.models.commands;
 
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
-import br.com.andrewribeiro.ribrest.services.command.Command;
+import br.com.andrewribeiro.ribrest.services.command.AbstractCommand;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class AfterCommandSucceed implements Command{
+public class AfterCommandSucceed extends AbstractCommand{
 
     @Override
-    public FlowContainer execute(FlowContainer flowContainer) throws Exception {
+    public void execute() throws Exception {
         Model model = flowContainer.getModel(); 
         System.out.println("I'm running an AFTER command in " + model.getClass() + " class.");
-        return flowContainer;
     }
     
     

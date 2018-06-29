@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest.services.command;
 
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 
 /**
  *
@@ -8,6 +8,6 @@ import br.com.andrewribeiro.ribrest.services.FlowContainer;
  */
 public interface Command {
     
-    public FlowContainer execute(FlowContainer flowContainer) throws Exception;
+    public void execute() throws RibrestDefaultException, Exception;
     
 }

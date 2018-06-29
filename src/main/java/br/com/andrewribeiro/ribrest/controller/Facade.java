@@ -80,7 +80,8 @@ public class Facade {
     private void runCommands(List<Command> commands){
         commands.forEach(command -> {
             try {
-                command.execute(fc);
+                sl.inject(command);
+                command.execute();
             } catch (Exception ex) {
                 fc.getResult().setStatus(Response.Status.PRECONDITION_FAILED);
                 throw new RuntimeException(ex.getMessage());

@@ -1,6 +1,7 @@
 package br.com.andrewribeiro.ribrest.annotations;
 
 import br.com.andrewribeiro.ribrest.services.command.GetPersistentModelCommand;
+import br.com.andrewribeiro.ribrest.services.command.MergeModelToPersistedModelCommand;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -15,7 +16,7 @@ public @interface RibrestModel {
     public RibrestEndpointConfigurator[] defaultEndpointsConfigurators() default {
         @RibrestEndpointConfigurator(method = "POST"),
         @RibrestEndpointConfigurator(method = "GET"),
-        @RibrestEndpointConfigurator(method = "PUT", path = "{id}", beforeCommands = {GetPersistentModelCommand.class}),
-        @RibrestEndpointConfigurator(method = "DELETE", path = "{id}", beforeCommands = {GetPersistentModelCommand.class})
+        @RibrestEndpointConfigurator(method = "PUT", path = "{id}", beforeCommands = {GetPersistentModelCommand.class, MergeModelToPersistedModelCommand.class}),
+        @RibrestEndpointConfigurator(method = "DELETE", path = "{id}", beforeCommands = {GetPersistentModelCommand.class, MergeModelToPersistedModelCommand.class})
     };
 }

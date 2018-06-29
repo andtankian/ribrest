@@ -32,6 +32,8 @@ public class MinerImpl extends AbstractMiner {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_DOESNT_IMPLEMENTS_ABSTRACT_METHODS, RibrestUtils.getResourceName(fc.getModel().getClass()));
         } catch(RibrestDefaultException rde){
             throw rde;
+        } catch (InstantiationException ex) {
+            Logger.getLogger(MinerImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
