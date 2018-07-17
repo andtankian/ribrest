@@ -1,6 +1,7 @@
-package br.com.andrewribeiro.test.models;
+package br.com.andrewribeiro.test.structure.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.test.crud.models.ChildModel;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;

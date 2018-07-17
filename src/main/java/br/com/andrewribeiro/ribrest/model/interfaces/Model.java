@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -17,11 +18,11 @@ import javax.persistence.OneToOne;
  */
 public interface Model {
 
-    public final static String LOADED_MODEL_KEY = UUID.randomUUID().toString();
+    public final static String PERSISTED_MODEL_KEY = UUID.randomUUID().toString();
 
     default public void merge(Model modelToMerge) {
-        List<Field> thisInstanceAttributes = this.getAllAttributesExceptId();
-        List<Field> modelToMergeAttributes = modelToMerge.getAllAttributesExceptId();
+        List<Field> thisInstanceAttributes = this.getAllAttributesExceptsId();
+        List<Field> modelToMergeAttributes = modelToMerge.getAllAttributesExceptsId();
         IntStream.range(0, thisInstanceAttributes.size()).forEach((index) -> {
             Field thisIntanceField = thisInstanceAttributes.get(index);
             Field modelToMergeField = modelToMergeAttributes.get(index);
@@ -29,8 +30,9 @@ public interface Model {
             modelToMergeField.setAccessible(true);
             try {
                 Object attributeInstance = modelToMergeField.get(modelToMerge);
+                attributeInstance = attributeInstance == null ? thisIntanceField.get(this) : attributeInstance;
                 if (modelToMergeField.isAnnotationPresent(OneToOne.class)) {
-                    attributeInstance = ((Model)attributeInstance).getId() == null ? null : attributeInstance;
+                    attributeInstance = ((Model) attributeInstance).getId() == null ? thisIntanceField.get(this) : attributeInstance;
                 }
                 thisIntanceField.set(this, attributeInstance);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -52,9 +54,36 @@ public interface Model {
         }
         return thisClassFields;
     }
+
+    default public List<Field> getAllAttributesExceptsId() {
+        return getAllAttributes().stream()
+                .filter(attribute -> !attribute.isAnnotationPresent(Id.class))
+                .collect(Collectors.toList());
+    }
+
+    default public List<Field> getAllAttributesExceptsBidirectionalModels() {
+        return getAllAttributes().stream()
+                .filter(attribute -> {
+                    return !(attribute.isAnnotationPresent(OneToOne.class) && !attribute.getAnnotation(OneToOne.class).mappedBy().isEmpty());
+                })
+                .collect(Collectors.toList());
+    }
+
+    default public List<Field> getAllModelAttributes() {
+        return getAllAttributes().stream()
+                .filter(attribute -> Model.class.isAssignableFrom(attribute.getType()))
+                .collect(Collectors.toList());
+    }
+
+    default public List<Field> getAllModelNonBidirectionalAttributes() {
+        return getAllModelAttributes().stream().filter(attribute -> !(attribute.isAnnotationPresent(OneToOne.class) && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())))
+                .collect(Collectors.toList());
+    }
     
-    default public List<Field> getAllAttributesExceptId(){
-        return getAllAttributes().stream().filter(attribute->!attribute.isAnnotationPresent(Id.class)).collect(Collectors.toList());
+    default public List<Field> getAllCollectionModelAttributes(){
+        return getAllAttributes().stream()
+                .filter(attribute -> attribute.isAnnotationPresent(OneToMany.class))
+                .collect(Collectors.toList());
     }
 
     default public List<Field> getIgnoredAttributes() {

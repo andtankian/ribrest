@@ -12,6 +12,11 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import java.lang.reflect.ParameterizedType;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -72,7 +77,7 @@ public abstract class AbstractMiner implements Miner {
             model.setId(Long.parseLong(path.getFirst("id")));
         } catch (NumberFormatException nfe) {}
 
-        for (Field attribute : model.getAllAttributesExceptId()) {
+        for (Field attribute : model.getAllAttributesExceptsId()) {
             fillAttribute(new FieldHelper(attribute, model, attribute.getName()));
         }
     }
@@ -83,11 +88,13 @@ public abstract class AbstractMiner implements Miner {
             fieldHelper.fillNonEntityAttribute();
         } else if (fieldHelper.attribute.isAnnotationPresent(OneToOne.class)) {
             fieldHelper.fillEntityAttribute();
+        } else if(fieldHelper.attribute.isAnnotationPresent(OneToMany.class)){
+            fieldHelper.fillManyEntityAttribute();
         }
     }
 
     private void fillChildModel(Model childModel, String parentAttributeName) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-        for (Field attribute : childModel.getAllAttributes()) {
+        for (Field attribute : childModel.getAllAttributesExceptsBidirectionalModels()) {
             fillAttribute(new FieldHelper(attribute, childModel, parentAttributeName + "." + attribute.getName()));
         }
     }
@@ -115,6 +122,22 @@ public abstract class AbstractMiner implements Miner {
             fillChildModel((Model) parameterValue, attribute.getName());
             fill();
         }
+        
+        void fillManyEntityAttribute() throws InstantiationException, IllegalAccessException{
+            Collection collection = getCollectionInstance();
+            Class collectionType = extractCollectionTypedClass();
+            getChildrenIds().forEach(stringId -> {
+                try {
+                    Model model = (Model) collectionType.newInstance();
+                    model.setId(Long.parseLong(stringId));
+                    collection.add(model);
+                } catch(Exception e){
+                    e.toString();
+                }
+            });
+            parameterValue = collection;
+            fill();
+        }
 
         void fill() throws IllegalArgumentException, IllegalAccessException {
             attribute.setAccessible(true);
@@ -122,11 +145,51 @@ public abstract class AbstractMiner implements Miner {
         }
 
         Object parseBeforeSetParameterValue(Object parameterValue) {
-            if (attribute.getType() == Long.class) {
+            if (attribute.getType() == Long.class && parameterValue != null) {
                 parameterValue = Long.parseLong((String) parameterValue);
             }
 
             return parameterValue;
+        }
+        
+        private Class extractCollectionTypedClass(){
+            Class collectionType = null;
+            if(attributeIsACollection()){
+                ParameterizedType type = (ParameterizedType) attribute.getGenericType();
+                collectionType = (Class) type.getActualTypeArguments()[0];
+            }
+            
+            return collectionType;
+        }
+        
+        private boolean attributeIsACollection(){
+            return Collection.class.isAssignableFrom(attribute.getType());
+        }
+        
+        private boolean attributeIsASet(){
+            return Set.class.isAssignableFrom(attribute.getType());
+        }
+        
+        private boolean attributeIsList(){
+            return List.class.isAssignableFrom(attribute.getType());
+        }
+        
+        private List<String> getChildrenIds(){
+            List childrenId = form.get(parameterName + ".id");
+            return childrenId == null ? new ArrayList() : childrenId;
+        }
+        
+        private Collection getCollectionInstance(){
+            Collection collection;
+            if(attributeIsASet()){
+                collection = new HashSet();
+            } else if(attributeIsList()){
+                collection = new ArrayList();
+            } else {
+                collection = null;
+            }
+            
+            return collection;
         }
     }
 }

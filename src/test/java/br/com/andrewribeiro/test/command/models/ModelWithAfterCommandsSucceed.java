@@ -1,8 +1,8 @@
-package br.com.andrewribeiro.test.models;
+package br.com.andrewribeiro.test.command.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.test.models.commands.AfterCommandSucceed;
+import br.com.andrewribeiro.test.command.commands.AfterCommandSucceed;
 import javax.persistence.Entity;
 
 /**

@@ -1,9 +1,10 @@
-package br.com.andrewribeiro.test;
+package br.com.andrewribeiro.test.crud;
 
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
-import br.com.andrewribeiro.test.models.ConcreteModelMapped;
-import br.com.andrewribeiro.test.models.ModelCrud;
+import br.com.andrewribeiro.test.RibrestTest;
+import br.com.andrewribeiro.test.structure.models.ConcreteModel;
+import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
@@ -24,7 +25,7 @@ public class SimpleCrudTest extends RibrestTest {
     @Ignore
     public void testGetModelMapped() throws JSONException {
 
-        Response r = get(ConcreteModelMapped.class);
+        Response r = get(ConcreteModel.class);
 
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
     }

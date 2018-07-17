@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.test.models;
+package br.com.andrewribeiro.test.structure.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 
@@ -8,7 +8,7 @@ import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
  */
 
 @RibrestModel
-public class NotAIModelSubClass {
+public class NotAModelSubclass {
     
     private String name;
 

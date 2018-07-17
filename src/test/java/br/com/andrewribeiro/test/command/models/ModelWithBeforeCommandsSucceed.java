@@ -1,9 +1,9 @@
-package br.com.andrewribeiro.test.models;
+package br.com.andrewribeiro.test.command.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.services.command.GetPersistentModelCommand;
-import br.com.andrewribeiro.test.models.commands.BeforeCommandSucceed;
+import br.com.andrewribeiro.test.command.commands.BeforeCommandSucceed;
 import javax.persistence.Entity;
 
 /**

@@ -29,16 +29,16 @@ public class Facade {
     }
 
     @Inject
-    FlowContainer fc;
+    FlowContainer flowContainer;
 
     @Inject
     Dispatcher dispatcher;
 
     @Inject
-    MinerFactory mf;
+    MinerFactory minerFactory;
 
     @Inject
-    private ServiceLocator sl;
+    private ServiceLocator serviceLocator;
 
     ContainerRequest cr;
     private final String entity;
@@ -46,44 +46,50 @@ public class Facade {
 
     public Response process() {
         Miner miner = null;
-        Response response;
+        Response response = Response.serverError().build();
         try {
             Class classInstance = Class.forName(entity);
-            miner = mf.getMinerInstance(classInstance);
-            sl.inject(miner); //Inject all the HK2 services to IMiner concrete instance.
-            fc.setMiner(miner);
-            fc.initModelInstance(classInstance);
+            miner = minerFactory.getMinerInstance(classInstance);
+            serviceLocator.inject(miner);
+            flowContainer.setMiner(miner);
+            flowContainer.initModelInstance(classInstance);
             miner.extractDataFromRequest(cr);
             runBeforeCommands();
             run();
             runAfterCommands();
         } catch (Exception e) {
-            if (!(e instanceof RibrestDefaultException)) {
-                e = new RibrestDefaultException(e.getCause() != null ? e.getCause().toString() : "Unknown");
-            }
-            setErrorOutput(((RibrestDefaultException)e).getError());
+            handleProcessExceptions(e);
         } finally {
-            response = dispatcher.send(fc);
-            sl.preDestroy(this);
+            try {
+                response = dispatcher.send();
+            } catch (Exception e) {
+                response = Response.serverError().build();
+            } finally {
+                serviceLocator.preDestroy(this);
+            }
         }
+
         return response;
     }
 
     private void runBeforeCommands() {
         runCommands(beforeCommands);
     }
-    
-    private void runAfterCommands(){
+
+    private void runAfterCommands() {
         runCommands(afterCommands);
     }
-    
-    private void runCommands(List<Command> commands){
+
+    private void runCommands(List<Command> commands) {
         commands.forEach(command -> {
             try {
-                sl.inject(command);
+                serviceLocator.inject(command);
                 command.execute();
+            } catch (RibrestDefaultException rde) {
+                setStatusWhenCommandsFail();
+                throw new RuntimeException(rde.getError());
             } catch (Exception ex) {
-                fc.getResult().setStatus(Response.Status.PRECONDITION_FAILED);
+                setStatusWhenCommandsFail();
                 throw new RuntimeException(ex.getMessage());
             }
         });
@@ -91,19 +97,30 @@ public class Facade {
 
     private void run() throws RibrestDefaultException {
         PersistenceCenter pc = new CRUDCenter();
-        sl.inject(pc);
+        serviceLocator.inject(pc);
         pc.perform();
     }
-    
-    private void setErrorOutput(String cause){
-        fc.getResult().setStatus(fc.getResult().getStatus().equals(Response.Status.OK) ? 
-                Response.Status.INTERNAL_SERVER_ERROR : fc.getResult().getStatus());
-        fc.getResult().setCause(cause);
+
+    private void setErrorOutput(String cause) {
+        flowContainer.getResult().setStatus(flowContainer.getResult().getStatus().equals(Response.Status.OK)
+                ? Response.Status.INTERNAL_SERVER_ERROR : flowContainer.getResult().getStatus());
+        flowContainer.getResult().setCause(cause);
+    }
+
+    private void setStatusWhenCommandsFail() {
+        flowContainer.getResult().setStatus(Response.Status.PRECONDITION_FAILED);
+    }
+
+    private void handleProcessExceptions(Exception e) {
+        if (!(e instanceof RibrestDefaultException)) {
+            e = new RibrestDefaultException(e.getMessage() != null ? e.getMessage() : "Unknown");
+        }
+        setErrorOutput(((RibrestDefaultException) e).getError());
     }
 
     public void setContainerRequest(ContainerRequest containerRequest) {
         this.cr = containerRequest;
-        fc.setMethod(cr.getMethod());
+        flowContainer.setMethod(cr.getMethod());
     }
 
     public void setBeforeCommandsToCurrentRequest(List beforeCommands) {
@@ -122,7 +139,7 @@ public class Facade {
      */
     @PostConstruct
     private void injected() {
-        ((RequestContext) sl.getService(RequestContext.class)).startRequest();
+        ((RequestContext) serviceLocator.getService(RequestContext.class)).startRequest();
     }
 
     /**
@@ -133,7 +150,7 @@ public class Facade {
      */
     @PreDestroy
     private void destroyed() {
-        sl.getService(RequestContext.class).stopRequest();
+        serviceLocator.getService(RequestContext.class).stopRequest();
     }
 
 }

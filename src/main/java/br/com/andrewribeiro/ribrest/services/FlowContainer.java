@@ -115,5 +115,9 @@ public class FlowContainer {
     public void addExtraObject(String key, Object object){
         this.extraObjects.put(key, object);
     }
+    
+    public void removeExtraObject(String key){
+        this.extraObjects.remove(key);
+    }
 
 }

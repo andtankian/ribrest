@@ -8,5 +8,5 @@ import javax.ws.rs.core.Response;
  * @author Andrew Ribeiro
  */
 public interface Dispatcher {
-    public Response send(FlowContainer fc);
+    public Response send();
 }

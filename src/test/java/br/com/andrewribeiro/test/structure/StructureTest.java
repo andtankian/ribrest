@@ -1,12 +1,12 @@
-package br.com.andrewribeiro.test;
+package br.com.andrewribeiro.test.structure;
 
-import br.com.andrewribeiro.test.models.NotAIModelSubClass;
+import br.com.andrewribeiro.test.structure.models.NotAModelSubclass;
 import br.com.andrewribeiro.ribrest.Ribrest;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.models.AbstractModel;
-import br.com.andrewribeiro.test.models.ConcreteModelNotMapped;
-import br.com.andrewribeiro.test.models.NotImplementsIModelAbstractMethods;
+import br.com.andrewribeiro.test.structure.models.ConcreteModelButNotAJPAEntity;
+import br.com.andrewribeiro.test.structure.models.ModelNotImplementingAbstractMethods;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static br.com.andrewribeiro.ribrest.utils.RibrestUtils.*;
-import br.com.andrewribeiro.test.models.NotAnnotatedWithRibrestModelAnnotationModel;
+import br.com.andrewribeiro.test.structure.models.NotAnnotatedWithRibrestModelAnnotation;
 import org.junit.BeforeClass;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -27,7 +27,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  *
  * @author Andrew Ribeiro
  */
-public class ResourcesTest {
+public class StructureTest {
 
     private final static String APP_URL = "http://localhost:2007/ribrestapp/";
 
@@ -39,30 +39,30 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testNotAIModelSubClass() throws JSONException, RibrestDefaultException {
+    public void notAModelSubclass() throws JSONException, RibrestDefaultException {
 
-        WebTarget wt = buildWebTarget(NotAIModelSubClass.class);
-
-        Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
-
-        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
-
-        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotAIModelSubClass.class) + " does not implement IModel.\nRibrest can't operate in this class (yet).\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
-    }
-
-    @Test
-    public void testNotImplementesIModelAbstractMethods() throws JSONException, RibrestDefaultException {
-        WebTarget wt = buildWebTarget(NotImplementsIModelAbstractMethods.class);
+        WebTarget wt = buildWebTarget(NotAModelSubclass.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
-        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotImplementsIModelAbstractMethods.class) + " is a IModel subclass but not implements its abstract methods.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotAModelSubclass.class) + " does not implement IModel.\nRibrest can't operate in this class (yet).\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
 
     @Test
-    public void testAbstractModel() throws JSONException, RibrestDefaultException {
+    public void modelNotImplementingAbstractMethods() throws JSONException, RibrestDefaultException {
+        WebTarget wt = buildWebTarget(ModelNotImplementingAbstractMethods.class);
+
+        Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
+
+        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(ModelNotImplementingAbstractMethods.class) + " is a IModel subclass but not implements its abstract methods.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    public void abstractModel() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(AbstractModel.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
@@ -73,22 +73,22 @@ public class ResourcesTest {
     }
 
     @Test
-    public void testConcreteModelNotMapped() throws JSONException, RibrestDefaultException {
-        WebTarget wt = buildWebTarget(ConcreteModelNotMapped.class);
+    public void ConcreteModelButNotAJPAEntity() throws JSONException, RibrestDefaultException {
+        WebTarget wt = buildWebTarget(ConcreteModelButNotAJPAEntity.class);
 
         Response r = wt.request(MediaType.APPLICATION_JSON).get(Response.class);
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
-        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(ConcreteModelNotMapped.class) + " isn't an entity. Try to annotate it with @Entity.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(ConcreteModelButNotAJPAEntity.class) + " isn't an entity. Try to annotate it with @Entity.\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
     
      @Test
-    public void testNotAnnotatedWithRibrestModelAnnotationModel() {
+    public void notAnnotatedWithRibrestModelAnnotation() {
         try {
-            WebTarget wt = buildWebTarget(NotAnnotatedWithRibrestModelAnnotationModel.class);
+            WebTarget wt = buildWebTarget(NotAnnotatedWithRibrestModelAnnotation.class);
         }catch(RuntimeException rte){
-            assertEquals("Ribrest could'nt get a valid resource name by the class: " + NotAnnotatedWithRibrestModelAnnotationModel.class.getName() + "\nHave you annotated it with @RibrestModel?",
+            assertEquals("Ribrest could'nt get a valid resource name by the class: " + NotAnnotatedWithRibrestModelAnnotation.class.getName() + "\nHave you annotated it with @RibrestModel?",
                     rte.getMessage());
         }
     }

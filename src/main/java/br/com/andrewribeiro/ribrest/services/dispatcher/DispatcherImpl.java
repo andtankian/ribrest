@@ -1,12 +1,14 @@
 package br.com.andrewribeiro.ribrest.services.dispatcher;
 
+import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.Result;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
-import br.com.andrewribeiro.ribrest.services.miner.util.GenericExclusionStrategy;
-import com.google.gson.FieldAttributes;
+import br.com.andrewribeiro.ribrest.services.miner.util.BidirectionalModelsExclusionStrategy;
 import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 
 /**
@@ -15,34 +17,33 @@ import javax.ws.rs.core.Response;
  */
 public class DispatcherImpl implements Dispatcher{
     
+    @Inject
+    FlowContainer flowContainer;
+    
     GsonBuilder jsonBuilder = new GsonBuilder();
-
+    
     @Override
-    public Response send(FlowContainer fc) {
-        Miner currentMiner = fc.getMiner();
+    public Response send() {
+        Miner currentMiner = flowContainer.getMiner();
+        setModelsToResult();
         setupSerializationStrategy(currentMiner.extractIgnoredFields());
-        setModelsToResult(fc);
-        return buildResultResponse(fc.getResult());
+        return buildResultResponse();
     }
     
-    public Response buildResultResponse(Result result){
-        return Response.status(result.getStatus()).entity(jsonBuilder.create().toJson(result))
-                .build();
+    private Response buildResultResponse(){
+        return Response.status(flowContainer.getResult().getStatus()).entity(jsonBuilder.create().toJson(flowContainer.getResult())).build();
     }
     
-    public void setupSerializationStrategy(List ignoreFields){
-        jsonBuilder.addDeserializationExclusionStrategy(new GenericExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes fa) {
-                    return ignoreFields.contains(fa.getName());
-                }
-            });
+    private void setupSerializationStrategy(List ignoreFields){
+        BidirectionalModelsExclusionStrategy exclusionStrategy = new BidirectionalModelsExclusionStrategy(alwaysGetListOfModels(flowContainer.getResult()), ignoreFields);
+        jsonBuilder.addDeserializationExclusionStrategy(exclusionStrategy);
     }
     
-    private void setModelsToResult(FlowContainer flowContainer){
+    private void setModelsToResult(){
         flowContainer.getResult().setHolder(flowContainer.getHolder());
     }
     
-    
-    
+    private List<Model> alwaysGetListOfModels(Result result){
+        return result.getHolder() == null ? new ArrayList() : result.getHolder().getModels();
+    }
 }

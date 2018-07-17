@@ -2,7 +2,6 @@ package br.com.andrewribeiro.ribrest.services.command;
 
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import javax.persistence.OneToOne;
 
 /**
@@ -12,14 +11,14 @@ import javax.persistence.OneToOne;
 public class GetPersistentModelCommand extends AbstractCommand {
 
     @Override
-    public void execute() throws RibrestDefaultException {
+    public void execute() throws RibrestDefaultException, Exception {
         Model model = flowContainer.getModel();
         Model persistedModel = flowContainer.getEm().find(model.getClass(), model.getId());
         if (persistedModel == null) {
             throw new RibrestDefaultException(new StringBuilder("The model ").append(model.getId()).append(" was not found.").toString());
         }
         loadAllModelChildrenAttributes(model);
-        flowContainer.addExtraObject(Model.LOADED_MODEL_KEY, persistedModel);
+        flowContainer.addExtraObject(Model.PERSISTED_MODEL_KEY, persistedModel);
     }
 
     private void loadAllModelChildrenAttributes(Model model) {
@@ -29,11 +28,11 @@ public class GetPersistentModelCommand extends AbstractCommand {
                     try {
                         attribute.setAccessible(true);
                         Model currentAttributeModel = (Model) attribute.get(model);
-                        if(currentAttributeModel.getId() != null){
-                            Model persistedAttributeModel = flowContainer.getEm().find(currentAttributeModel.getClass(), currentAttributeModel.getId());
+                        if (currentAttributeModel.getId() != null) {
+                            Model persistedAttributeModel = flowContainer.getEm().getReference(currentAttributeModel.getClass(), currentAttributeModel.getId());
                             attribute.set(model, persistedAttributeModel);
                         }
-                    }catch(Exception e){
+                    } catch (IllegalAccessException | IllegalArgumentException | SecurityException e) {
                         throw new RuntimeException(e);
                     }
                 });

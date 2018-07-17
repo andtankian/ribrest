@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.test.models;
+package br.com.andrewribeiro.test.structure.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
@@ -10,5 +10,5 @@ import javax.persistence.Entity;
  */
 @Entity
 @RibrestModel
-public class ConcreteModelMapped extends AbstractModel {
+public class ConcreteModel extends AbstractModel {
 }

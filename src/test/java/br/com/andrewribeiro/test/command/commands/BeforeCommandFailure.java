@@ -1,4 +1,4 @@
-package br.com.andrewribeiro.test.models.commands;
+package br.com.andrewribeiro.test.command.commands;
 
 import br.com.andrewribeiro.ribrest.services.command.AbstractCommand;
 
