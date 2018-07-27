@@ -5,6 +5,7 @@ import br.com.andrewribeiro.ribrest.dao.interfaces.CRUD;
 import javax.persistence.EntityTransaction;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.ws.rs.core.Response;
 
 /**
@@ -15,7 +16,7 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
 
     @Override
     public void perform() {
-        String method = fc.getMethod();
+        String method = flowContainer.getMethod();
         if (method.equalsIgnoreCase("post")) {
             create();
         } else if (method.equalsIgnoreCase("get")) {
@@ -30,30 +31,34 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
     @Override
     public void create() {
         beginInactiveTransaction();
-        em.persist(m);
-        em.getTransaction().commit();
-        fc.getResult().setStatus(Response.Status.CREATED);
-        fc.getHolder().getModels().add(m);
+        entityManager.persist(model);
+        entityManager.getTransaction().commit();
+        flowContainer.getResult().setStatus(Response.Status.CREATED);
+        flowContainer.getHolder().getModels().add(model);
     }
 
     @Override
     public void read() {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery cmodel = cb.createQuery();
-        cmodel.select(cmodel.from(m.getClass()));
-        fc.getHolder().setModels(em.createQuery(cmodel).setFirstResult(sm.getOffset()).setMaxResults(sm.getLimit()).getResultList());
-        CriteriaQuery<Long> ccount = cb.createQuery(Long.class);
-        ccount.select(cb.count(ccount.from(m.getClass())));
-        fc.getHolder().setTotal(em.createQuery(ccount).getSingleResult());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery cmodel = criteriaBuilder.createQuery();
+        Root from = cmodel.from(model.getClass());
+        cmodel.select(from);
+        if(model.getId() != null){
+            cmodel.where(criteriaBuilder.equal(from.get("id"), model.getId()));
+        }
+        flowContainer.getHolder().setModels(entityManager.createQuery(cmodel).setFirstResult(searchModel.getOffset()).setMaxResults(searchModel.getLimit()).getResultList());
+        CriteriaQuery<Long> ccount = criteriaBuilder.createQuery(Long.class);
+        ccount.select(criteriaBuilder.count(ccount.from(model.getClass())));
+        flowContainer.getHolder().setTotal(entityManager.createQuery(ccount).getSingleResult());
         setStatusToNoContentIfModelsEmpty();
     }
 
     @Override
     public void update() {
         beginInactiveTransaction();
-        em.getTransaction().commit();
-        fc.getResult().setStatus(Response.Status.OK);
-        fc.getHolder().getModels().add(m);
+        entityManager.getTransaction().commit();
+        flowContainer.getResult().setStatus(Response.Status.OK);
+        flowContainer.getHolder().getModels().add(model);
     }
 
     @Override
@@ -62,7 +67,7 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
     }
     
     private void beginInactiveTransaction(){
-        EntityTransaction t = em.getTransaction();
+        EntityTransaction t = entityManager.getTransaction();
         if(!t.isActive()){
             t.begin();
         }
@@ -70,12 +75,12 @@ public class CRUDDAOImpl extends AbstractDAO implements CRUD {
     
     private void setStatusToNoContentIfModelsEmpty(){
         if(isModelsEmpty()){
-            fc.getResult().setStatus(Response.Status.NO_CONTENT);
+            flowContainer.getResult().setStatus(Response.Status.NO_CONTENT);
         }
     }
     
     private boolean isModelsEmpty(){
-        return fc.getHolder().getModels().isEmpty();
+        return flowContainer.getHolder().getModels().isEmpty();
     }
 
 }

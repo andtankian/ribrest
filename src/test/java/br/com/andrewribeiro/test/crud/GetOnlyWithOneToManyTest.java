@@ -21,7 +21,7 @@ import org.junit.Test;
 public class GetOnlyWithOneToManyTest extends RibrestTest {
 
     @Test
-//    @Ignore
+    @Ignore
     public void getFathersAndItsKids() throws JSONException {
 
         Response responseForKids;
@@ -53,6 +53,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
     }
 
     @Test
+    @Ignore
     public void getKidsAndItsFather() throws JSONException {
 
         getFathersAndItsKids();
@@ -63,6 +64,38 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
 
         System.out.println(responseForKidsString);
 
+    }
+    
+    @Test
+    @Ignore
+    public void getSingleInexistentFather() throws RibrestDefaultException{
+        
+        
+        Response response = get(FatherModel.class, "/99999");
+        
+        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        String responseText = response.readEntity(String.class);
+        
+        System.out.println(responseText);
+    }
+    
+    @Test
+    public void getSingleExistentFather() throws JSONException, RibrestDefaultException{
+        
+        Response responseForPostFather = post(FatherModel.class, new Form());
+        
+        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), responseForPostFather.getStatus());
+        
+        String responseForPostFatherText = responseForPostFather.readEntity(String.class);
+        
+        String fatherId = new JSONObject(responseForPostFatherText).getJSONObject("holder").getJSONArray("models").getJSONObject(0).getString("id");
+        
+        Response response = get(FatherModel.class, "/" + fatherId);
+        
+        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
+        System.out.println(response.readEntity(String.class));
     }
 
 }

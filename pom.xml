@@ -6,7 +6,7 @@
     <groupId>br.com.andrewribeiro</groupId>
     <artifactId>Ribrest</artifactId>
     <packaging>jar</packaging>
-    <version>1.8.0RC</version>
+    <version>1.9.0</version>
     <name>Ribrest</name>
     <description>
         Ribrest Framework - A simple Java Restful framework that truly improve your productivity 

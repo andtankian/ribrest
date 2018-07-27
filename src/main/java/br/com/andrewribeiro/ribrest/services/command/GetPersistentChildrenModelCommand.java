@@ -23,7 +23,7 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
                         Collection detachedModels = (Collection) attribute.get(model);
                         Collection newPersistedModels = RibrestUtils.getCollectionInstance(attribute.getType());
                         detachedModels.forEach(detachedModel -> {
-                            Object persistedModel = flowContainer.getEm().find(detachedModel.getClass(), ((Model) detachedModel).getId());
+                            Object persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), ((Model) detachedModel).getId());
                             if (persistedModel == null) {
                                 throw new RuntimeException(new StringBuilder("The child model ")
                                         .append(detachedModel.getClass().getSimpleName())

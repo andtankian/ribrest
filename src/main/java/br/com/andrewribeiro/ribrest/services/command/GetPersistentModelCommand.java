@@ -13,7 +13,7 @@ public class GetPersistentModelCommand extends AbstractCommand {
     @Override
     public void execute() throws RibrestDefaultException, Exception {
         Model model = flowContainer.getModel();
-        Model persistedModel = flowContainer.getEm().find(model.getClass(), model.getId());
+        Model persistedModel = flowContainer.getEntityManager().find(model.getClass(), model.getId());
         if (persistedModel == null) {
             throw new RibrestDefaultException(new StringBuilder("The model ").append(model.getId()).append(" was not found.").toString());
         }
@@ -29,7 +29,7 @@ public class GetPersistentModelCommand extends AbstractCommand {
                         attribute.setAccessible(true);
                         Model currentAttributeModel = (Model) attribute.get(model);
                         if (currentAttributeModel.getId() != null) {
-                            Model persistedAttributeModel = flowContainer.getEm().getReference(currentAttributeModel.getClass(), currentAttributeModel.getId());
+                            Model persistedAttributeModel = flowContainer.getEntityManager().getReference(currentAttributeModel.getClass(), currentAttributeModel.getId());
                             attribute.set(model, persistedAttributeModel);
                         }
                     } catch (IllegalAccessException | IllegalArgumentException | SecurityException e) {

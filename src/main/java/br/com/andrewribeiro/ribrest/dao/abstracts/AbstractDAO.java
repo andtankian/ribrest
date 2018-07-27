@@ -15,17 +15,17 @@ import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 public abstract class AbstractDAO implements DAO {
 
     @Inject
-    protected FlowContainer fc;
+    protected FlowContainer flowContainer;
 
-    protected EntityManager em;
-    protected Model m;
-    protected SearchModel sm;
+    protected EntityManager entityManager;
+    protected Model model;
+    protected SearchModel searchModel;
     
     @PostConstruct
     private void injected(){
-        em = fc.getEm();
-        m = (Model) fc.getModel();
-        sm = fc.getHolder().getSm();
+        entityManager = flowContainer.getEntityManager();
+        model = (Model) flowContainer.getModel();
+        searchModel = flowContainer.getHolder().getSm();
     }
 
 }

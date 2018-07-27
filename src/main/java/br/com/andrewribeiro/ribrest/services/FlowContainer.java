@@ -35,7 +35,7 @@ public class FlowContainer {
     private final Map extraObjects = new HashMap();
 
     @Inject
-    private EntityManager em;
+    private EntityManager entityManager;
 
     private boolean go;
 
@@ -81,12 +81,12 @@ public class FlowContainer {
         this.result = result;
     }
 
-    public EntityManager getEm() {
-        return em;
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 
-    public void setEm(EntityManager em) {
-        this.em = em;
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     public String getMethod() {
