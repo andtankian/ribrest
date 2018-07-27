@@ -6,7 +6,7 @@
     <groupId>br.com.andrewribeiro</groupId>
     <artifactId>Ribrest</artifactId>
     <packaging>jar</packaging>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.8.0-SNAPSHOT</version>
     <name>Ribrest</name>
 
     <dependencyManagement>
@@ -38,7 +38,8 @@
         <dependency>
             <groupId>io.github.lukehutch</groupId>
             <artifactId>fast-classpath-scanner</artifactId>
-            <version>LATEST</version>
+            <version>3.1.12</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

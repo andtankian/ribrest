@@ -36,6 +36,7 @@ public class DispatcherImpl implements Dispatcher{
     
     private void setupSerializationStrategy(List ignoreFields){
         BidirectionalModelsExclusionStrategy exclusionStrategy = new BidirectionalModelsExclusionStrategy(alwaysGetListOfModels(flowContainer.getResult()), ignoreFields);
+        exclusionStrategy.removeCircularReferences();
         jsonBuilder.addDeserializationExclusionStrategy(exclusionStrategy);
     }
     

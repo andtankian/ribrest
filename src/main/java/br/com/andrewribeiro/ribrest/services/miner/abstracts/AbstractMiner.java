@@ -130,6 +130,7 @@ public abstract class AbstractMiner implements Miner {
                 try {
                     Model model = (Model) collectionType.newInstance();
                     model.setId(Long.parseLong(stringId));
+                    fillInverseAttributeInRelationship(model);
                     collection.add(model);
                 } catch(Exception e){
                     e.toString();
@@ -137,6 +138,20 @@ public abstract class AbstractMiner implements Miner {
             });
             parameterValue = collection;
             fill();
+        }
+        
+        void fillInverseAttributeInRelationship(Model model){
+            model.getAllInverseCollectionModelAttributes()
+                    .forEach(attribute -> {
+                        if(attribute.getType().getSimpleName().equals(this.model.getClass().getSimpleName())){
+                            attribute.setAccessible(true);
+                            try {
+                                attribute.set(model, this.model);
+                            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                                throw new RuntimeException(ex.toString());
+                            }
+                        }
+                    });
         }
 
         void fill() throws IllegalArgumentException, IllegalAccessException {

@@ -3,7 +3,13 @@ package br.com.andrewribeiro.ribrest.services.miner.util;
 import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -14,55 +20,107 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
     public BidirectionalModelsExclusionStrategy(List<Model> models, List<String> ignoredFields) {
         this.models = models;
         this.ignoredFields = ignoredFields;
-        excludeBidirectionalObjects();
     }
-    
-    
 
     private List<Model> models;
     private List<String> ignoredFields;
-    private final Integer expectedDepth = 5;
+    private Set<Model> repetitiveModels = new HashSet<>();
 
-    public final void excludeBidirectionalObjects() {
+    public void removeCircularReferences() {
         models.forEach(model -> {
-            goUnderModelAttributes(model, 1);
+            clearAllModelCircularReferences(model);
         });
     }
 
-    private void goUnderModelAttributes(Model model, final Integer currentDepth) {
-        if(modelIsNull(model)) return;
+    private void clearAllModelCircularReferences(Model model) {
+        if (isModelNull(model)) {
+            return;
+        }
+        repetitiveModels.add(model);
+        clearDirectModelCircularReferences(model);
+        clearCollectionModelCircularReferences(model);
+    }
+
+    private void clearDirectModelCircularReferences(Model model) {
         model.getAllModelAttributes().forEach(attribute -> {
-            Model attributeValue;
             attribute.setAccessible(true);
             try {
-                attributeValue = (Model) attribute.get(model);
-                if (currentDepth.equals(expectedDepth)) {
-                    setAttributesToNull(attributeValue);
+                Model modelInstance = (Model) attribute.get(model);
+                if (repetitiveModels.contains(modelInstance)) {
+                    attribute.set(model, null);
                 } else {
-                    goUnderModelAttributes(attributeValue, (currentDepth + 1));
+                    populateRepetiveModels(model);
+                    clearAllModelCircularReferences(modelInstance);
                 }
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new RuntimeException(ex);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
     }
 
-    private void setAttributesToNull(Model model) {
-        if (modelIsNull(model)) {
-            return;
-        }
-        model.getAllModelAttributes()
-                .forEach(attribute -> {
+    private void clearCollectionModelCircularReferences(Model model) {
+        model.getAllCollectionModelAttributes().forEach(attribute -> {
+            attribute.setAccessible(true);
+            try {
+                Collection<Model> collectionInstance = (Collection) attribute.get(model);
+                collectionInstance.forEach(modelInstance -> {
+                    if (repetitiveModels.contains(modelInstance)) {
+                        try {
+                            attribute.set(model, null);
+                        } catch (IllegalArgumentException | IllegalAccessException ex) {
+                            throw new RuntimeException(ex.getMessage());
+                        }
+                    } else {
+                        populateRepetiveModels(modelInstance);
+                        clearAllModelCircularReferences(modelInstance);
+                    }
+                });
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        });
+    }
+
+    private void populateRepetiveModels(Model model) {
+
+        addAllModelAttributesToRepetitiveModels(model);
+        addAllModelCollectionAttributesToRepetitiveModels(model);
+    }
+
+    private void addAllModelAttributesToRepetitiveModels(Model model) {
+        repetitiveModels.addAll(model.getAllModelAttributes().stream()
+                .map((attribute) -> {
                     attribute.setAccessible(true);
+                    Model attributeInstance;
                     try {
-                        attribute.set(model, null);
-                    } catch (IllegalArgumentException | IllegalAccessException ex) {
-                        throw new RuntimeException(ex);
+                        attributeInstance = (Model) attribute.get(model);
+                        return attributeInstance;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }).collect(Collectors.toSet()));
+
+    }
+
+    private void addAllModelCollectionAttributesToRepetitiveModels(Model model) {
+        model.getAllCollectionModelAttributes().stream()
+                .forEach(attribute -> {
+                    Collection tempCollection = null;
+                    if (Collection.class.isAssignableFrom(attribute.getType())) {
+                        attribute.setAccessible(true);
+                        try {
+                            tempCollection = (Collection) attribute.get(model);
+                            repetitiveModels.addAll((Set) tempCollection.stream().map(modelInstance -> {
+                                return modelInstance;
+                            }).collect(Collectors.toSet()));
+                        } catch (Exception e) {
+                            throw new RuntimeException();
+                        }
                     }
                 });
     }
-    
-    private boolean modelIsNull(Model model){
+
+    private boolean isModelNull(Model model) {
         return model == null;
     }
 

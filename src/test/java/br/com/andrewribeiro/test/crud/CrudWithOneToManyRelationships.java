@@ -10,7 +10,6 @@ import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

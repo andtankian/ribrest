@@ -22,7 +22,7 @@ import org.junit.Ignore;
 public class SimpleCrudTest extends RibrestTest {
 
     @Test
-    @Ignore
+//    @Ignore
     public void testGetModelMapped() throws JSONException {
 
         Response r = get(ConcreteModel.class);
@@ -39,7 +39,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testUpdateModel() throws JSONException, RibrestDefaultException {
         MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
         parameters.add("name", "Andrew Ribeiro Santos");

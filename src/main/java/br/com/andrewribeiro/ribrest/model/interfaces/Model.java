@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -83,6 +84,12 @@ public interface Model {
     default public List<Field> getAllCollectionModelAttributes(){
         return getAllAttributes().stream()
                 .filter(attribute -> attribute.isAnnotationPresent(OneToMany.class))
+                .collect(Collectors.toList());
+    }
+    
+    default public List<Field> getAllInverseCollectionModelAttributes(){
+        return getAllAttributes().stream()
+                .filter(attribute -> attribute.isAnnotationPresent(ManyToOne.class))
                 .collect(Collectors.toList());
     }
 

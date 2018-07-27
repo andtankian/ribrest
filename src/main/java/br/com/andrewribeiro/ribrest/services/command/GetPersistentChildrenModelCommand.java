@@ -32,6 +32,7 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
                                         .append(" was not found.").toString());
 
                             } else {
+                                ((Model)persistedModel).merge((Model) detachedModel);
                                 newPersistedModels.add(persistedModel);
                             }
                         });
