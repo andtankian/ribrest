@@ -8,7 +8,33 @@
     <packaging>jar</packaging>
     <version>1.8.0RC</version>
     <name>Ribrest</name>
-
+    <description>
+        Ribrest Framework - A simple Java Restful framework that truly improve your productivity 
+    </description>
+    <url>https://andrewribeiroblog.wordpress.com</url>
+    <licenses>
+        <license>
+            <name>
+                MIT Licence
+            </name>
+            <url>
+                https://github.com/andtankian/ribrest/blob/master/LICENSE
+            </url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Andrew Ribeiro</name>
+            <email>andtankian@gmail.com</email>
+            <organization>andrewribeiroblog</organization>
+            <organizationUrl>https://andrewribeiroblog.wordpress.com</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>https://github.com/andtankian/ribrest.git</connection>
+        <developerConnection>https://github.com/andtankian/ribrest.git</developerConnection>
+        <url>https://github.com/andtankian/ribrest</url>
+    </scm>
     <dependencyManagement>
         <dependencies>
             <dependency>
