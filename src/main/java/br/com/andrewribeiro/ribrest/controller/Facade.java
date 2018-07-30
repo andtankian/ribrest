@@ -1,6 +1,8 @@
 package br.com.andrewribeiro.ribrest.controller;
 
-import br.com.andrewribeiro.ribrest.dao.CRUDCenter;
+import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.dao.CRUDCenterImpl;
+import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.cdi.hk2.RequestContext;
@@ -12,6 +14,7 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
+import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
 import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFactory;
@@ -25,7 +28,7 @@ import java.util.List;
 public class Facade {
 
     public Facade(String entity) {
-        this.entity = entity;
+        this.modelClassName = entity;
     }
 
     @Inject
@@ -37,23 +40,25 @@ public class Facade {
     @Inject
     MinerFactory minerFactory;
 
+
     @Inject
     private ServiceLocator serviceLocator;
 
-    ContainerRequest cr;
-    private final String entity;
+    ContainerRequest containterRequest;
+    private final String modelClassName;
     private List<Command> beforeCommands, afterCommands;
+    private Class currentDao;
 
     public Response process() {
         Miner miner = null;
         Response response = Response.serverError().build();
         try {
-            Class classInstance = Class.forName(entity);
-            miner = minerFactory.getMinerInstance(classInstance);
+            Class classModel = Class.forName(modelClassName);
+            miner = minerFactory.getMinerInstance(classModel);
             serviceLocator.inject(miner);
             flowContainer.setMiner(miner);
-            flowContainer.initModelInstance(classInstance);
-            miner.extractDataFromRequest(cr);
+            flowContainer.initModelInstance(classModel);
+            miner.extractDataFromRequest(containterRequest);
             runBeforeCommands();
             run();
             runAfterCommands();
@@ -96,7 +101,8 @@ public class Facade {
     }
 
     private void run() throws RibrestDefaultException {
-        PersistenceCenter pc = new CRUDCenter();
+        PersistenceCenter pc = new CRUDCenterImpl();
+        pc.setCurrentDAOClass(currentDao);
         serviceLocator.inject(pc);
         pc.perform();
     }
@@ -117,10 +123,10 @@ public class Facade {
         }
         setErrorOutput(((RibrestDefaultException) e).getError());
     }
-
+    
     public void setContainerRequest(ContainerRequest containerRequest) {
-        this.cr = containerRequest;
-        flowContainer.setMethod(cr.getMethod());
+        this.containterRequest = containerRequest;
+        flowContainer.setMethod(containterRequest.getMethod());
     }
 
     public void setBeforeCommandsToCurrentRequest(List beforeCommands) {
@@ -129,6 +135,10 @@ public class Facade {
 
     public void setAfterCommandsToCurrentRequest(List afterCommands) {
         this.afterCommands = afterCommands != null ? afterCommands : new ArrayList();
+    }
+    
+    public void setCurrentDAO(Class currentDao){
+        this.currentDao = currentDao;
     }
 
     /**

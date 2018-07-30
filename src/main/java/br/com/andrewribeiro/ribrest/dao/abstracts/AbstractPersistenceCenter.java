@@ -1,5 +1,6 @@
 package br.com.andrewribeiro.ribrest.dao.abstracts;
 
+import br.com.andrewribeiro.ribrest.dao.interfaces.CRUD;
 import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
 import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
@@ -18,6 +19,7 @@ public abstract class AbstractPersistenceCenter implements PersistenceCenter {
 
     
     private DAO dao;
+    protected Class daoClass;
     
     @Inject
     private ServiceLocator sl;
@@ -37,5 +39,12 @@ public abstract class AbstractPersistenceCenter implements PersistenceCenter {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_ISNT_AN_ENTITY, RibrestUtils.getResourceName(fc.getModel().getClass()));
         }
     }
+
+    @Override
+    public void setCurrentDAOClass(Class daoClass) {
+        this.daoClass = daoClass;
+    }
+    
+    
 
 }

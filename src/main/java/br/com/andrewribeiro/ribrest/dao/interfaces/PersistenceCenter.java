@@ -10,5 +10,5 @@ public interface PersistenceCenter {
     
     public void perform() throws RibrestDefaultException;
     public DAO create();
-    
+    public void setCurrentDAOClass(Class daoClass);
 }

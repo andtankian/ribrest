@@ -24,6 +24,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
 
     Resource.Builder resourceBuilder;
     Class currentClassResource;
+    Class currentDao;
     List beforeCommands;
     List afterCommands;
 
@@ -46,6 +47,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
         Facade f = new Facade(className);
         f.setBeforeCommandsToCurrentRequest(beforeCommands);
         f.setAfterCommandsToCurrentRequest(afterCommands);
+        f.setCurrentDAO(currentDao);
         clearCommands();
         return f;
     }
@@ -98,6 +100,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
                 .forEach((endpointConfigurator) -> {
                     beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
                     afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
+                    currentDao = endpointConfigurator.dao();
                     createEndpoint(resourceBuilder,
                             new RibrestEndpointConfiguratorContainer().fromRibrestEndpointConfigurator(endpointConfigurator));
                 });

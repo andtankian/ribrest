@@ -21,7 +21,7 @@ import org.junit.Test;
 public class GetOnlyWithOneToManyTest extends RibrestTest {
 
     @Test
-    @Ignore
+//    @Ignore
     public void getFathersAndItsKids() throws JSONException {
 
         Response responseForKids;
@@ -53,7 +53,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void getKidsAndItsFather() throws JSONException {
 
         getFathersAndItsKids();
@@ -67,7 +67,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void getSingleInexistentFather() throws RibrestDefaultException{
         
         
