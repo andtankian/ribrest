@@ -11,8 +11,9 @@ public class Ribrest {
 
     private static Ribrest instance;
 
-    private static String DEFAULT_BASE_URL = "http://localhost:2007/ribrestapp/";
-    private static String DEFAULT_PU = "ribrest";
+    private static String DEFAULT_APP_BASE_URL = "http://localhost:2007/";
+    private static String DEFAULT_APP_NAME = "ribrest/";
+    private static String DEFAULT_PERSISTENCE_UNIT = "ribrest";
 
     private ServiceLocator serviceLocator;
     private HttpServer server;
@@ -20,16 +21,19 @@ public class Ribrest {
     /*
     RELATED TO INIT RIBREST INIT PARAMETERS
      */
-    private String baseUrl;
+    private String appBaseUrl;
+    private String appName;
     private String persistenceUnitName;
+    private String completeAppUrl;
     private boolean debug;
     private RibrestConfiguratorImpl ribrestConfigurator;
     private ResourceConfig resourceConfig;
 
     public Ribrest() {
         debug = false;
-        baseUrl = DEFAULT_BASE_URL;
-        persistenceUnitName = DEFAULT_PU;
+        appBaseUrl = DEFAULT_APP_BASE_URL;
+        appName = DEFAULT_APP_NAME;
+        persistenceUnitName = DEFAULT_PERSISTENCE_UNIT;
         ribrestConfigurator = new RibrestConfiguratorImpl();
         resourceConfig = new ResourceConfig();
     }
@@ -57,14 +61,22 @@ public class Ribrest {
 
         server = ribrestConfigurator.getRunningGrizzlyServer();
 
-        RibrestLog.log(new StringBuilder("Application is up and running at: ")
-                .append(baseUrl).toString());
+        RibrestLog.logForced(new StringBuilder("Application is up and running at: ")
+                .append(getCompleteAppUrl()).toString());
+        
+        ribrestConfigurator.setupShutdownHook();
 
     }
-
+    
     public void shutdown() {
+        RibrestLog.logForced("Bye :)");
+        System.exit(0);
+    }
+
+    void stop() {
         serviceLocator.getService(EntityManagerFactory.class).close();
         server.shutdown();
+        
     }
 
     public boolean isDebug() {
@@ -76,22 +88,38 @@ public class Ribrest {
         return instance;
     }
 
-    public Ribrest baseUrl(String baseUrl) {
-        this.baseUrl = baseUrl != null && !baseUrl.isEmpty() ? baseUrl : this.baseUrl;
+    public Ribrest appBaseUrl(String appBaseUrl) {
+        this.appBaseUrl = appBaseUrl != null && !appBaseUrl.isEmpty() ? appBaseUrl : this.appBaseUrl;
+        this.appBaseUrl = !this.appBaseUrl.endsWith("/") ? this.appBaseUrl.concat("/") : this.appBaseUrl;
         return instance;
     }
 
-    String getBaseUrl() {
-        return baseUrl;
+    public Ribrest appName(String appName) {
+        this.appName = appName != null && !appName.isEmpty() ? appName : this.appName;
+        this.appName = !this.appName.endsWith("/") ? this.appName.concat("/") : this.appName;
+        return instance;
     }
 
-    public Ribrest persistenceUnitName(String pesistenceUnitName) {
-        this.persistenceUnitName = pesistenceUnitName != null && !persistenceUnitName.isEmpty() ? persistenceUnitName : this.persistenceUnitName;
+    String getAppBaseUrl() {
+        return appBaseUrl;
+    }
+
+    String getAppName() {
+        return appName;
+    }
+
+    public Ribrest persistenceUnitName(String persistenceUnitName) {
+        this.persistenceUnitName = persistenceUnitName != null && !persistenceUnitName.isEmpty() ? persistenceUnitName : this.persistenceUnitName;
         return instance;
     }
 
     String getPersistenceUnitName() {
         return persistenceUnitName;
+    }
+
+    String getCompleteAppUrl() {
+        completeAppUrl = completeAppUrl == null ? getAppBaseUrl() + getAppName() : completeAppUrl;
+        return completeAppUrl;
     }
 
     public Ribrest resourceConfig(ResourceConfig resourceConfig) {

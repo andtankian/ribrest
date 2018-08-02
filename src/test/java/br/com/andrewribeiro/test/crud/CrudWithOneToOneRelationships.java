@@ -24,7 +24,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class CrudWithOneToOneRelationships extends RibrestTest{
     
     @Test
-//    @Ignore
+    @Ignore
     public void postingModelWithOneToOneRelationship(){
         
         MultivaluedMap mvm = new MultivaluedHashMap();
@@ -35,7 +35,7 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
-//    @Ignore
+    @Ignore
     public void puttingAnInexistentModel() throws RibrestDefaultException, JSONException{
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "New Parent Name");
@@ -50,7 +50,7 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
-//    @Ignore
+    @Ignore
     public void postingModelWithBidirectionalRelationshipButMissingChild() {
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "I'm Parent Model");
@@ -60,7 +60,7 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
-//    @Ignore
+    @Ignore
     public void gettingModelsWithBidirectionalRelationship(){
         
         for (int i = 0; i < 10; i++) {
@@ -75,6 +75,7 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
+    @Ignore
     public void postingModelWithBidirectionalRelationshipAndSameClassType(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         

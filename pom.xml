@@ -3,23 +3,19 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>br.com.andrewribeiro</groupId>
+    <groupId>com.github.andtankian</groupId>
     <artifactId>Ribrest</artifactId>
     <packaging>jar</packaging>
-    <version>1.10.0</version>
+    <version>1.10.3-SNAPSHOT</version>
     <name>Ribrest</name>
     <description>
-        Ribrest Framework - A simple Java Restful framework that truly improve your productivity 
+        Ribrest Framework - A simple Java Restful framework that truly improve your productivity when developing restul based webservices.
     </description>
-    <url>https://andrewribeiroblog.wordpress.com</url>
+    <url>https://github.com/andtankian/ribrest</url>
     <licenses>
         <license>
-            <name>
-                MIT Licence
-            </name>
-            <url>
-                https://github.com/andtankian/ribrest/blob/master/LICENSE
-            </url>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
     <developers>
@@ -29,10 +25,10 @@
             <organization>andrewribeiroblog</organization>
             <organizationUrl>https://andrewribeiroblog.wordpress.com</organizationUrl>
         </developer>
-    </developers>
+    </developers>   
     <scm>
-        <connection>https://github.com/andtankian/ribrest.git</connection>
-        <developerConnection>https://github.com/andtankian/ribrest.git</developerConnection>
+        <connection>scm:git:git://github.com/andtankian/ribrest.git</connection>
+        <developerConnection>scm:git:ssh://github.com/andtankian/ribrest.git</developerConnection>
         <url>https://github.com/andtankian/ribrest</url>
     </scm>
     <dependencyManagement>
@@ -127,6 +123,46 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <inherited>true</inherited>
@@ -136,18 +172,12 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.0</version>
                 <configuration>
-                    <mainClass>br.com.andrewribeiro.ribrest.Ribrest</mainClass>
+                    <forkCount>1</forkCount>
+                    <reuseForks>fase</reuseForks>
                 </configuration>
             </plugin>
         </plugins>
@@ -156,4 +186,15 @@
         <jersey.version>2.26</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
 </project>

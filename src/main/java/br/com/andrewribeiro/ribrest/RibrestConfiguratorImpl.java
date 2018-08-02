@@ -15,7 +15,7 @@ import org.glassfish.jersey.server.ResourceConfig;
  *
  * @author Andrew Ribeiro
  */
-class RibrestConfiguratorImpl extends AbstractRibrestConfigurator{
+class RibrestConfiguratorImpl extends AbstractRibrestConfigurator {
 
     private final RibrestScanner ribrestScanner = new RibrestScanner();
     private final RibrestResourceManager ribrestResourceManager = new RibrestResourceManager();
@@ -25,8 +25,6 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator{
         super.setRibrestInstance(ribrest);
         ribrestResourceManager.setRibrestInstance(ribrest);
     }
-    
-    
 
     void setupHK2CDI() {
         RibrestLog.log("Setting up CDI Services by HK2 Framework");
@@ -53,10 +51,15 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator{
         resourceConfig.registerResources(ribrestResourceManager.getProgrammaticallyResources(ribrestScanner.getModelClassesInstances()));
         return initServer();
     }
+    
+    void setupShutdownHook(){
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{ribrest.stop();}));
+        RibrestLog.logForced("To shutdown Ribrest, type CTRL+C...");
+    }
 
     private HttpServer initServer() {
-        return GrizzlyHttpServerFactory.createHttpServer(URI.create(ribrest.getBaseUrl()), 
-                ribrest.getResourceConfig(), 
+        return GrizzlyHttpServerFactory.createHttpServer(URI.create(ribrest.getCompleteAppUrl()),
+                ribrest.getResourceConfig(),
                 ribrest.getServiceLocator());
     }
 

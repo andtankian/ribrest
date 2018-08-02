@@ -35,7 +35,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
         for (Object clazz : classes) {
             try {
                 resources.add(createResource((Class) clazz));
-                RibrestLog.log(new StringBuilder("Resource created at: ").append(ribrest.getBaseUrl()).append(((Class) clazz).getSimpleName().toLowerCase()).append("s").toString());
+                RibrestLog.log(new StringBuilder("Resource created at: ").append(ribrest.getCompleteAppUrl()).append(((Class) clazz).getSimpleName().toLowerCase()).append("s").toString());
             } catch (RibrestDefaultException ex) {
                 throw new RuntimeException(ex.getError());
             }

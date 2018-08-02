@@ -50,13 +50,13 @@ public class RibrestTest {
 
     @BeforeClass
     public static void before() {
-        Ribrest.getInstance().debug(true).baseUrl(APP_URL).init();
+        Ribrest.getInstance().debug(true).appBaseUrl(APP_URL).init();
     }
 
-    @AfterClass
-    public static void after() {
-        Ribrest.getInstance().shutdown();
-    }
+//    @AfterClass
+//    public static void after() {
+//        Ribrest.getInstance().shutdown();
+//    }
 
     private WebTarget buildWebTarget(Class sub) {
         WebTarget wt = null;
