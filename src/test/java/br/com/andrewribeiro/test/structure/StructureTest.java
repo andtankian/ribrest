@@ -30,7 +30,9 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  */
 public class StructureTest {
 
-    private final static String APP_URL = "http://localhost:2007/ribrestapp/";
+    private final static String BASE_URL = "http://localhost:2007/";
+    private final static String APP_NAME = "ribrestapp/";
+    private final static String APP_URL = BASE_URL + APP_NAME;
 
     private final Client c = ClientBuilder.newClient();
 
@@ -40,7 +42,7 @@ public class StructureTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void notAModelSubclass() throws JSONException, RibrestDefaultException {
 
         WebTarget wt = buildWebTarget(NotAModelSubclass.class);
@@ -53,7 +55,7 @@ public class StructureTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void modelNotImplementingAbstractMethods() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(ModelNotImplementingAbstractMethods.class);
 
@@ -65,7 +67,7 @@ public class StructureTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void abstractModel() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(AbstractModel.class);
 
@@ -77,7 +79,7 @@ public class StructureTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void ConcreteModelButNotAJPAEntity() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(ConcreteModelButNotAJPAEntity.class);
 
@@ -89,7 +91,7 @@ public class StructureTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void notAnnotatedWithRibrestModelAnnotation() {
         try {
             WebTarget wt = buildWebTarget(NotAnnotatedWithRibrestModelAnnotation.class);
@@ -100,7 +102,7 @@ public class StructureTest {
     }
 
     private static void init() {
-        Ribrest.getInstance().debug(true).init();
+        Ribrest.getInstance().debug(true).appBaseUrl(BASE_URL).appName(APP_NAME).init();
     }
 
     private WebTarget buildWebTarget(Class sub) {

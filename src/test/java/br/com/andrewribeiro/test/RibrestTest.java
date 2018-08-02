@@ -18,8 +18,9 @@ import org.junit.BeforeClass;
  * @author Andrew Ribeiro
  */
 public class RibrestTest {
-
-    private final static String APP_URL = "http://localhost:2007/crudtest/";
+    private final static String BASE_URL = "http://localhost:2007/";
+    private final static String APP_NAME = "ribrestapp/";
+    private final static String APP_URL = BASE_URL + APP_NAME;
 
     protected final Client c = ClientBuilder.newClient();
 
@@ -50,7 +51,7 @@ public class RibrestTest {
 
     @BeforeClass
     public static void before() {
-        Ribrest.getInstance().debug(true).appBaseUrl(APP_URL).init();
+        Ribrest.getInstance().debug(true).appBaseUrl(BASE_URL).appName(APP_NAME).init();
     }
 
 //    @AfterClass

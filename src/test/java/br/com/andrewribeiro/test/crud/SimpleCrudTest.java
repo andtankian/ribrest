@@ -10,6 +10,7 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -22,7 +23,7 @@ import org.junit.Ignore;
 public class SimpleCrudTest extends RibrestTest {
 
     @Test
-    @Ignore
+    //@Ignore
     public void testGetModelMapped() throws JSONException {
 
         Response r = get(ConcreteModel.class);
@@ -31,7 +32,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void testCreateModel() throws JSONException {
 
         Response r = post(ModelCrud.class, new Form("name", "Andrew Ribeiro"));
@@ -40,11 +41,20 @@ public class SimpleCrudTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void testUpdateModel() throws JSONException, RibrestDefaultException {
-        MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
-        parameters.add("name", "Andrew Ribeiro Santos");
-        Response r = put(RibrestUtils.getResourceName(ModelCrud.class) + "/1", new Form(parameters));
+        MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
+        mvm.add("name", "Andrew Ribeiro");
+        Response responseForPost = post(ModelCrud.class, new Form(mvm));
+        
+        assertEquals(Response.Status.CREATED.getStatusCode(), responseForPost.getStatus());
+        
+        String responseForPostString = responseForPost.readEntity(String.class);
+        
+        JSONObject jsonObjectForPost = new JSONObject(responseForPostString);
+        String idModel = jsonObjectForPost.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getString("id");
+        mvm.putSingle("name", "Andrew Ribeiro Santos");
+        Response r = put(RibrestUtils.getResourceName(ModelCrud.class) + "/" + idModel, new Form(mvm));
         
         assertEquals(200, r.getStatus());
     }

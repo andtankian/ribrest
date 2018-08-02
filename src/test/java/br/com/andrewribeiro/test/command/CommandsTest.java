@@ -17,7 +17,7 @@ import org.junit.Test;
 public class CommandsTest extends RibrestTest {
 
     @Test
-    @Ignore
+    //@Ignore
     public void beforeCommandSucceed() throws RibrestDefaultException {
 
         Response response = get(ModelWithBeforeCommandsSucceed.class, "/beforecommand1");
@@ -26,7 +26,7 @@ public class CommandsTest extends RibrestTest {
     }
     
     @Test
-    @Ignore
+    //@Ignore
     public void beforeCommandFailure() {
         Response response = get(ModelWithBeforeCommandsFailure.class);
         
@@ -34,7 +34,7 @@ public class CommandsTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void afterCommandSucceed(){
         Response response = get(ModelWithAfterCommandsSucceed.class);
         

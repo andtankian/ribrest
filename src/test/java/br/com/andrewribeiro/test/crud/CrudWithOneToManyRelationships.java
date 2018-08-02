@@ -20,7 +20,7 @@ import org.junit.Test;
 public class CrudWithOneToManyRelationships extends RibrestTest {
 
     @Test
-    @Ignore
+    //@Ignore
     public void postingModelWithOneToManyRelationshipButMissingChildren() {
 
         MultivaluedMap mvm = new MultivaluedHashMap();
@@ -32,7 +32,7 @@ public class CrudWithOneToManyRelationships extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void postingModelWithOneToManyRelationshipWithChildren() {
 
         MultivaluedMap mvm = new MultivaluedHashMap();
@@ -47,7 +47,7 @@ public class CrudWithOneToManyRelationships extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void postingModelWithOneToManyRelationshipWithInexistentChildren() {
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "Parent Name that will have inexistent children");
@@ -59,7 +59,7 @@ public class CrudWithOneToManyRelationships extends RibrestTest {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void postingModelWithOneToManyRelationshipWithExistentChildren() throws JSONException {
 
         MultivaluedMap mvm = new MultivaluedHashMap();
