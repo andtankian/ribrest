@@ -38,8 +38,8 @@ That's it.
 You should get some log about Ribrest initialization
 
 > Ribrest INFO: ***INITIALIZING RIBREST FRAMEWORK***
-	Ribrest INFO: Application is up and running at: http://localhost:8080/myapp/
-	Ribrest INFO: To shutdown Ribrest, type CTRL+C...
+Ribrest INFO: Application is up and running at: http://localhost:8080/myapp/
+Ribrest INFO: To shutdown Ribrest, type CTRL+C...
 
 Try to send some http request to `MyClass` endpoint that should be: http://localhost:8080/myapp/mymodelobjects
 
