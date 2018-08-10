@@ -21,34 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.utils;
+package br.com.andrewribeiro.test.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import java.security.Key;
-import java.sql.Timestamp;
+import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
+import br.com.andrewribeiro.test.security.models.SecureModel;
+import br.com.andrewribeiro.test.RibrestTest;
+import javax.ws.rs.core.Response;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
-public class RibrestJWT {
+/**
+ *
+ * @author Andrew Ribeiro
+ */
+public class SecuringEndpointTest extends RibrestTest {
 
-    private static final Key API_SECRET_KEY = RibrestUtils.RibrestTokens.getNewSecretKey();
+    @Test
+    public void missingToken() throws RibrestDefaultException {
 
-    public String create(RibrestJWTPayload payload) {
-        return Jwts.builder()
-                .setIssuedAt(new Timestamp(System.currentTimeMillis()))
-                .setExpiration(payload.getExpiration())
-                .setAudience(payload.getAudience())
-                .setIssuer(payload.getIssuer())
-                .setSubject(payload.getSubject())
-                .compact();
-    }
+        Response response = get(SecureModel.class, "/secure");
 
-    public Jws<Claims> decode(String token) throws Exception {
-        return Jwts.parser().setSigningKey(API_SECRET_KEY).parseClaimsJws(token);
-    }
-    
-    public final Key getApiSecretKey(){
-        return API_SECRET_KEY;
+        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+
+        String responseText = response.readEntity(String.class);
+
+        JSONAssert.assertEquals("{\"cause\":\"" + RibrestUtils.RibrestDefaultResponses.UNAUTHORIZED_MISSING_TOKEN + "\"}", responseText, JSONCompareMode.STRICT);
     }
 
 }

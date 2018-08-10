@@ -21,34 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.utils;
+package br.com.andrewribeiro.test.security.models;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import java.security.Key;
-import java.sql.Timestamp;
+import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoint;
+import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
+import javax.persistence.Entity;
 
-public class RibrestJWT {
-
-    private static final Key API_SECRET_KEY = RibrestUtils.RibrestTokens.getNewSecretKey();
-
-    public String create(RibrestJWTPayload payload) {
-        return Jwts.builder()
-                .setIssuedAt(new Timestamp(System.currentTimeMillis()))
-                .setExpiration(payload.getExpiration())
-                .setAudience(payload.getAudience())
-                .setIssuer(payload.getIssuer())
-                .setSubject(payload.getSubject())
-                .compact();
-    }
-
-    public Jws<Claims> decode(String token) throws Exception {
-        return Jwts.parser().setSigningKey(API_SECRET_KEY).parseClaimsJws(token);
-    }
+/**
+ *
+ * @author Andrew Ribeiro
+ */
+@RibrestModel(endpointsConfigurators = @RibrestEndpointConfigurator(path = "secure", requestFiltersNameBindings = RibrestRestrictedEndpoint.class))
+@Entity
+public class SecureModel extends AbstractModel{
     
-    public final Key getApiSecretKey(){
-        return API_SECRET_KEY;
-    }
-
 }

@@ -23,32 +23,25 @@
  */
 package br.com.andrewribeiro.ribrest.utils;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import java.security.Key;
-import java.sql.Timestamp;
-
-public class RibrestJWT {
-
-    private static final Key API_SECRET_KEY = RibrestUtils.RibrestTokens.getNewSecretKey();
-
-    public String create(RibrestJWTPayload payload) {
-        return Jwts.builder()
-                .setIssuedAt(new Timestamp(System.currentTimeMillis()))
-                .setExpiration(payload.getExpiration())
-                .setAudience(payload.getAudience())
-                .setIssuer(payload.getIssuer())
-                .setSubject(payload.getSubject())
-                .compact();
-    }
-
-    public Jws<Claims> decode(String token) throws Exception {
-        return Jwts.parser().setSigningKey(API_SECRET_KEY).parseClaimsJws(token);
+import org.json.JSONObject;
+/**
+ *
+ * @author Andrew Ribeiro
+ */
+public class RibrestDefaultResponses {
+    
+    public final String UNAUTHORIZED_INVALID_TOKEN = "This token is invalid.";
+    public final String UNAUTHORIZED_MISSING_TOKEN = "Token is missing.";
+    
+    public String getUnauthorizedInvalidToken(){
+        return getBuiltJsonString(UNAUTHORIZED_INVALID_TOKEN);
     }
     
-    public final Key getApiSecretKey(){
-        return API_SECRET_KEY;
+    public String getUnauthorizedMissingToken(){
+        return getBuiltJsonString(UNAUTHORIZED_MISSING_TOKEN);
     }
-
+    
+    private String getBuiltJsonString(String cause){
+        return new JSONObject().put("cause", cause).toString();
+    }
 }

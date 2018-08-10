@@ -28,7 +28,6 @@ import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.filters.models.FilterModel;
 import javax.ws.rs.core.Response;
 import junit.framework.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -38,13 +37,11 @@ import org.junit.Test;
 public class FiltersTest extends RibrestTest {
 
     @Test
-    @Ignore
     public void customRequestSpecificFilter() throws RibrestDefaultException {
         customHttpGetToFilter("/custom");
     }
 
     @Test
-    @Ignore
     public void customRequestGlobalFilter() {
         simpleHttpGetToFilter();
     }
@@ -55,7 +52,6 @@ public class FiltersTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
     public void customResponseGlobalFilter() {
         simpleHttpGetToFilter();
     }

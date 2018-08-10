@@ -29,6 +29,10 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoint;
+import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
+import io.jsonwebtoken.Jwts;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 
 /**
  *
@@ -37,13 +41,41 @@ import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoin
 @RibrestFilter
 @Provider
 @RibrestRestrictedEndpoint
-public class RibrestRestrictedEndpointFilter implements ContainerRequestFilter{
+public class RibrestRestrictedEndpointFilter implements ContainerRequestFilter {
+
+    ContainerRequestContext containerRequestContext;
 
     @Override
-    public void filter(ContainerRequestContext crc) throws IOException {
-        System.out.println("RibrestRestrictedEndpointFilter being executed");
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
+        this.containerRequestContext = containerRequestContext;
+
+        String authorizationHeader = containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+
+        if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedMissingToken()));
+            return;
+        }
+        String token = authorizationHeader.substring("Bearer".length()).trim();
+        
+        if(token == null || token.isEmpty()){
+            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedInvalidToken()));
+        }
+
+        try {
+            Jwts.parser().setSigningKey(RibrestUtils.RibrestJWT.getApiSecretKey()).parseClaimsJws(token);
+
+        } catch (Exception e) {
+
+        }
     }
 
-   
-    
+    private Response getResponseToAbort(String serializedEntity) {
+        return Response.status(Response.Status.UNAUTHORIZED).entity(serializedEntity)
+                .build();
+    }
+
+    private void abort(Response response) {
+        containerRequestContext.abortWith(response);
+    }
+
 }
