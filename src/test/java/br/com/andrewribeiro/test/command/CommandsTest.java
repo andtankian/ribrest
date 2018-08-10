@@ -26,7 +26,7 @@ public class CommandsTest extends RibrestTest {
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void beforeCommandFailure() {
         Response response = get(ModelWithBeforeCommandsFailure.class);
         
@@ -34,7 +34,7 @@ public class CommandsTest extends RibrestTest {
     }
 
     @Test
-    //@Ignore
+    @Ignore
     public void afterCommandSucceed(){
         Response response = get(ModelWithAfterCommandsSucceed.class);
         

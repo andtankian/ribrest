@@ -47,7 +47,7 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator {
 
     HttpServer getRunningGrizzlyServer() {
         ResourceConfig resourceConfig = ribrest.getResourceConfig();
-        resourceConfig.packages(ribrestScanner.getResourcesPackagesNames());
+        resourceConfig.packages(ribrestScanner.getAllPackagesToBeRegistered());
         resourceConfig.registerResources(ribrestResourceManager.getProgrammaticallyResources(ribrestScanner.getModelClassesInstances()));
         return initServer();
     }

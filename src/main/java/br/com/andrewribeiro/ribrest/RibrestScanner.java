@@ -1,11 +1,13 @@
 package br.com.andrewribeiro.ribrest;
 
+import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.ws.rs.Path;
 
 /**
@@ -45,12 +47,28 @@ public class RibrestScanner {
     String[] getResourcesPackagesNames() {
         RibrestLog.log("Trying to scan independent resources annoted with @javax.ws.rs.Path...");
         List classesNames = getNamesOfClassesWithAnnotation(Path.class);
-        RibrestLog.log(new StringBuilder("Scanned ").append(classesNames.size()).append(" independent resource classes, they are :")
+        RibrestLog.log(new StringBuilder("Scanned ").append(classesNames.size()).append(" independent resource classes, they are: ")
                 .append(classesNames.toString()).toString());
         String[] packageNames = getClassesPackageNames(classesNames);
         RibrestLog.log(new StringBuilder("Identified the following packagenames for the scanned independent resources: ")
                 .append(Arrays.toString(packageNames)).toString());
         return packageNames;
+    }
+    
+    String[] getFiltersPackagesNames(){
+        RibrestLog.log("Trying to scan filters annoted with @RibrestFilter");
+        List classesNames = getNamesOfClassesWithAnnotation(RibrestFilter.class);
+        RibrestLog.log(new StringBuilder("Scanned ").append(classesNames.size()).append(" filters, they are: ")
+                .append(classesNames.toString()).toString());
+        String[] packageNames = getClassesPackageNames(classesNames);
+        RibrestLog.log(new StringBuilder("Identified the following packagenames for the scanned filters: ")
+                .append(Arrays.toString(packageNames)).toString());
+        return packageNames;
+    }
+    
+    String [] getAllPackagesToBeRegistered(){
+        return Stream.concat(Arrays.stream(getResourcesPackagesNames()), Arrays.stream(getFiltersPackagesNames()))
+                      .toArray(String[]::new);
     }
     
     List getModelClassesInstances() {

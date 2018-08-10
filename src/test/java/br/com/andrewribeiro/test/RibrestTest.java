@@ -18,18 +18,24 @@ import org.junit.BeforeClass;
  * @author Andrew Ribeiro
  */
 public class RibrestTest {
+
     private final static String BASE_URL = "http://localhost:2007/";
     private final static String APP_NAME = "ribrestapp/";
     private final static String APP_URL = BASE_URL + APP_NAME;
 
     protected final Client c = ClientBuilder.newClient();
 
+    public Response get(String path) {
+        WebTarget wt = buildWebTarget(path);
+        return wt.request(MediaType.APPLICATION_JSON).get();
+    }
+
     public Response get(Class resource) {
         WebTarget wt = buildWebTarget(resource);
         return wt.request(MediaType.APPLICATION_JSON).get();
     }
-    
-    public Response get(Class resource, String path) throws RibrestDefaultException{
+
+    public Response get(Class resource, String path) throws RibrestDefaultException {
         WebTarget wt = buildWebTarget(APP_URL + RibrestUtils.getResourceName(resource) + path);
         return wt.request(MediaType.APPLICATION_JSON).get();
     }
@@ -58,7 +64,6 @@ public class RibrestTest {
 //    public static void after() {
 //        Ribrest.getInstance().shutdown();
 //    }
-
     private WebTarget buildWebTarget(Class sub) {
         WebTarget wt = null;
         try {

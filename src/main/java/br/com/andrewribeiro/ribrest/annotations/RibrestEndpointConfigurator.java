@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RibrestEndpointConfigurator {
+    public Class[] requestFiltersNameBindings() default {};
     public String path() default "";
     public String method() default "GET";
     public Class[] beforeCommands() default {};

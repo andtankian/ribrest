@@ -14,6 +14,9 @@ import java.util.Set;
  */
 public class RibrestUtils {
 
+    public final static RibrestTokens RibrestTokens = new RibrestTokens();
+    public final static RibrestJWT RibrestJWT = new RibrestJWT();
+
     public static String getResourceName(Class c) throws RibrestDefaultException {
 
         if (c == null) {
@@ -42,7 +45,7 @@ public class RibrestUtils {
         } else if (collectionIsList(collectionClass)) {
             collection = new ArrayList();
         }
-        
+
         return collection;
     }
 
