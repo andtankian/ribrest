@@ -26,6 +26,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
     Class currentClassResource;
     Class currentDao;
     List requestFiltersNameBindings;
+    List responseFiltersNameBindings;
     List beforeCommands;
     List afterCommands;
 
@@ -93,17 +94,14 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
     private void buildEndpoint(Resource.Builder resourceBuilder, String method) {
         resourceBuilder.addMethod(method).consumes(MediaType.APPLICATION_FORM_URLENCODED)
                 .produces(MediaType.APPLICATION_JSON)
-                .nameBindings(requestFiltersNameBindings)
+                .nameBindings(getCurrentNameBindings())
                 .handledBy(new RibrestInflector(ribrest, produceValidFacade(currentClassResource.getCanonicalName())));
     }
 
     private void createEndpointFromConfigurators(List<RibrestEndpointConfigurator> endpointConfigurators) {
         endpointConfigurators.stream()
                 .forEach((endpointConfigurator) -> {
-                    requestFiltersNameBindings = Arrays.asList(endpointConfigurator.requestFiltersNameBindings());
-                    beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
-                    afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
-                    currentDao = endpointConfigurator.dao();
+                    getDataFromEndpointConfiguratorAnnotation(endpointConfigurator);
                     createEndpoint(resourceBuilder,
                             new RibrestEndpointConfiguratorContainer().fromRibrestEndpointConfigurator(endpointConfigurator));
                 });
@@ -140,6 +138,21 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
         }
 
         return null;
+    }
+
+    private void getDataFromEndpointConfiguratorAnnotation(RibrestEndpointConfigurator endpointConfigurator) {
+        requestFiltersNameBindings = Arrays.asList(endpointConfigurator.requestFiltersNameBindings());
+        responseFiltersNameBindings = Arrays.asList(endpointConfigurator.responseFiltersNameBindings());
+        beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
+        afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
+        currentDao = endpointConfigurator.dao();
+    }
+    
+    private List getCurrentNameBindings(){
+        List allCurrentNameBindings = new ArrayList();
+        allCurrentNameBindings.addAll(requestFiltersNameBindings);
+        allCurrentNameBindings.addAll(responseFiltersNameBindings);
+        return allCurrentNameBindings;
     }
 
     private void clearCommands() {

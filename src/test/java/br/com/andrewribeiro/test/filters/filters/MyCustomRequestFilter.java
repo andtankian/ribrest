@@ -21,32 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.filters;
+package br.com.andrewribeiro.test.filters.filters;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.test.RibrestTest;
-import br.com.andrewribeiro.test.filters.models.FilterModel;
-import javax.ws.rs.core.Response;
-import junit.framework.Assert;
-import org.junit.Test;
+import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
+import java.io.IOException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.ext.Provider;
+import br.com.andrewribeiro.test.filters.annotations.MyCustomRequestFilterNameBinding;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class FilterTest extends RibrestTest{
-    
-    @Test
-    public void basicFilter() throws RibrestDefaultException{
-        
-        Response response = get(FilterModel.class);
-        
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
-        response = get(FilterModel.class, "/custom");
-        
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
+@RibrestFilter
+@Provider
+@MyCustomRequestFilterNameBinding
+public class MyCustomRequestFilter implements ContainerRequestFilter{
+
+    @Override
+    public void filter(ContainerRequestContext crc) throws IOException {
+        System.out.println("MyCustomRequestFilter being executed specifically.");
     }
     
 }

@@ -33,4 +33,4 @@ import javax.ws.rs.NameBinding;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @NameBinding
-public @interface MyCustomFilterNameBinding {}
+public @interface MyCustomResponseFilterNameBinding {}

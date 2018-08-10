@@ -21,25 +21,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.filters.models;
+package br.com.andrewribeiro.test.filters.filters;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
-import javax.persistence.Entity;
-import br.com.andrewribeiro.test.filters.annotations.MyCustomRequestFilterNameBinding;
-import br.com.andrewribeiro.test.filters.annotations.MyCustomResponseFilterNameBinding;
+import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
+import java.io.IOException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@Entity
-@RibrestModel(endpointsConfigurators = {
-    @RibrestEndpointConfigurator(path = "custom", 
-            requestFiltersNameBindings = MyCustomRequestFilterNameBinding.class, 
-            responseFiltersNameBindings = MyCustomResponseFilterNameBinding.class)
-})
-public class FilterModel extends AbstractModel{
+@RibrestFilter
+@Provider
+public class MyCustomGlobalRequestFilter implements ContainerRequestFilter{
+
+    @Override
+    public void filter(ContainerRequestContext crc) throws IOException {
+        System.out.println("MyCustomGlobalRequestFilter filter being executed globally.");
+    }
     
 }

@@ -21,27 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.filters.filters;
+package br.com.andrewribeiro.test.filters.annotations;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
-import br.com.andrewribeiro.test.filters.annotations.MyCustomFilterNameBinding;
-import java.io.IOException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.ext.Provider;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.ws.rs.NameBinding;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@RibrestFilter
-@Provider
-@MyCustomFilterNameBinding
-public class MyCustomFilter implements ContainerRequestFilter{
-
-    @Override
-    public void filter(ContainerRequestContext crc) throws IOException {
-        System.out.println("MyCustomFilter being executed");
-    }
-    
-}
+@Retention(RetentionPolicy.RUNTIME)
+@NameBinding
+public @interface MyCustomRequestFilterNameBinding {}
