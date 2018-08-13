@@ -28,11 +28,11 @@ import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
-import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoint;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import io.jsonwebtoken.Jwts;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import br.com.andrewribeiro.ribrest.filters.annotations.RibrestJWTSecure;
 
 /**
  *
@@ -40,8 +40,8 @@ import javax.ws.rs.core.Response;
  */
 @RibrestFilter
 @Provider
-@RibrestRestrictedEndpoint
-public class RibrestRestrictedEndpointFilter implements ContainerRequestFilter {
+@RibrestJWTSecure
+public class RibrestRestrictedEndpointWithJWT implements ContainerRequestFilter {
 
     ContainerRequestContext containerRequestContext;
 
@@ -52,20 +52,21 @@ public class RibrestRestrictedEndpointFilter implements ContainerRequestFilter {
         String authorizationHeader = containerRequestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedMissingToken()));
+            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedMissingTokenJSON()));
             return;
         }
         String token = authorizationHeader.substring("Bearer".length()).trim();
         
         if(token == null || token.isEmpty()){
-            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedInvalidToken()));
+            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedInvalidTokenJSON()));
+            return;
         }
 
         try {
-            Jwts.parser().setSigningKey(RibrestUtils.RibrestJWT.getApiSecretKey()).parseClaimsJws(token);
-
+            Jwts.parser().setSigningKey(RibrestUtils.RibrestJWT.getCurrentAPISecretKey()).parseClaimsJws(token);
         } catch (Exception e) {
-
+            abort(getResponseToAbort(RibrestUtils.RibrestDefaultResponses.getUnauthorizedInvalidTokenJSON()));
+            return;
         }
     }
 

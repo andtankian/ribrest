@@ -1,8 +1,6 @@
 package br.com.andrewribeiro.ribrest.controller;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.dao.CRUDCenterImpl;
-import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.cdi.hk2.RequestContext;
@@ -14,7 +12,6 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
 import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFactory;

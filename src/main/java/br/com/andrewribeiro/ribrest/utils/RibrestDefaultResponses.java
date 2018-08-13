@@ -33,11 +33,11 @@ public class RibrestDefaultResponses {
     public final String UNAUTHORIZED_INVALID_TOKEN = "This token is invalid.";
     public final String UNAUTHORIZED_MISSING_TOKEN = "Token is missing.";
     
-    public String getUnauthorizedInvalidToken(){
+    public String getUnauthorizedInvalidTokenJSON(){
         return getBuiltJsonString(UNAUTHORIZED_INVALID_TOKEN);
     }
     
-    public String getUnauthorizedMissingToken(){
+    public String getUnauthorizedMissingTokenJSON(){
         return getBuiltJsonString(UNAUTHORIZED_MISSING_TOKEN);
     }
     

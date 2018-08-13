@@ -47,7 +47,7 @@ public class RibrestJWT {
         return Jwts.parser().setSigningKey(API_SECRET_KEY).parseClaimsJws(token);
     }
     
-    public final Key getApiSecretKey(){
+    public final Key getCurrentAPISecretKey(){
         return API_SECRET_KEY;
     }
 

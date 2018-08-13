@@ -25,15 +25,15 @@ package br.com.andrewribeiro.test.security.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoint;
 import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
 import javax.persistence.Entity;
+import br.com.andrewribeiro.ribrest.filters.annotations.RibrestJWTSecure;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@RibrestModel(endpointsConfigurators = @RibrestEndpointConfigurator(path = "secure", requestFiltersNameBindings = RibrestRestrictedEndpoint.class))
+@RibrestModel(endpointsConfigurators = @RibrestEndpointConfigurator(path = "secure", requestFiltersNameBindings = RibrestJWTSecure.class))
 @Entity
 public class SecureModel extends AbstractModel{
     

@@ -27,8 +27,11 @@ import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.security.models.SecureModel;
 import br.com.andrewribeiro.test.RibrestTest;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import junit.framework.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -49,6 +52,19 @@ public class SecuringEndpointTest extends RibrestTest {
         String responseText = response.readEntity(String.class);
 
         JSONAssert.assertEquals("{\"cause\":\"" + RibrestUtils.RibrestDefaultResponses.UNAUTHORIZED_MISSING_TOKEN + "\"}", responseText, JSONCompareMode.STRICT);
+    }
+    
+    @Test
+    public void invalidToken() throws RibrestDefaultException {
+        MultivaluedMap mvm = new MultivaluedHashMap();
+        mvm.add("Authorization", "Bearer HDSHAJK432BABK4K2NKNM.4Y3892NJKNFKDSLBFHDB.YGYAOBCNXMAH3782");
+        Response response = getWithHeaders(APP_URL + "securemodels/secure", mvm);
+
+        Assert.assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+
+        String responseText = response.readEntity(String.class);
+
+        JSONAssert.assertEquals("{\"cause\":\"" + RibrestUtils.RibrestDefaultResponses.UNAUTHORIZED_INVALID_TOKEN + "\"}", responseText, JSONCompareMode.STRICT);
     }
 
 }
