@@ -1,6 +1,7 @@
 package br.com.andrewribeiro.ribrest.annotations;
 
 import br.com.andrewribeiro.ribrest.dao.CRUDDAOImpl;
+import br.com.andrewribeiro.ribrest.services.dispatcher.DispatcherImpl;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -17,4 +18,5 @@ public @interface RibrestEndpointConfigurator {
     public Class[] beforeCommands() default {};
     public Class[] afterCommands() default {};
     public Class dao() default CRUDDAOImpl.class;
+    public Class dispatcher() default DispatcherImpl.class;
 }

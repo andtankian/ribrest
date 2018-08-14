@@ -38,13 +38,13 @@ import org.junit.Test;
 public class FiltersTest extends RibrestTest {
 
     @Test
-    @Ignore
+//    @Ignore
     public void customRequestSpecificFilter() throws RibrestDefaultException {
         customHttpGetToFilter("/custom");
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void customRequestGlobalFilter() {
         simpleHttpGetToFilter();
     }
@@ -55,7 +55,7 @@ public class FiltersTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void customResponseGlobalFilter() {
         simpleHttpGetToFilter();
     }

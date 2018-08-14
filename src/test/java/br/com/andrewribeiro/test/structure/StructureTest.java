@@ -42,7 +42,7 @@ public class StructureTest {
     }
 
     @Test
-    //@Ignore
+//    @Ignore
     public void notAModelSubclass() throws JSONException, RibrestDefaultException {
 
         WebTarget wt = buildWebTarget(NotAModelSubclass.class);
@@ -55,7 +55,7 @@ public class StructureTest {
     }
 
     @Test
-    //@Ignore
+//    @Ignore
     public void modelNotImplementingAbstractMethods() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(ModelNotImplementingAbstractMethods.class);
 
@@ -67,7 +67,7 @@ public class StructureTest {
     }
 
     @Test
-    //@Ignore
+//    @Ignore
     public void abstractModel() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(AbstractModel.class);
 
@@ -79,7 +79,7 @@ public class StructureTest {
     }
 
     @Test
-    //@Ignore
+//    @Ignore
     public void ConcreteModelButNotAJPAEntity() throws JSONException, RibrestDefaultException {
         WebTarget wt = buildWebTarget(ConcreteModelButNotAJPAEntity.class);
 
@@ -91,7 +91,7 @@ public class StructureTest {
     }
 
     @Test
-    //@Ignore
+//    @Ignore
     public void notAnnotatedWithRibrestModelAnnotation() {
         try {
             WebTarget wt = buildWebTarget(NotAnnotatedWithRibrestModelAnnotation.class);

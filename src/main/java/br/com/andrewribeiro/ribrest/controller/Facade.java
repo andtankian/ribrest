@@ -1,8 +1,6 @@
 package br.com.andrewribeiro.ribrest.controller;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.dao.CRUDCenterImpl;
-import br.com.andrewribeiro.ribrest.dao.interfaces.DAO;
 import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.cdi.hk2.RequestContext;
@@ -14,7 +12,6 @@ import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ContainerRequest;
 import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
 import br.com.andrewribeiro.ribrest.dao.interfaces.PersistenceCenter;
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
 import br.com.andrewribeiro.ribrest.services.miner.factory.interfaces.MinerFactory;
@@ -32,26 +29,24 @@ public class Facade {
     }
 
     @Inject
-    FlowContainer flowContainer;
+    private FlowContainer flowContainer;
 
     @Inject
-    Dispatcher dispatcher;
-
-    @Inject
-    MinerFactory minerFactory;
-
+    private MinerFactory minerFactory;
 
     @Inject
     private ServiceLocator serviceLocator;
 
-    ContainerRequest containterRequest;
+    private ContainerRequest containterRequest;
     private final String modelClassName;
+    private Miner miner;
     private List<Command> beforeCommands, afterCommands;
-    private Class currentDao;
+    private Class currentDaoClass;
+    private Class<Dispatcher> currentDispatcherClass;
+    private Dispatcher dispatcher;
+    private Response response = Response.serverError().build();
 
     public Response process() {
-        Miner miner = null;
-        Response response = Response.serverError().build();
         try {
             Class classModel = Class.forName(modelClassName);
             miner = minerFactory.getMinerInstance(classModel);
@@ -65,13 +60,7 @@ public class Facade {
         } catch (Exception e) {
             handleProcessExceptions(e);
         } finally {
-            try {
-                response = dispatcher.send();
-            } catch (Exception e) {
-                response = Response.serverError().build();
-            } finally {
-                serviceLocator.preDestroy(this);
-            }
+            dispatch();
         }
 
         return response;
@@ -102,9 +91,36 @@ public class Facade {
 
     private void run() throws RibrestDefaultException {
         PersistenceCenter pc = new CRUDCenterImpl();
-        pc.setCurrentDAOClass(currentDao);
+        pc.setCurrentDAOClass(currentDaoClass);
         serviceLocator.inject(pc);
         pc.perform();
+    }
+    
+    private void dispatch() {
+        getDispatcherInstance(currentDispatcherClass);
+        try {
+            response = dispatcher.send();
+        } catch (Exception exception) {
+            response = Response.serverError().build();
+        } finally {
+            serviceLocator.preDestroy(this);
+        }
+    }
+
+    private void getDispatcherInstance(Class<Dispatcher> dispatcherClass) {
+        if (dispatcherClass == null) {
+            throw new RuntimeException("Ribrest couldn't get a dispatcher instance of a null class.");
+        }
+        try {
+            dispatcher = dispatcherClass.newInstance();
+            serviceLocator.inject(dispatcher);
+        } catch (Exception exception) {
+            throw runtimeException(exception.getMessage());
+        }
+    }
+
+    private RuntimeException runtimeException(String cause) {
+        return new RuntimeException(cause);
     }
 
     private void setErrorOutput(String cause) {
@@ -123,7 +139,7 @@ public class Facade {
         }
         setErrorOutput(((RibrestDefaultException) e).getError());
     }
-    
+
     public void setContainerRequest(ContainerRequest containerRequest) {
         this.containterRequest = containerRequest;
         flowContainer.setMethod(containterRequest.getMethod());
@@ -136,9 +152,13 @@ public class Facade {
     public void setAfterCommandsToCurrentRequest(List afterCommands) {
         this.afterCommands = afterCommands != null ? afterCommands : new ArrayList();
     }
-    
-    public void setCurrentDAO(Class currentDao){
-        this.currentDao = currentDao;
+
+    public void setCurrentDAO(Class currentDao) {
+        this.currentDaoClass = currentDao;
+    }
+
+    public void setCurrentDispatcherClass(Class dispatcherClass) {
+        currentDispatcherClass = dispatcherClass;
     }
 
     /**

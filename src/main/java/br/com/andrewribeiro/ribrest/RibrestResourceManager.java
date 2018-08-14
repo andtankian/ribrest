@@ -25,6 +25,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
     Resource.Builder resourceBuilder;
     Class currentClassResource;
     Class currentDao;
+    Class currentDispatcher;
     List requestFiltersNameBindings;
     List responseFiltersNameBindings;
     List beforeCommands;
@@ -50,6 +51,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
         f.setBeforeCommandsToCurrentRequest(beforeCommands);
         f.setAfterCommandsToCurrentRequest(afterCommands);
         f.setCurrentDAO(currentDao);
+        f.setCurrentDispatcherClass(currentDispatcher);
         clearCommands();
         return f;
     }
@@ -146,6 +148,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
         beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
         afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
         currentDao = endpointConfigurator.dao();
+        currentDispatcher = endpointConfigurator.dispatcher();
     }
     
     private List getCurrentNameBindings(){
