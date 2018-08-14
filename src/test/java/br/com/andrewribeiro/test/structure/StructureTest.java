@@ -13,7 +13,6 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
-import org.junit.AfterClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -51,7 +50,7 @@ public class StructureTest {
 
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
 
-        JSONAssert.assertEquals("{\"cause\": \"The created resource: " + getResourceName(NotAModelSubclass.class) + " does not implement IModel.\nRibrest can't operate in this class (yet).\"}}", r.readEntity(String.class), JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals("{\"cause\":\"The created resource: " + getResourceName(NotAModelSubclass.class) + " does not implement Model interface.\"}", r.readEntity(String.class), JSONCompareMode.LENIENT);
     }
 
     @Test

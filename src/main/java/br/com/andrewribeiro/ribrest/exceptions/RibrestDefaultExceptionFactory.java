@@ -24,7 +24,7 @@ public class RibrestDefaultExceptionFactory {
         );
         map.put(RibrestDefaultExceptionConstants.RESOURCE_IS_NOT_IMODEL_SUBCLASS, new StringBuilder("The created resource: ")
                 .append("{{rn}}")
-                .append(" does not implement IModel.\nRibrest can't operate in this class (yet).")
+                .append(" does not implement Model interface.")
                 .toString()
         );
         map.put(RibrestDefaultExceptionConstants.RESOURCE_ISNT_AN_ENTITY, new StringBuilder("The created resource: ")

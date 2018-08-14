@@ -35,7 +35,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
             Assert.assertEquals(Response.Status.CREATED.getStatusCode(), responseForKids.getStatus());
             responseForKidsString = responseForKids.readEntity(String.class);
             JSONObject kidsResponseJson = new JSONObject(responseForKidsString);
-            kidsId.add("kids.id", kidsResponseJson.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getString("id"));
+            kidsId.add("kids.id", String.valueOf(kidsResponseJson.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getInt("id")));
         }
 
         Response responseForFather = post(FatherModel.class, new Form(kidsId));
@@ -90,7 +90,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
         
         String responseForPostFatherText = responseForPostFather.readEntity(String.class);
         
-        String fatherId = new JSONObject(responseForPostFatherText).getJSONObject("holder").getJSONArray("models").getJSONObject(0).getString("id");
+        String fatherId = String.valueOf(new JSONObject(responseForPostFatherText).getJSONObject("holder").getJSONArray("models").getJSONObject(0).getInt("id"));
         
         Response response = get(FatherModel.class, "/" + fatherId);
         

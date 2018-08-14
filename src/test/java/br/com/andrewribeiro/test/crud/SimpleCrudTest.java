@@ -52,7 +52,7 @@ public class SimpleCrudTest extends RibrestTest {
         String responseForPostString = responseForPost.readEntity(String.class);
         
         JSONObject jsonObjectForPost = new JSONObject(responseForPostString);
-        String idModel = jsonObjectForPost.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getString("id");
+        String idModel = String.valueOf(jsonObjectForPost.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getInt("id"));
         mvm.putSingle("name", "Andrew Ribeiro Santos");
         Response r = put(RibrestUtils.getResourceName(ModelCrud.class) + "/" + idModel, new Form(mvm));
         
