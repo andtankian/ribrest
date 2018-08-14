@@ -16,6 +16,7 @@ public class RibrestUtils {
 
     public final static RibrestTokens RibrestTokens = new RibrestTokens();
     public final static RibrestJWT RibrestJWT = new RibrestJWT();
+    public final static RibrestDefaultResponses RibrestDefaultResponses = new RibrestDefaultResponses();
 
     public static String getResourceName(Class c) throws RibrestDefaultException {
 
@@ -56,5 +57,7 @@ public class RibrestUtils {
     private static final boolean collectionIsList(Class collectionClass) {
         return List.class.isAssignableFrom(collectionClass);
     }
+    
+    
 
 }

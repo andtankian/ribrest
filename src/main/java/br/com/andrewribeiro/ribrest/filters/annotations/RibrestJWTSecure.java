@@ -21,34 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.utils;
+package br.com.andrewribeiro.ribrest.filters.annotations;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import java.security.Key;
-import java.sql.Timestamp;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import javax.ws.rs.NameBinding;
 
-public class RibrestJWT {
-
-    private static final Key API_SECRET_KEY = RibrestUtils.RibrestTokens.getNewSecretKey();
-
-    public String create(RibrestJWTPayload payload) {
-        return Jwts.builder()
-                .setIssuedAt(new Timestamp(System.currentTimeMillis()))
-                .setExpiration(payload.getExpiration())
-                .setAudience(payload.getAudience())
-                .setIssuer(payload.getIssuer())
-                .setSubject(payload.getSubject())
-                .compact();
-    }
-
-    public Jws<Claims> decode(String token) throws Exception {
-        return Jwts.parser().setSigningKey(API_SECRET_KEY).parseClaimsJws(token);
-    }
+/**
+ *
+ * @author ribeiro
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@NameBinding
+public @interface RibrestJWTSecure {
     
-    public final Key getCurrentAPISecretKey(){
-        return API_SECRET_KEY;
-    }
-
 }

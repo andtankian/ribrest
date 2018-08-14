@@ -28,7 +28,6 @@ import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.filters.models.FilterModel;
 import javax.ws.rs.core.Response;
 import junit.framework.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**

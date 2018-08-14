@@ -9,6 +9,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,11 +20,16 @@ import org.junit.BeforeClass;
  */
 public class RibrestTest {
 
-    private final static String BASE_URL = "http://localhost:2007/";
-    private final static String APP_NAME = "ribrestapp/";
-    private final static String APP_URL = BASE_URL + APP_NAME;
+    protected final static String BASE_URL = "http://localhost:2007/";
+    protected final static String APP_NAME = "ribrestapp/";
+    protected final static String APP_URL = BASE_URL + APP_NAME;
 
     protected final Client c = ClientBuilder.newClient();
+    
+    public Response getWithHeaders(String path, MultivaluedMap headers){
+         WebTarget wt = buildWebTarget(path);
+        return wt.request(MediaType.APPLICATION_JSON).headers(headers).get();
+    }
 
     public Response get(String path) {
         WebTarget wt = buildWebTarget(path);

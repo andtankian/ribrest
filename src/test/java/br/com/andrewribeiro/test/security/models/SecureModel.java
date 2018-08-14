@@ -21,29 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.filters;
+package br.com.andrewribeiro.test.security.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
-import java.io.IOException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.ext.Provider;
-import br.com.andrewribeiro.ribrest.filters.annotations.RibrestRestrictedEndpoint;
+import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
+import javax.persistence.Entity;
+import br.com.andrewribeiro.ribrest.filters.annotations.RibrestJWTSecure;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@RibrestFilter
-@Provider
-@RibrestRestrictedEndpoint
-public class RibrestRestrictedEndpointFilter implements ContainerRequestFilter{
-
-    @Override
-    public void filter(ContainerRequestContext crc) throws IOException {
-        System.out.println("RibrestRestrictedEndpointFilter being executed");
-    }
-
-   
+@RibrestModel(endpointsConfigurators = @RibrestEndpointConfigurator(path = "secure", requestFiltersNameBindings = RibrestJWTSecure.class))
+@Entity
+public class SecureModel extends AbstractModel{
     
 }

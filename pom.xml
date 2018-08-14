@@ -69,6 +69,11 @@
             <version>LATEST</version>
         </dependency>
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
             <version>1.0.2.Final</version>
@@ -84,7 +89,12 @@
             <version>0.10.2</version>
             <scope>runtime</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.10.2</version>
+            <scope>runtime</scope>
+        </dependency>
         <!--RELATED TO TESTS -->
         <dependency>
             <groupId>junit</groupId>

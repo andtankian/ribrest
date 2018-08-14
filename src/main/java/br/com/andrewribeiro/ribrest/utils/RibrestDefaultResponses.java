@@ -21,18 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.filters.annotations;
+package br.com.andrewribeiro.ribrest.utils;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import javax.ws.rs.NameBinding;
-
+import org.json.JSONObject;
 /**
  *
- * @author ribeiro
+ * @author Andrew Ribeiro
  */
-@Retention(RetentionPolicy.RUNTIME)
-@NameBinding
-public @interface RibrestRestrictedEndpoint {
+public class RibrestDefaultResponses {
     
+    public final String UNAUTHORIZED_INVALID_TOKEN = "This token is invalid.";
+    public final String UNAUTHORIZED_MISSING_TOKEN = "Token is missing.";
+    
+    public String getUnauthorizedInvalidTokenJSON(){
+        return getBuiltJsonString(UNAUTHORIZED_INVALID_TOKEN);
+    }
+    
+    public String getUnauthorizedMissingTokenJSON(){
+        return getBuiltJsonString(UNAUTHORIZED_MISSING_TOKEN);
+    }
+    
+    private String getBuiltJsonString(String cause){
+        return new JSONObject().put("cause", cause).toString();
+    }
 }
