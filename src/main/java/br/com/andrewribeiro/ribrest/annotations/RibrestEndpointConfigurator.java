@@ -11,12 +11,12 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RibrestEndpointConfigurator {
-    public Class[] requestFiltersNameBindings() default {};
-    public Class[] responseFiltersNameBindings()default {};
     public String path() default "";
     public String method() default "GET";
+    public Class[] requestFiltersNameBindings() default {};
     public Class[] beforeCommands() default {};
-    public Class[] afterCommands() default {};
     public Class dao() default CRUDDAOImpl.class;
+    public Class[] afterCommands() default {};
     public Class dispatcher() default DispatcherImpl.class;
+    public Class[] responseFiltersNameBindings()default {};
 }
