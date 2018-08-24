@@ -15,6 +15,7 @@ import br.com.andrewribeiro.ribrest.model.interfaces.Model;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -53,23 +54,23 @@ public abstract class AbstractMiner implements Miner {
     }
 
     private void prepareDataObjects(ContainerRequest cr) {
-        /*Populating form attribute with data coming from ContainerRequest*/
         Form f = cr.readEntity(Form.class);
         form = f.asMap();
 
-        /*Populating query parameters with data coming from ContainerRequest*/
         UriInfo u = cr.getUriInfo();
         query = u.getQueryParameters();
 
-        /*Populating path parameters with data coming from ContainerRequest*/
         path = u.getPathParameters();
 
-        /*Populating header with data coming from ContainerRequest*/
         header = cr.getHeaders();
 
-        /*GETTING THE ACCEPTS*/
         accepts = query != null ? query.get("accepts") : new ArrayList();
         accepts = accepts != null ? accepts : new ArrayList();
+        
+        Map<String, Integer> limitAndOffset = new QueryMiner().extractLimitAndOffset(query);
+        
+        fc.getHolder().getSm().setLimit(limitAndOffset.get("limit"));
+        fc.getHolder().getSm().setOffset(limitAndOffset.get("offset"));
     }
 
     protected void fillModel(Model model) throws IllegalArgumentException, IllegalAccessException, InstantiationException {

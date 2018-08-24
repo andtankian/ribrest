@@ -17,7 +17,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static br.com.andrewribeiro.ribrest.utils.RibrestUtils.*;
+import br.com.andrewribeiro.test.structure.models.ConcreteModel;
 import br.com.andrewribeiro.test.structure.models.NotAnnotatedWithRibrestModelAnnotation;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.MultivaluedMap;
+import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -99,6 +105,28 @@ public class StructureTest {
                     rte.getMessage());
         }
     }
+    
+    @Test
+    public void limitAndOffset(){
+        Response response = buildWebTarget(ConcreteModel.class).request(MediaType.APPLICATION_JSON).post(Entity.form(new Form()));
+        
+        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        
+        response = buildWebTarget(ConcreteModel.class).request(MediaType.APPLICATION_JSON).get();
+        
+        String responseText = response.readEntity(String.class);
+        JSONObject jsonObject = new JSONObject(responseText);
+        
+        int limit, offset;
+        limit = jsonObject.getJSONObject("holder").getJSONObject("sm").getInt("limit");
+        offset = jsonObject.getJSONObject("holder").getJSONObject("sm").getInt("offset");
+        
+        Assert.assertEquals(999, limit);
+        Assert.assertEquals(0, offset);
+        
+        
+    }
 
     private static void init() {
         Ribrest.getInstance().debug(true).appBaseUrl(BASE_URL).appName(APP_NAME).init();
@@ -107,7 +135,7 @@ public class StructureTest {
     private WebTarget buildWebTarget(Class sub) {
         WebTarget wt = null;
         try {
-            wt = c.target(APP_URL + RibrestUtils.getResourceName(sub));
+            wt = c.target(APP_URL + RibrestUtils.getResourceName(sub) + "?limit=999&offset=0");
         } catch (Exception e) {
             if (e instanceof RibrestDefaultException) {
                 throw new RuntimeException(((RibrestDefaultException) e).getError());
@@ -115,5 +143,5 @@ public class StructureTest {
         }
         return wt;
     }
-
+    
 }
