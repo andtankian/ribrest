@@ -6,6 +6,7 @@ import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
 import java.net.URI;
 import javax.persistence.EntityManagerFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.StaticHttpHandler;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.ServiceLocatorFactory;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -61,6 +62,12 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator {
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(ribrest.getCompleteAppUrl()),
                 ribrest.getResourceConfig(),
                 ribrest.getServiceLocator());
+    }
+    
+    void setupStaticServer(HttpServer server){
+        StaticHttpHandler httpHandler = new StaticHttpHandler(ribrest.getStaticSrc());
+        server.getServerConfiguration().addHttpHandler(httpHandler, "/" + ribrest.getStaticPath());
+        RibrestLog.logForced(new StringBuilder("Static file server has been created at: ").append(ribrest.getCompleteStaticServerUrl()).toString());
     }
 
 }

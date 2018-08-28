@@ -11,9 +11,11 @@ public class Ribrest {
 
     private static Ribrest instance;
 
-    private static String DEFAULT_APP_BASE_URL = "http://localhost:2007/";
-    private static String DEFAULT_APP_NAME = "ribrest/";
-    private static String DEFAULT_PERSISTENCE_UNIT = "ribrest";
+    private static final String DEFAULT_APP_BASE_URL = "http://localhost:2007/";
+    private static final String DEFAULT_APP_NAME = "ribrest/";
+    private static final String DEFAULT_PERSISTENCE_UNIT = "ribrest";
+    private final static String DEFAULT_STATIC_PATH = "static";
+    private final static String DEFAULT_STATIC_SRC = "statics";
 
     private ServiceLocator serviceLocator;
     private HttpServer server;
@@ -24,6 +26,8 @@ public class Ribrest {
     private String appBaseUrl;
     private String appName;
     private String persistenceUnitName;
+    private String staticPath;
+    private String staticSrc;
     private String completeAppUrl;
     private boolean debug;
     private RibrestConfiguratorImpl ribrestConfigurator;
@@ -34,6 +38,8 @@ public class Ribrest {
         appBaseUrl = DEFAULT_APP_BASE_URL;
         appName = DEFAULT_APP_NAME;
         persistenceUnitName = DEFAULT_PERSISTENCE_UNIT;
+        staticPath = DEFAULT_STATIC_PATH;
+        staticSrc = DEFAULT_STATIC_SRC;
         ribrestConfigurator = new RibrestConfiguratorImpl();
         resourceConfig = new ResourceConfig();
     }
@@ -60,14 +66,16 @@ public class Ribrest {
         ribrestConfigurator.setupPersistence();
 
         server = ribrestConfigurator.getRunningGrizzlyServer();
+        
+        ribrestConfigurator.setupStaticServer(server);
 
         RibrestLog.logForced(new StringBuilder("Application is up and running at: ")
                 .append(getCompleteAppUrl()).toString());
-        
+
         ribrestConfigurator.setupShutdownHook();
 
     }
-    
+
     public void shutdown() {
         RibrestLog.logForced("Bye :)");
         System.exit(0);
@@ -76,7 +84,7 @@ public class Ribrest {
     void stop() {
         serviceLocator.getService(EntityManagerFactory.class).close();
         server.shutdown();
-        
+
     }
 
     public boolean isDebug() {
@@ -100,17 +108,28 @@ public class Ribrest {
         return instance;
     }
 
+    public Ribrest persistenceUnitName(String persistenceUnitName) {
+        this.persistenceUnitName = persistenceUnitName != null && !persistenceUnitName.isEmpty() ? persistenceUnitName : this.persistenceUnitName;
+        return instance;
+    }
+
+    public Ribrest staticPath(String staticPath) {
+        this.staticPath = staticPath != null && !staticPath.isEmpty() ? staticPath : this.staticPath;
+        this.staticPath = this.staticPath.startsWith("/") ? this.staticPath.substring(1) : this.staticPath;
+        return instance;
+    }
+    
+    public Ribrest staticSrc(String staticSrc){
+        this.staticSrc = staticSrc != null && !staticSrc.isEmpty() ? staticSrc : this.staticSrc;
+        return instance;
+    }
+
     String getAppBaseUrl() {
         return appBaseUrl;
     }
 
     String getAppName() {
         return appName;
-    }
-
-    public Ribrest persistenceUnitName(String persistenceUnitName) {
-        this.persistenceUnitName = persistenceUnitName != null && !persistenceUnitName.isEmpty() ? persistenceUnitName : this.persistenceUnitName;
-        return instance;
     }
 
     String getPersistenceUnitName() {
@@ -120,6 +139,17 @@ public class Ribrest {
     String getCompleteAppUrl() {
         completeAppUrl = completeAppUrl == null ? getAppBaseUrl() + getAppName() : completeAppUrl;
         return completeAppUrl;
+    }
+    
+    String getCompleteStaticServerUrl(){
+        return this.appBaseUrl + this.staticPath;
+    }
+    String getStaticPath(){
+        return this.staticPath;
+    }
+    
+    String getStaticSrc() {
+        return this.staticSrc;
     }
 
     public Ribrest resourceConfig(ResourceConfig resourceConfig) {
