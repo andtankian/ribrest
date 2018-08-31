@@ -11,7 +11,8 @@ import org.glassfish.hk2.api.Factory;
  */
 public class EMFFactory implements Factory<EntityManagerFactory>{
     
-    private EntityManagerFactory emf;
+    
+    private EntityManagerFactory entityManagerFactory;
     
     @Inject
     PersistenceUnitWrapper puw;
@@ -19,13 +20,13 @@ public class EMFFactory implements Factory<EntityManagerFactory>{
 
     @Override
     public EntityManagerFactory provide() {
-        emf = emf != null ? emf : Persistence.createEntityManagerFactory(puw.getPersistenceUnitName());
-        return emf;
+        entityManagerFactory = entityManagerFactory == null ? Persistence.createEntityManagerFactory(puw.getPersistenceUnitName()) : entityManagerFactory;
+        return entityManagerFactory;
     }
 
     @Override
-    public void dispose(EntityManagerFactory t) {
-        emf.close();
+    public void dispose(EntityManagerFactory entityManagerFactory) {
+        entityManagerFactory.close();
     }
     
 }
