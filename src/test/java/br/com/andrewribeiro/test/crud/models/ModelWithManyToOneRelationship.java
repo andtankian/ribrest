@@ -21,33 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.services.miner.abstracts;
+package br.com.andrewribeiro.test.crud.models;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.ws.rs.core.MultivaluedMap;
+import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class QueryMiner {
+@RibrestModel
+@Entity
+public class ModelWithManyToOneRelationship extends AbstractModel{
     
-    public Map<String, Integer> extractLimitAndOffset(MultivaluedMap<String, String> query){
-        Map<String, Integer> limitAndOffset = new HashMap<>();
-        limitAndOffset.put("limit", getIntegerFromStringOrNumber(query.getFirst("limit"), 5));
-        limitAndOffset.put("offset", getIntegerFromStringOrNumber(query.getFirst("offset"), 0));
-        return limitAndOffset;
-    }
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    ModelCrud model;
     
-    private Integer getIntegerFromStringOrNumber(String stringInteger, Integer number){
-        Integer integer;
-        try {
-            integer = Integer.parseInt(stringInteger);
-        }catch(Exception e){
-            integer = number;
-        }
-        
-        return integer;
-    }
 }

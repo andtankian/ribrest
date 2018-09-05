@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -91,6 +92,8 @@ public abstract class AbstractMiner implements Miner {
             fieldHelper.fillEntityAttribute();
         } else if(fieldHelper.attribute.isAnnotationPresent(OneToMany.class)){
             fieldHelper.fillManyEntityAttribute();
+        } else if(fieldHelper.attribute.isAnnotationPresent(ManyToOne.class)){
+            fieldHelper.fillEntityAttribute();
         }
     }
 

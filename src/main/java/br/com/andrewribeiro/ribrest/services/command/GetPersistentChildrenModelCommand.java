@@ -42,6 +42,25 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
                         throw new RuntimeException(e.getMessage());
                     }
                 });
+        
+        model.getAllInverseCollectionModelAttributes().forEach(attribute->{
+            try {
+                attribute.setAccessible(true);
+                Model detachedModel = (Model) attribute.get(model);
+                if(detachedModel.getId() != null){
+                 Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
+                 if(persistedModel == null) {
+                     throw new RuntimeException(new StringBuilder("The child ").append(attribute.getName())
+                             .append(" identified by ").append(detachedModel.getId()).append(" wasn't found.")
+                             .toString());
+                 } else {
+                     attribute.set(model, persistedModel);
+                 }
+                }
+            }catch(Exception ex){
+                throw new RuntimeException(ex.getMessage());
+            }
+        });
     }
 
 }
