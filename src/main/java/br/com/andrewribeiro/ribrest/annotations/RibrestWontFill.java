@@ -21,22 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.crud.models;
+package br.com.andrewribeiro.ribrest.annotations;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@RibrestModel
-@Entity
-public class ModelWithManyToOneRelationship extends AbstractModel{
-    
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    ModelCrud model;
-}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface RibrestWontFill {}

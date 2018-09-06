@@ -1,6 +1,7 @@
 package br.com.andrewribeiro.test.crud.models;
 
 import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.annotations.RibrestWontFill;
 import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,7 @@ public class SonModel extends AbstractModel{
     
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "father_id")
+    @RibrestWontFill
     private FatherModel father;
 
     public String getName() {

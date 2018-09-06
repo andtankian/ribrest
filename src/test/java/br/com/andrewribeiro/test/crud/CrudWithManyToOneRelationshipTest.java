@@ -24,6 +24,7 @@
 package br.com.andrewribeiro.test.crud;
 
 import br.com.andrewribeiro.test.RibrestTest;
+import br.com.andrewribeiro.test.crud.models.ChildModel;
 import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import br.com.andrewribeiro.test.crud.models.ModelWithManyToOneRelationship;
 import javax.ws.rs.core.Form;
@@ -42,7 +43,6 @@ import org.junit.Test;
 public class CrudWithManyToOneRelationshipTest extends RibrestTest{
     
     @Test
-    @Ignore
     public void postManyToOneModel(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("model.name", "Child Of Many To One Model");
@@ -52,6 +52,7 @@ public class CrudWithManyToOneRelationshipTest extends RibrestTest{
     }
     
     @Test
+//    @Ignore
     public void postManyToOneModelWithExistentChild(){
         Response response = post(ModelCrud.class, new Form());
         

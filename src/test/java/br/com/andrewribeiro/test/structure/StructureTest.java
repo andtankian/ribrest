@@ -17,15 +17,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static br.com.andrewribeiro.ribrest.utils.RibrestUtils.*;
-import br.com.andrewribeiro.test.structure.models.ConcreteModel;
+import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import br.com.andrewribeiro.test.structure.models.NotAnnotatedWithRibrestModelAnnotation;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
-import javax.ws.rs.core.MultivaluedMap;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -108,12 +106,12 @@ public class StructureTest {
     
     @Test
     public void limitAndOffset(){
-        Response response = buildWebTarget(ConcreteModel.class).request(MediaType.APPLICATION_JSON).post(Entity.form(new Form()));
+        Response response = buildWebTarget(ModelCrud.class).request(MediaType.APPLICATION_JSON).post(Entity.form(new Form()));
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         
         
-        response = buildWebTarget(ConcreteModel.class).request(MediaType.APPLICATION_JSON).get();
+        response = buildWebTarget(ModelCrud.class).request(MediaType.APPLICATION_JSON).get();
         
         String responseText = response.readEntity(String.class);
         JSONObject jsonObject = new JSONObject(responseText);

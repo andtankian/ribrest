@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import br.com.andrewribeiro.ribrest.annotations.RibrestWontFill;
 
 /**
  *
@@ -92,7 +93,7 @@ public abstract class AbstractMiner implements Miner {
             fieldHelper.fillEntityAttribute();
         } else if(fieldHelper.attribute.isAnnotationPresent(OneToMany.class)){
             fieldHelper.fillManyEntityAttribute();
-        } else if(fieldHelper.attribute.isAnnotationPresent(ManyToOne.class)){
+        } else if(fieldHelper.attribute.isAnnotationPresent(ManyToOne.class) && !fieldHelper.attribute.isAnnotationPresent(RibrestWontFill.class)){
             fieldHelper.fillEntityAttribute();
         }
     }

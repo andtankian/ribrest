@@ -47,7 +47,7 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
             try {
                 attribute.setAccessible(true);
                 Model detachedModel = (Model) attribute.get(model);
-                if(detachedModel.getId() != null){
+                if(detachedModel != null && detachedModel.getId() != null){
                  Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
                  if(persistedModel == null) {
                      throw new RuntimeException(new StringBuilder("The child ").append(attribute.getName())
