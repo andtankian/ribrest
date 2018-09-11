@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -49,7 +47,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
                 if (repetitiveModels.contains(modelInstance)) {
                     attribute.set(model, null);
                 } else {
-                    populateRepetiveModels(model);
+                    populateRepetiveModels(modelInstance);
                     clearAllModelCircularReferences(modelInstance);
                 }
             } catch (Exception e) {

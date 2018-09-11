@@ -6,7 +6,7 @@
     <groupId>com.github.andtankian</groupId>
     <artifactId>Ribrest</artifactId>
     <packaging>jar</packaging>
-    <version>1.17.1-SNAPSHOT</version>
+    <version>1.17.2-SNAPSHOT</version>
     <name>Ribrest</name>
     <description>
         Ribrest Framework - A simple Java Restful framework that truly improve your productivity when developing restful based webservices in Java.
@@ -142,7 +142,7 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.5</version>
@@ -155,7 +155,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
