@@ -44,7 +44,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
             attribute.setAccessible(true);
             try {
                 Model modelInstance = (Model) attribute.get(model);
-                if (repetitiveModels.contains(modelInstance)) {
+                if (repetitiveModels.contains(modelInstance) || modelInstance == null) {
                     attribute.set(model, null);
                 } else {
                     populateRepetiveModels(modelInstance);
@@ -62,7 +62,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
             try {
                 Collection<Model> collectionInstance = (Collection) attribute.get(model);
                 collectionInstance.forEach(modelInstance -> {
-                    if (repetitiveModels.contains(modelInstance)) {
+                    if (repetitiveModels.contains(modelInstance) || modelInstance == null) {
                         try {
                             attribute.set(model, null);
                         } catch (IllegalArgumentException | IllegalAccessException ex) {
