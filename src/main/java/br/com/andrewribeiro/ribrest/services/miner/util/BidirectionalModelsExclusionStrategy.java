@@ -26,6 +26,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
 
     public void removeCircularReferences() {
         models.forEach(model -> {
+            repetitiveModels.clear();
             clearAllModelCircularReferences(model);
         });
     }
@@ -61,18 +62,20 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
             attribute.setAccessible(true);
             try {
                 Collection<Model> collectionInstance = (Collection) attribute.get(model);
-                collectionInstance.forEach(modelInstance -> {
-                    if (repetitiveModels.contains(modelInstance) || modelInstance == null) {
-                        try {
-                            attribute.set(model, null);
-                        } catch (IllegalArgumentException | IllegalAccessException ex) {
-                            throw new RuntimeException(ex.getMessage());
+                if (collectionInstance != null) {
+                    collectionInstance.forEach(modelInstance -> {
+                        if (repetitiveModels.contains(modelInstance) || modelInstance == null) {
+                            try {
+                                attribute.set(model, null);
+                            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                                throw new RuntimeException(ex.getMessage());
+                            }
+                        } else {
+                            populateRepetiveModels(modelInstance);
+                            clearAllModelCircularReferences(modelInstance);
                         }
-                    } else {
-                        populateRepetiveModels(modelInstance);
-                        clearAllModelCircularReferences(modelInstance);
-                    }
-                });
+                    });
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -108,9 +111,11 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
                         attribute.setAccessible(true);
                         try {
                             tempCollection = (Collection) attribute.get(model);
-                            repetitiveModels.addAll((Set) tempCollection.stream().map(modelInstance -> {
-                                return modelInstance;
-                            }).collect(Collectors.toSet()));
+                            if (tempCollection != null) {
+                                repetitiveModels.addAll((Set) tempCollection.stream().map(modelInstance -> {
+                                    return modelInstance;
+                                }).collect(Collectors.toSet()));
+                            }
                         } catch (Exception e) {
                             throw new RuntimeException();
                         }

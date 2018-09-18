@@ -54,6 +54,7 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
                              .append(" identified by ").append(detachedModel.getId()).append(" wasn't found.")
                              .toString());
                  } else {
+                     persistedModel.merge(detachedModel);
                      attribute.set(model, persistedModel);
                  }
                 }
