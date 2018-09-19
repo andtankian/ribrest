@@ -6,7 +6,7 @@
     <groupId>com.github.andtankian</groupId>
     <artifactId>Ribrest</artifactId>
     <packaging>jar</packaging>
-    <version>1.17.4-SNAPSHOT</version>
+    <version>1.17.4.1</version>
     <name>Ribrest</name>
     <description>
         Ribrest Framework - A simple Java Restful framework that truly improve your productivity when developing restful based webservices in Java.

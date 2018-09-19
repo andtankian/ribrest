@@ -1,3 +1,4 @@
+
 # Ribrest Framework
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.andtankian/Ribrest/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
 
@@ -50,7 +51,7 @@ Import the Ribrest as a maven dependency
      <dependency>
           <groupId>com.github.andtankian</groupId>
           <artifactId>Ribrest</artifactId>
-          <version>1.10.3</version>
+          <version>1.17.4</version>
       </dependency>
 
 
