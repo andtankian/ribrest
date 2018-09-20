@@ -23,9 +23,9 @@
  */
 package br.com.andrewribeiro.test.structure.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.model.AbstractModel;
 import br.com.andrewribeiro.test.structure.dispatchers.CustomDispatcher;
 
 /**

@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.crud.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import javax.persistence.Entity;
 
 /**
@@ -9,7 +9,7 @@ import javax.persistence.Entity;
  */
 @RibrestModel
 @Entity
-public class ModelCrud extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel{
+public class ModelCrud extends br.com.andrewribeiro.ribrest.core.model.AbstractModel{
     
     private String name;
 

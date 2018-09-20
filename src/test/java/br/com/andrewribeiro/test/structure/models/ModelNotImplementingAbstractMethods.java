@@ -1,9 +1,9 @@
 package br.com.andrewribeiro.test.structure.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import java.lang.reflect.Field;
 import java.util.List;
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.core.model.Model;
 
 /**
  *

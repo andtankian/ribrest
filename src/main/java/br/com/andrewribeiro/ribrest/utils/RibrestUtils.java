@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.ribrest.utils;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;

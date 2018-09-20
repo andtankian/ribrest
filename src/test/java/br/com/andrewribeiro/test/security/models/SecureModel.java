@@ -23,11 +23,11 @@
  */
 package br.com.andrewribeiro.test.security.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.model.AbstractModel;
 import javax.persistence.Entity;
-import br.com.andrewribeiro.ribrest.filters.annotations.RibrestJWTSecure;
+import br.com.andrewribeiro.ribrest.services.filters.annotations.RibrestJWTSecure;
 
 /**
  *

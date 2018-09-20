@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.test;
 
 import br.com.andrewribeiro.ribrest.Ribrest;
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;

@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest;
 
-import br.com.andrewribeiro.ribrest.controller.Facade;
+import br.com.andrewribeiro.ribrest.core.controller.Facade;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.process.Inflector;
@@ -25,7 +25,7 @@ class RibrestInflector implements Inflector<ContainerRequestContext, Response>{
         ribrestInstance.getServiceLocator().inject(facade);
         ribrestInstance.getServiceLocator().postConstruct(facade);
         facade.setContainerRequest((ContainerRequest) containerRequestContainer);
-        return facade.process();
+        return facade.processRequest();
     }
     
 }

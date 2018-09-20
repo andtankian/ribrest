@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.ribrest.services.command;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.model.Model;
 import javax.persistence.OneToOne;
 
 /**

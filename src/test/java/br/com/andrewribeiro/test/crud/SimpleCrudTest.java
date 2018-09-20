@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.crud;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.structure.models.ConcreteModel;

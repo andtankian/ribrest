@@ -1,10 +1,9 @@
 package br.com.andrewribeiro.ribrest.services.dispatcher;
 
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
-import br.com.andrewribeiro.ribrest.services.Result;
-import br.com.andrewribeiro.ribrest.services.miner.interfaces.Miner;
-import br.com.andrewribeiro.ribrest.services.miner.util.BidirectionalModelsExclusionStrategy;
+import br.com.andrewribeiro.ribrest.core.model.Model;
+import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.dtos.Result;
+import br.com.andrewribeiro.ribrest.services.miner.Miner;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;

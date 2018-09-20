@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest.services.command;
 
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import javax.inject.Inject;
 
 /**

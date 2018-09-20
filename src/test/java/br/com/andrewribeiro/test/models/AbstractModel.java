@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.test.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.model.Model;
 
 /**
  *

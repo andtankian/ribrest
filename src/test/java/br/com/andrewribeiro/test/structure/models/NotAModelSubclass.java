@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.structure.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 
 /**
  *

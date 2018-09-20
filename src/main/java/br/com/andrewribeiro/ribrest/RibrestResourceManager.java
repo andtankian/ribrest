@@ -1,9 +1,9 @@
 package br.com.andrewribeiro.ribrest;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.controller.Facade;
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.controller.Facade;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;

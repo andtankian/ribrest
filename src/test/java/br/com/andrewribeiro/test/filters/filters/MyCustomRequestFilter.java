@@ -23,7 +23,7 @@
  */
 package br.com.andrewribeiro.test.filters.filters;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestFilter;
 import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

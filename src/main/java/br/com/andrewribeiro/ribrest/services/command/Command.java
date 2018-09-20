@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest.services.command;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 
 /**
  *

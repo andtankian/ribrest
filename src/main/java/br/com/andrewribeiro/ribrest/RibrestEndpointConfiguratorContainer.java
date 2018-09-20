@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
 
 /**
  *

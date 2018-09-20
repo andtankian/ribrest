@@ -2,7 +2,7 @@ package br.com.andrewribeiro.test.structure;
 
 import br.com.andrewribeiro.test.structure.models.NotAModelSubclass;
 import br.com.andrewribeiro.ribrest.Ribrest;
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.models.AbstractModel;
 import br.com.andrewribeiro.test.structure.models.ConcreteModelButNotAJPAEntity;

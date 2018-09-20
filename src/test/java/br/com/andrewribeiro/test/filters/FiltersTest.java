@@ -23,7 +23,7 @@
  */
 package br.com.andrewribeiro.test.filters;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.filters.models.FilterModel;
 import javax.ws.rs.core.Response;

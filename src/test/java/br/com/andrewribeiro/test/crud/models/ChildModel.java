@@ -7,7 +7,7 @@ import javax.persistence.Entity;
  * @author Andrew Ribeiro
  */
 @Entity
-public class ChildModel extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel {
+public class ChildModel extends br.com.andrewribeiro.ribrest.core.model.AbstractModel {
 
     private String name;
 

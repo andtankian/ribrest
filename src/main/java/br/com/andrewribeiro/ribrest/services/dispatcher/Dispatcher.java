@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.ribrest.services.dispatcher;
 
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import javax.ws.rs.core.Response;
 
 /**

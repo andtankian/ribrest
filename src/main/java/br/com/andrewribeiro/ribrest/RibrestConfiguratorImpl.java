@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.ribrest;
 
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
-import br.com.andrewribeiro.ribrest.services.cdi.hk2.RibrestSLPopulator;
+import br.com.andrewribeiro.ribrest.services.cdi.RibrestSLPopulator;
 import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
 import java.net.URI;
 import javax.persistence.EntityManagerFactory;

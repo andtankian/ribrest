@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.command;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.command.models.ModelWithAfterCommandsSucceed;
 import br.com.andrewribeiro.test.command.models.ModelWithBeforeCommandsFailure;

@@ -8,7 +8,7 @@ import javax.persistence.OneToOne;
  * @author Andrew Ribeiro
  */
 @Entity
-public class ModelChildWithBidirectionalRelationship extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel{
+public class ModelChildWithBidirectionalRelationship extends br.com.andrewribeiro.ribrest.core.model.AbstractModel{
     
     @OneToOne(mappedBy = "child")
     ModelParentWithBidirectionalRelationship parent;

@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.test.command.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestEndpointConfigurator;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import br.com.andrewribeiro.test.command.commands.BeforeCommandFailure;
 import javax.persistence.Entity;
 
@@ -13,6 +13,6 @@ import javax.persistence.Entity;
 @RibrestModel(defaultEndpointsConfigurators = {
     @RibrestEndpointConfigurator(beforeCommands = BeforeCommandFailure.class)
 })
-public class ModelWithBeforeCommandsFailure extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel{
+public class ModelWithBeforeCommandsFailure extends br.com.andrewribeiro.ribrest.core.model.AbstractModel{
 
 }

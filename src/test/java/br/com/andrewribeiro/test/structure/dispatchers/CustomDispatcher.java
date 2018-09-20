@@ -23,7 +23,7 @@
  */
 package br.com.andrewribeiro.test.structure.dispatchers;
 
-import br.com.andrewribeiro.ribrest.services.FlowContainer;
+import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;

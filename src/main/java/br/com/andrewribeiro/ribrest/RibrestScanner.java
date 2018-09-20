@@ -1,7 +1,7 @@
 package br.com.andrewribeiro.ribrest;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestFilter;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.util.ArrayList;

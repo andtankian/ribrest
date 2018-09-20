@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.command.commands;
 
-import br.com.andrewribeiro.ribrest.model.interfaces.Model;
+import br.com.andrewribeiro.ribrest.core.model.Model;
 import br.com.andrewribeiro.ribrest.services.command.AbstractCommand;
 
 /**

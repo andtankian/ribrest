@@ -23,7 +23,7 @@
  */
 package br.com.andrewribeiro.test.security;
 
-import br.com.andrewribeiro.ribrest.exceptions.RibrestDefaultException;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.security.models.SecureModel;
 import br.com.andrewribeiro.test.RibrestTest;

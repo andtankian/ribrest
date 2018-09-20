@@ -1,6 +1,6 @@
 package br.com.andrewribeiro.test.crud.models;
 
-import br.com.andrewribeiro.ribrest.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import javax.persistence.OneToOne;
  */
 @RibrestModel
 @Entity
-public class ModelWithBidirectionalRelationshipAndSameChildClassType extends br.com.andrewribeiro.ribrest.model.abstracts.AbstractModel{
+public class ModelWithBidirectionalRelationshipAndSameChildClassType extends br.com.andrewribeiro.ribrest.core.model.AbstractModel{
     
     @Column(length = 20)
     private String name;

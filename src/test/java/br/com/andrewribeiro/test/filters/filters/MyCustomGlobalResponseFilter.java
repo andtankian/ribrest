@@ -27,7 +27,7 @@ import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import br.com.andrewribeiro.ribrest.annotations.RibrestFilter;
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestFilter;
 import javax.ws.rs.ext.Provider;
 /**
  *
