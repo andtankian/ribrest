@@ -25,38 +25,34 @@ public class SimpleCrudTest extends RibrestTest {
     @Test
     //@Ignore
     public void testGetModelMapped() throws JSONException {
-
-        Response r = get(ConcreteModel.class);
-
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
+        get(ConcreteModel.class);
+        wasNoContent();
+        logResponse();
     }
 
     @Test
     //@Ignore
     public void testCreateModel() throws JSONException {
-
-        Response r = post(ModelCrud.class, new Form("name", "Andrew Ribeiro"));
-
-        assertEquals(201, r.getStatus());
+        post(ModelCrud.class, new Form("name", "Andrew Ribeiro"));
+        wasCreated();
+        logResponse();
     }
 
     @Test
     //@Ignore
-    public void testUpdateModel() throws JSONException, RibrestDefaultException {
+    public void testUpdateModel() throws JSONException {
         MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
         mvm.add("name", "Andrew Ribeiro");
-        Response responseForPost = post(ModelCrud.class, new Form(mvm));
+        post(ModelCrud.class, new Form(mvm));
+        wasCreated();
+        logResponse();
         
-        assertEquals(Response.Status.CREATED.getStatusCode(), responseForPost.getStatus());
-        
-        String responseForPostString = responseForPost.readEntity(String.class);
-        
-        JSONObject jsonObjectForPost = new JSONObject(responseForPostString);
+        JSONObject jsonObjectForPost = new JSONObject(responseText);
         String idModel = String.valueOf(jsonObjectForPost.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getInt("id"));
         mvm.putSingle("name", "Andrew Ribeiro Santos");
-        Response r = put(RibrestUtils.getResourceName(ModelCrud.class) + "/" + idModel, new Form(mvm));
-        
-        assertEquals(200, r.getStatus());
+        put(ModelCrud.class, "/" + idModel, new Form(mvm));
+        wasOk();
+        logResponse();        
     }
 
 }

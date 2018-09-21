@@ -29,17 +29,17 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
         
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("child.name", "Child Name");
-        Response response = post(ModelWithOneToOneRelationship.class, new Form(mvm));
+        Response response = postResponse(ModelWithOneToOneRelationship.class, new Form(mvm));
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void puttingAnInexistentModel() throws RibrestDefaultException, JSONException{
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "New Parent Name");
-        Response response = put(RibrestUtils.getResourceName(ModelWithOneToOneRelationship.class) + "/99999", new Form(mvm));
+        Response response = putResponse(RibrestUtils.getResourceName(ModelWithOneToOneRelationship.class) + "/99999", new Form(mvm));
         
         Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
         
@@ -50,24 +50,24 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void postingModelWithBidirectionalRelationshipButMissingChild() {
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "I'm Parent Model");
-        Response response = post(ModelParentWithBidirectionalRelationship.class, new Form(mvm));
+        Response response = postResponse(ModelParentWithBidirectionalRelationship.class, new Form(mvm));
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void gettingModelsWithBidirectionalRelationship(){
         
         for (int i = 0; i < 10; i++) {
             postingModelWithBidirectionalRelationshipButMissingChild();            
         }
         
-        Response response = get(ModelParentWithBidirectionalRelationship.class);
+        Response response = getResponse(ModelParentWithBidirectionalRelationship.class);
         
         Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         
@@ -75,14 +75,14 @@ public class CrudWithOneToOneRelationships extends RibrestTest{
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void postingModelWithBidirectionalRelationshipAndSameClassType(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         
         mvm.add("name", "Parent");
         mvm.add("child1.name", "My name is child 1");
         
-        Response response = post(ModelWithBidirectionalRelationshipAndSameChildClassType.class, new Form(mvm));
+        Response response = postResponse(ModelWithBidirectionalRelationshipAndSameChildClassType.class, new Form(mvm));
         
         Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
     }

@@ -12,9 +12,9 @@ public class RibrestDefaultExceptionFactory {
     private static final Map<String, String> map = new HashMap<>();
 
     static {
-        map.put(RibrestDefaultExceptionConstants.RESOURCE_DOESNT_IMPLEMENTS_ABSTRACT_METHODS, new StringBuilder("The created resource: ")
+        map.put(RibrestDefaultExceptionConstants.RESOURCE_DOESNT_IMPLEMENT_ABSTRACT_METHODS, new StringBuilder("The created resource: ")
                 .append("{{rn}}")
-                .append(" is a IModel subclass but not implements its abstract methods.")
+                .append(" is a Model but it doesn't implement abstract methods.")
                 .toString()
         );
         map.put(RibrestDefaultExceptionConstants.RESOURCE_IS_ABSTRACT, new StringBuilder("The created resource: ")

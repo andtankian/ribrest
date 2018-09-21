@@ -18,7 +18,7 @@ public class RibrestUtils {
     public final static RibrestJWT RibrestJWT = new RibrestJWT();
     public final static RibrestDefaultResponses RibrestDefaultResponses = new RibrestDefaultResponses();
 
-    public static String getResourceName(Class c) throws RibrestDefaultException {
+    public static String getResourceName(Class c) {
 
         if (c == null) {
             throw new RibrestDefaultException("Ribrest couldn't get an valid resource name by this class because it's null.");

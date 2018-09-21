@@ -21,52 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.filters;
 
-import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.test.RibrestTest;
-import br.com.andrewribeiro.test.filters.models.FilterModel;
-import org.junit.Test;
+package br.com.andrewribeiro.ribrest.services.miner;
+
+import br.com.andrewribeiro.ribrest.core.model.Model;
+import java.lang.reflect.Field;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-public class FiltersTest extends RibrestTest {
+public class RibrestAttributeContainer {
 
-    @Test
-//    @Ignore
-    public void customRequestSpecificFilter() throws RibrestDefaultException {
-        customHttpGetToFilter("/custom");
+    public RibrestAttributeContainer(Field attribute, Model parentInstance, String parameterName) {
+        this.attribute = attribute;
+        this.parentInstance = parentInstance;
+        this.parameterName = parameterName;
+    }
+    
+    
+    
+    private Field attribute;
+    private Model parentInstance;
+    private String parameterName;
+
+    public Field getAttribute() {
+        return attribute;
     }
 
-    @Test
-//    @Ignore
-    public void customRequestGlobalFilter() {
-        simpleHttpGetToFilter();
+    public void setAttribute(Field attribute) {
+        this.attribute = attribute;
     }
 
-    @Test
-    public void customResponseSpecificFilter() throws RibrestDefaultException {
-        customHttpGetToFilter("/custom");
+    public Model getParentInstance() {
+        return parentInstance;
     }
 
-    @Test
-//    @Ignore
-    public void customResponseGlobalFilter() {
-        simpleHttpGetToFilter();
+    public void setParentInstance(Model parentInstance) {
+        this.parentInstance = parentInstance;
     }
 
-    private void simpleHttpGetToFilter() {
-        get(FilterModel.class);
-        wasNoContent();
-        logResponse();
+    public String getParameterName() {
+        return parameterName;
     }
 
-    private void customHttpGetToFilter(String path) throws RibrestDefaultException {
-        get(FilterModel.class, path);
-        wasNoContent();
-        logResponse();
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
 }

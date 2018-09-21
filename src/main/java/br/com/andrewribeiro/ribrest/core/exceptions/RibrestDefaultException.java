@@ -4,7 +4,7 @@ package br.com.andrewribeiro.ribrest.core.exceptions;
  *
  * @author Andrew Ribeiro
  */
-public class RibrestDefaultException extends Exception{
+public class RibrestDefaultException extends RuntimeException{
 
     public RibrestDefaultException(String error) {
         this.error = error;

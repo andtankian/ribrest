@@ -21,16 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.test.structure;
+package br.com.andrewribeiro.test.patterns;
 
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.structure.dispatchers.CustomDispatcher;
 import br.com.andrewribeiro.test.structure.models.ModelWithCustomDispatcher;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.Response;
-import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -42,14 +37,9 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class CustomDispatcherTest extends RibrestTest{
     
     @Test
-    public void customDispatcherReturn(){
-        
-        Response response = get(ModelWithCustomDispatcher.class);
-        
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
-        String responseText = response.readEntity(String.class);
-        
+    public void customDispatcherReturn(){        
+        get(ModelWithCustomDispatcher.class);
+        wasOk();        
         JSONAssert.assertEquals("{\"message\":\"" + CustomDispatcher.CUSTOM_RETURN_MESSAGE + "\"}", responseText, JSONCompareMode.STRICT);
     }
   

@@ -17,27 +17,26 @@ import org.junit.Test;
 public class CommandsTest extends RibrestTest {
 
     @Test
-    //@Ignore
-    public void beforeCommandSucceed() throws RibrestDefaultException {
-
-        Response response = get(ModelWithBeforeCommandsSucceed.class, "/beforecommand1");
-
-        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+//    @Ignore
+    public void beforeCommandSucceed() {
+        get(ModelWithBeforeCommandsSucceed.class, "/beforecommand1");
+        wasNoContent();
+        logResponse();
     }
     
     @Test
 //    @Ignore
     public void beforeCommandFailure() {
-        Response response = get(ModelWithBeforeCommandsFailure.class);
-        
-        Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
+        get(ModelWithBeforeCommandsFailure.class);
+        wasPreConditionFailed();
+        logResponse();
     }
 
     @Test
 //    @Ignore
     public void afterCommandSucceed(){
-        Response response = get(ModelWithAfterCommandsSucceed.class);
-        
-        Assert.assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+       get(ModelWithAfterCommandsSucceed.class);
+       wasNoContent();
+       logResponse();
     }
 }

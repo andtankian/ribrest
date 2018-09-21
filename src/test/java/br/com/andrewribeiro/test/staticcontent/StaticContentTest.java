@@ -24,8 +24,6 @@
 package br.com.andrewribeiro.test.staticcontent;
 
 import br.com.andrewribeiro.test.RibrestTest;
-import javax.ws.rs.core.Response;
-import junit.framework.Assert;
 import org.junit.Test;
 
 /**
@@ -36,14 +34,16 @@ public class StaticContentTest extends RibrestTest{
     
     @Test
     public void getNonExistentImage(){
-        Response response = get("http://localhost:2007/static/nonexistent.jpg");
-        Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        get("http://localhost:2007/static/nonexistent.jpg");
+        wasNotFound();
+        logResponse();
     }
     
     @Test
     public void getExistentImage(){
-        Response response = get("http://localhost:2007/static/existent.jpg");
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        get("http://localhost:2007/static/existent.jpg");
+        wasOk();
+        logResponse();
     }
     
 }

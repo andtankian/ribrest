@@ -31,18 +31,18 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
 
         for (int i = 0; i < 5; i++) {
             mvm.putSingle("name", "Kid " + i);
-            responseForKids = post(SonModel.class, new Form(mvm));
+            responseForKids = postResponse(SonModel.class, new Form(mvm));
             Assert.assertEquals(Response.Status.CREATED.getStatusCode(), responseForKids.getStatus());
             responseForKidsString = responseForKids.readEntity(String.class);
             JSONObject kidsResponseJson = new JSONObject(responseForKidsString);
             kidsId.add("kids.id", String.valueOf(kidsResponseJson.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getInt("id")));
         }
 
-        Response responseForFather = post(FatherModel.class, new Form(kidsId));
+        Response responseForFather = postResponse(FatherModel.class, new Form(kidsId));
 
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), responseForFather.getStatus());
 
-        responseForFather = get(FatherModel.class);
+        responseForFather = getResponse(FatherModel.class);
 
         String responseForFatherString = responseForFather.readEntity(String.class);
 
@@ -58,7 +58,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
 
         getFathersAndItsKids();
 
-        Response responseForKids = get(SonModel.class);
+        Response responseForKids = getResponse(SonModel.class);
         Assert.assertEquals(Response.Status.OK.getStatusCode(), responseForKids.getStatus());
         String responseForKidsString = responseForKids.readEntity(String.class);
 
@@ -84,7 +84,7 @@ public class GetOnlyWithOneToManyTest extends RibrestTest {
 //    @Ignore
     public void getSingleExistentFather() throws JSONException, RibrestDefaultException{
         
-        Response responseForPostFather = post(FatherModel.class, new Form());
+        Response responseForPostFather = postResponse(FatherModel.class, new Form());
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), responseForPostFather.getStatus());
         

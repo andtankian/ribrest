@@ -20,6 +20,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestWontFill;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultExceptionConstants;
+import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultExceptionFactory;
+import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 
 /**
  *
@@ -30,25 +33,30 @@ public abstract class AbstractMiner implements Miner {
     @Inject
     protected FlowContainer flowContainer;
 
-    protected MultivaluedMap<String, String> formMap;
-    protected MultivaluedMap<String, String> queryMap;
-    protected MultivaluedMap<String, String> pathMap;
-    protected MultivaluedMap<String, String> headerMap;
+    RequestMaps requestMaps;
     protected List accepts;
 
     private List ignored;
 
     @Override
     public void extractDataFromRequest(ContainerRequest containerRequest) throws RibrestDefaultException {
-        getDataObjects(containerRequest);
+        getRequestMaps(containerRequest);
     }
 
     @Override
     public void mineRequest(ContainerRequest containerRequest) {
-        getDataObjects(containerRequest);
+        getRequestMaps(containerRequest);
+        Model model = null;
+        try {
+            model = flowContainer.getModel();
+
+            ModelExplorer modelExplorer = new ModelExplorer(model);
+            modelExplorer.fillModelWithData(requestMaps);
+        } catch (UnsupportedOperationException ex) {
+            throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_DOESNT_IMPLEMENT_ABSTRACT_METHODS, RibrestUtils.getResourceName(model.getClass()));
+        } catch (Exception e) {
+        }
     }
-    
-    
 
     @Override
     public List extractIgnoredFields() {
@@ -60,45 +68,36 @@ public abstract class AbstractMiner implements Miner {
         return new ArrayList(ignored);
     }
 
-    private void getDataObjects(ContainerRequest containerRequest) {
+    private void getRequestMaps(ContainerRequest containerRequest) {
         Form form = containerRequest.readEntity(Form.class);
-        formMap = form.asMap();
+        MultivaluedMap<String, String> formMap = form.asMap();
 
         UriInfo u = containerRequest.getUriInfo();
-        queryMap = u.getQueryParameters();
+        MultivaluedMap<String, String> queryMap = u.getQueryParameters();
 
-        pathMap = u.getPathParameters();
+        MultivaluedMap<String, String> pathMap = u.getPathParameters();
 
-        headerMap = containerRequest.getHeaders();
+        MultivaluedMap<String, String> headerMap = containerRequest.getHeaders();
 
         accepts = queryMap != null ? queryMap.get("accepts") : new ArrayList();
         accepts = accepts != null ? accepts : new ArrayList();
-        
+
         Map<String, Integer> limitAndOffset = new QueryMiner().extractLimitAndOffset(queryMap);
-        
+
         flowContainer.getHolder().getSm().setLimit(limitAndOffset.get("limit"));
         flowContainer.getHolder().getSm().setOffset(limitAndOffset.get("offset"));
-    }
 
-    protected void fillModel(Model model) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-        try {
-            model.setId(Long.parseLong(pathMap.getFirst("id")));
-        } catch (NumberFormatException nfe) {}
-
-        for (Field attribute : model.getAllAttributesExceptsId()) {
-            fillAttribute(new FieldHelper(attribute, model, attribute.getName()));
-        }
+        requestMaps =  new RequestMaps(formMap, queryMap, pathMap, headerMap);
     }
 
     private void fillAttribute(FieldHelper fieldHelper) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
         if (fieldHelper.attribute.getType() == String.class
                 || fieldHelper.attribute.getType() == Long.class) {
-            fieldHelper.fillNonEntityAttribute();
         } else if (fieldHelper.attribute.isAnnotationPresent(OneToOne.class)) {
             fieldHelper.fillEntityAttribute();
-        } else if(fieldHelper.attribute.isAnnotationPresent(OneToMany.class)){
+        } else if (fieldHelper.attribute.isAnnotationPresent(OneToMany.class)) {
             fieldHelper.fillManyEntityAttribute();
-        } else if(fieldHelper.attribute.isAnnotationPresent(ManyToOne.class) && !fieldHelper.attribute.isAnnotationPresent(RibrestWontFill.class)){
+        } else if (fieldHelper.attribute.isAnnotationPresent(ManyToOne.class) && !fieldHelper.attribute.isAnnotationPresent(RibrestWontFill.class)) {
             fieldHelper.fillEntityAttribute();
         }
     }
@@ -122,18 +121,13 @@ public abstract class AbstractMiner implements Miner {
         String parameterName;
         Object parameterValue;
 
-        void fillNonEntityAttribute() throws IllegalArgumentException, IllegalAccessException {
-            parameterValue = formMap.getFirst(parameterName);
-            fill();
-        }
-
         void fillEntityAttribute() throws InstantiationException, IllegalAccessException {
             parameterValue = attribute.getType().newInstance();
             fillChildModel((Model) parameterValue, attribute.getName());
             fill();
         }
-        
-        void fillManyEntityAttribute() throws InstantiationException, IllegalAccessException{
+
+        void fillManyEntityAttribute() throws InstantiationException, IllegalAccessException {
             Collection collection = getCollectionInstance();
             Class collectionType = extractCollectionTypedClass();
             getChildrenIds().forEach(stringId -> {
@@ -142,18 +136,18 @@ public abstract class AbstractMiner implements Miner {
                     model.setId(Long.parseLong(stringId));
                     fillInverseAttributeInRelationship(model);
                     collection.add(model);
-                } catch(Exception e){
+                } catch (Exception e) {
                     e.toString();
                 }
             });
             parameterValue = collection;
             fill();
         }
-        
-        void fillInverseAttributeInRelationship(Model model){
+
+        void fillInverseAttributeInRelationship(Model model) {
             model.getAllInverseCollectionModelAttributes()
                     .forEach(attribute -> {
-                        if(attribute.getType().getSimpleName().equals(this.model.getClass().getSimpleName())){
+                        if (attribute.getType().getSimpleName().equals(this.model.getClass().getSimpleName())) {
                             attribute.setAccessible(true);
                             try {
                                 attribute.set(model, this.model);
@@ -176,44 +170,43 @@ public abstract class AbstractMiner implements Miner {
 
             return parameterValue;
         }
-        
-        private Class extractCollectionTypedClass(){
+
+        private Class extractCollectionTypedClass() {
             Class collectionType = null;
-            if(attributeIsACollection()){
+            if (attributeIsACollection()) {
                 ParameterizedType type = (ParameterizedType) attribute.getGenericType();
                 collectionType = (Class) type.getActualTypeArguments()[0];
             }
-            
+
             return collectionType;
         }
-        
-        private boolean attributeIsACollection(){
+
+        private boolean attributeIsACollection() {
             return Collection.class.isAssignableFrom(attribute.getType());
         }
-        
-        private boolean attributeIsASet(){
+
+        private boolean attributeIsASet() {
             return Set.class.isAssignableFrom(attribute.getType());
         }
-        
-        private boolean attributeIsList(){
+
+        private boolean attributeIsList() {
             return List.class.isAssignableFrom(attribute.getType());
         }
-        
-        private List<String> getChildrenIds(){
-            List childrenId = formMap.get(parameterName + ".id");
-            return childrenId == null ? new ArrayList() : childrenId;
+
+        private List<String> getChildrenIds() {
+            return null;
         }
-        
-        private Collection getCollectionInstance(){
+
+        private Collection getCollectionInstance() {
             Collection collection;
-            if(attributeIsASet()){
+            if (attributeIsASet()) {
                 collection = new HashSet();
-            } else if(attributeIsList()){
+            } else if (attributeIsList()) {
                 collection = new ArrayList();
             } else {
                 collection = null;
             }
-            
+
             return collection;
         }
     }

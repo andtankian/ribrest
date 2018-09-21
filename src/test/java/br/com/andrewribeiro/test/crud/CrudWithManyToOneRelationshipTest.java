@@ -46,7 +46,7 @@ public class CrudWithManyToOneRelationshipTest extends RibrestTest{
     public void postManyToOneModel(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("model.name", "Child Of Many To One Model");
-        Response response = post(ModelWithManyToOneRelationship.class, new Form(mvm));
+        Response response = postResponse(ModelWithManyToOneRelationship.class, new Form(mvm));
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
@@ -54,7 +54,7 @@ public class CrudWithManyToOneRelationshipTest extends RibrestTest{
     @Test
 //    @Ignore
     public void postManyToOneModelWithExistentChild(){
-        Response response = post(ModelCrud.class, new Form());
+        Response response = postResponse(ModelCrud.class, new Form());
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         String responseText = response.readEntity(String.class);
@@ -64,7 +64,7 @@ public class CrudWithManyToOneRelationshipTest extends RibrestTest{
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("model.id", childId.toString());
         
-        response = post(ModelWithManyToOneRelationship.class, new Form(mvm));
+        response = postResponse(ModelWithManyToOneRelationship.class, new Form(mvm));
         
         Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         

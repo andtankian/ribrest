@@ -71,7 +71,7 @@ public class Facade {
     }
 
     private void mine() throws RibrestDefaultException {
-        miner.extractDataFromRequest(containterRequest);
+        miner.mineRequest(containterRequest);
     }
 
     private void injectDependency(Object dependency) {
