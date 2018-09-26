@@ -24,7 +24,6 @@
 package br.com.andrewribeiro.test.crud;
 
 import br.com.andrewribeiro.test.RibrestTest;
-import br.com.andrewribeiro.test.crud.models.ChildModel;
 import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import br.com.andrewribeiro.test.crud.models.ModelWithManyToOneRelationship;
 import javax.ws.rs.core.Form;
@@ -43,33 +42,38 @@ import org.junit.Test;
 public class CrudWithManyToOneRelationshipTest extends RibrestTest{
     
     @Test
+//    @Ignore
     public void postManyToOneModel(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("model.name", "Child Of Many To One Model");
-        Response response = postResponse(ModelWithManyToOneRelationship.class, new Form(mvm));
-        
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        post(ModelWithManyToOneRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
     }
     
     @Test
 //    @Ignore
-    public void postManyToOneModelWithExistentChild(){
-        Response response = postResponse(ModelCrud.class, new Form());
-        
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        String responseText = response.readEntity(String.class);
+    public void postManyToOneModelWithoutModel(){
+        post(ModelWithManyToOneRelationship.class, new Form());
+        wasCreated();
+        logResponse();
+    }
+    
+    @Test
+//    @Ignore
+    public void postManyToOneModelWithExistentModel(){
+        post(ModelCrud.class, new Form());
+        wasCreated();
+        logResponse();
         JSONObject jsonObject = new JSONObject(responseText);
         Long childId = jsonObject.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getLong("id");
         
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("model.id", childId.toString());
         
-        response = postResponse(ModelWithManyToOneRelationship.class, new Form(mvm));
-        
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        
-        responseText = response.readEntity(String.class);
-        
+        post(ModelWithManyToOneRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
         jsonObject = new JSONObject(responseText);
         Assert.assertEquals(childId.longValue(), jsonObject.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getJSONObject("model").getLong("id"));
     }

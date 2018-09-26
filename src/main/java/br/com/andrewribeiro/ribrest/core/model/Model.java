@@ -62,10 +62,10 @@ public interface Model {
                 .collect(Collectors.toList());
     }
 
-    default public List<Field> getAllAttributesExceptsBidirectionalModels() {
-        return getAllAttributes().stream()
+    default public List<Field> getAllModelOneToOneAttributesNotMappedBy() {
+        return getAllModelAttributes().stream()
                 .filter(attribute -> {
-                    return !(attribute.isAnnotationPresent(OneToOne.class) && !attribute.getAnnotation(OneToOne.class).mappedBy().isEmpty());
+                    return attribute.isAnnotationPresent(OneToOne.class) && attribute.getAnnotation(OneToOne.class).mappedBy().isEmpty();
                 })
                 .collect(Collectors.toList());
     }
@@ -75,19 +75,14 @@ public interface Model {
                 .filter(attribute -> Model.class.isAssignableFrom(attribute.getType()))
                 .collect(Collectors.toList());
     }
-
-    default public List<Field> getAllModelNonBidirectionalAttributes() {
-        return getAllModelAttributes().stream().filter(attribute -> !(attribute.isAnnotationPresent(OneToOne.class) && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())))
-                .collect(Collectors.toList());
-    }
     
-    default public List<Field> getAllCollectionModelAttributes(){
+    default public List<Field> getAllOneToManyAttributes(){
         return getAllAttributes().stream()
                 .filter(attribute -> attribute.isAnnotationPresent(OneToMany.class))
                 .collect(Collectors.toList());
     }
     
-    default public List<Field> getAllInverseCollectionModelAttributes(){
+    default public List<Field> getAllManyToOneAttributes(){
         return getAllAttributes().stream()
                 .filter(attribute -> attribute.isAnnotationPresent(ManyToOne.class))
                 .collect(Collectors.toList());

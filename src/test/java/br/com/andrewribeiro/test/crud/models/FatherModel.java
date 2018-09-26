@@ -2,10 +2,10 @@ package br.com.andrewribeiro.test.crud.models;
 
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestEndpointConfigurator;
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
-import br.com.andrewribeiro.ribrest.core.annotations.RibrestWontFill;
 import br.com.andrewribeiro.ribrest.core.model.AbstractModel;
 import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 /**
@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 public class FatherModel extends AbstractModel{
     
     @OneToMany
+    @JoinColumn(name = "father_id")
     private Set<SonModel> kids;
 
     public Set<SonModel> getKids() {

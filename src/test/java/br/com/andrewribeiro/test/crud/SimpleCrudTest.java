@@ -1,20 +1,15 @@
 package br.com.andrewribeiro.test.crud;
 
-import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.structure.models.ConcreteModel;
 import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *

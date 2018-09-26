@@ -19,7 +19,6 @@ public class SonModel extends AbstractModel{
     private String name;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "father_id")
     @RibrestWontFill
     private FatherModel father;
 

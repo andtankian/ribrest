@@ -58,7 +58,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
     }
 
     private void clearCollectionModelCircularReferences(Model model) {
-        model.getAllCollectionModelAttributes().forEach(attribute -> {
+        model.getAllOneToManyAttributes().forEach(attribute -> {
             attribute.setAccessible(true);
             try {
                 Collection<Model> collectionInstance = (Collection) attribute.get(model);
@@ -104,7 +104,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
     }
 
     private void addAllModelCollectionAttributesToRepetitiveModels(Model model) {
-        model.getAllCollectionModelAttributes().stream()
+        model.getAllOneToManyAttributes().stream()
                 .forEach(attribute -> {
                     Collection tempCollection = null;
                     if (Collection.class.isAssignableFrom(attribute.getType())) {

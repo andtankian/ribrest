@@ -82,6 +82,7 @@ public class RibrestTest {
     public void put(Class classResource,String subpath, Form form) {
         WebTarget wt = buildWebTarget(classResource, subpath);
         response = wt.request(MediaType.APPLICATION_JSON).put(Entity.form(form));
+        getResponseText();
     }
 
     public Response delete(Class resource, Form form) {
@@ -137,7 +138,7 @@ public class RibrestTest {
         assertContainsPieceOfJson("The created resource: " + RibrestUtils.getResourceName(resourceClass) + " isn't an entity. Try to annotate it with @Entity.");
     }
 
-    private void assertContainsPieceOfJson(String piece) {
+    protected void assertContainsPieceOfJson(String piece) {
         JSONAssert.assertEquals("{\"cause\":\"" + piece + "\"}", responseText, JSONCompareMode.LENIENT);
     }
 

@@ -11,12 +11,20 @@ import java.util.Collection;
  */
 public class GetPersistentChildrenModelCommand extends AbstractCommand {
 
+    Model model;
+
     @Override
     public void execute() throws RibrestDefaultException, Exception {
 
-        Model model = flowContainer.getModel();
+        model = flowContainer.getModel();
+        getAllOneToManyPersistentChild();
+        getAllManyToOnePersistentChild();
+        getAllOneToOnePersistentChild();
 
-        model.getAllCollectionModelAttributes()
+    }
+
+    private void getAllOneToManyPersistentChild() {
+        model.getAllOneToManyAttributes()
                 .forEach(attribute -> {
                     try {
                         attribute.setAccessible(true);
@@ -32,34 +40,59 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
                                         .append(" was not found.").toString());
 
                             } else {
-                                ((Model)persistedModel).merge((Model) detachedModel);
+                                ((Model) persistedModel).merge((Model) detachedModel);
                                 newPersistedModels.add(persistedModel);
                             }
                         });
-                        
+
                         attribute.set(model, newPersistedModels);
                     } catch (Exception e) {
                         throw new RuntimeException(e.getMessage());
                     }
                 });
-        
-        model.getAllInverseCollectionModelAttributes().forEach(attribute->{
+    }
+
+    private void getAllManyToOnePersistentChild() {
+        model.getAllManyToOneAttributes().forEach(attribute -> {
+            try {
+                attribute.setAccessible(true);
+                Model detachedModel = (Model) attribute.get(model);
+                if (detachedModel != null && detachedModel.getId() != null) {
+                    Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
+                    if (persistedModel == null) {
+                        throw new RuntimeException(new StringBuilder("The child ").append(attribute.getName())
+                                .append(" identified by ").append(detachedModel.getId()).append(" wasn't found.")
+                                .toString());
+                    } else {
+                        persistedModel.merge(detachedModel);
+                        attribute.set(model, persistedModel);
+                    }
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException(ex.getMessage());
+            }
+        });
+    }
+    
+    private void getAllOneToOnePersistentChild(){
+        model.getAllModelOneToOneAttributesNotMappedBy().forEach(attribute->{
             try {
                 attribute.setAccessible(true);
                 Model detachedModel = (Model) attribute.get(model);
                 if(detachedModel != null && detachedModel.getId() != null){
-                 Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
-                 if(persistedModel == null) {
-                     throw new RuntimeException(new StringBuilder("The child ").append(attribute.getName())
-                             .append(" identified by ").append(detachedModel.getId()).append(" wasn't found.")
-                             .toString());
-                 } else {
-                     persistedModel.merge(detachedModel);
-                     attribute.set(model, persistedModel);
-                 }
+                    Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
+                    if(persistedModel == null){
+                        throw new RibrestDefaultException(new StringBuilder("The child ").append(attribute.getName()).append(" wasn't found.").toString());
+                    } else {
+                        attribute.set(model, persistedModel);
+                    }
                 }
-            }catch(Exception ex){
-                throw new RuntimeException(ex.getMessage());
+            } catch(Exception ex){
+                if(ex instanceof RibrestDefaultException){
+                    throw (RibrestDefaultException)ex;
+                }
+                
+                throw new RibrestDefaultException("Error while getting one to one persistent child.");
             }
         });
     }

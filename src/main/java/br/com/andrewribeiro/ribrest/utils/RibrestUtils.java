@@ -2,6 +2,8 @@ package br.com.andrewribeiro.ribrest.utils;
 
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,14 +52,26 @@ public class RibrestUtils {
         return collection;
     }
 
-    private static final boolean collectionIsSet(Class collectionClass) {
+    public static final Class extractCollectionTypedClassFromCollectionAttribute(Field attribute) {
+        Class collectionType = null;
+        if (attributeIsACollection(attribute)) {
+            ParameterizedType type = (ParameterizedType) attribute.getGenericType();
+            collectionType = (Class) type.getActualTypeArguments()[0];
+        }
+
+        return collectionType;
+    }
+
+    private static boolean attributeIsACollection(Field attribute) {
+        return Collection.class.isAssignableFrom(attribute.getType());
+    }
+
+    private static boolean collectionIsSet(Class collectionClass) {
         return Set.class.isAssignableFrom(collectionClass);
     }
 
-    private static final boolean collectionIsList(Class collectionClass) {
+    private static boolean collectionIsList(Class collectionClass) {
         return List.class.isAssignableFrom(collectionClass);
     }
-    
-    
 
 }

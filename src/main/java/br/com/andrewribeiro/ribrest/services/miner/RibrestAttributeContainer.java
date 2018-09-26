@@ -44,6 +44,7 @@ public class RibrestAttributeContainer {
     private Field attribute;
     private Model parentInstance;
     private String parameterName;
+    private Object parameterValue;
 
     public Field getAttribute() {
         return attribute;
@@ -67,6 +68,14 @@ public class RibrestAttributeContainer {
 
     public void setParameterName(String parameterName) {
         this.parameterName = parameterName;
+    }
+
+    public Object getParameterValue() {
+        return parameterValue;
+    }
+
+    public void setParameterValue(Object parameterValue) {
+        this.parameterValue = parameterValue;
     }
 
 }

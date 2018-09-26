@@ -1,21 +1,18 @@
 package br.com.andrewribeiro.test.crud;
 
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
-import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import br.com.andrewribeiro.test.RibrestTest;
+import br.com.andrewribeiro.test.crud.models.ModelChildWithOneToOneRelationship;
 import br.com.andrewribeiro.test.crud.models.ModelParentWithBidirectionalRelationship;
+import br.com.andrewribeiro.test.crud.models.ModelParentWithOneToOneRelationship;
 import br.com.andrewribeiro.test.crud.models.ModelWithBidirectionalRelationshipAndSameChildClassType;
 import br.com.andrewribeiro.test.structure.models.ModelWithOneToOneRelationship;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Ignore;
+import org.json.JSONObject;
 import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 /**
  *
@@ -24,66 +21,101 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 public class CrudWithOneToOneRelationships extends RibrestTest{
     
     @Test
-    //@Ignore
+//    @Ignore
     public void postingModelWithOneToOneRelationship(){
         
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("child.name", "Child Name");
-        Response response = postResponse(ModelWithOneToOneRelationship.class, new Form(mvm));
-        
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        post(ModelWithOneToOneRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void puttingAnInexistentModel() throws RibrestDefaultException, JSONException{
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "New Parent Name");
-        Response response = putResponse(RibrestUtils.getResourceName(ModelWithOneToOneRelationship.class) + "/99999", new Form(mvm));
-        
-        Assert.assertEquals(Response.Status.PRECONDITION_FAILED.getStatusCode(), response.getStatus());
-        
-        String json = response.readEntity(String.class);
-        
-        JSONAssert.assertEquals("{\"cause\":\"The model 99999 was not found.\"}", json, JSONCompareMode.LENIENT);
+        put(ModelWithOneToOneRelationship.class, "/99999", new Form(mvm));
+        wasPreConditionFailed();        
+        assertContainsPieceOfJson("The model 99999 was not found.");
+        logResponse();
         
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void postingModelWithBidirectionalRelationshipButMissingChild() {
         MultivaluedMap mvm = new MultivaluedHashMap();
         mvm.add("name", "I'm Parent Model");
-        Response response = postResponse(ModelParentWithBidirectionalRelationship.class, new Form(mvm));
+        post(ModelParentWithBidirectionalRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
         
-        Assert.assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void gettingModelsWithBidirectionalRelationship(){
         
         for (int i = 0; i < 10; i++) {
             postingModelWithBidirectionalRelationshipButMissingChild();            
         }
         
-        Response response = getResponse(ModelParentWithBidirectionalRelationship.class);
-        
-        Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        
-        String json = response.readEntity(String.class);
+        get(ModelParentWithBidirectionalRelationship.class);
+        wasOk();
+        logResponse();
     }
     
     @Test
-    @Ignore
+//    @Ignore
+    public void postingModelWithBidirectionWithChild(){
+        MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
+        mvm.add("child", "child");
+        post(ModelParentWithBidirectionalRelationship.class,new Form(mvm));
+        wasCreated();
+        logResponse();
+    }
+    
+    @Test
+//    @Ignore
+    public void postingModelWithBidirectionalInexistentChild(){
+        
+        MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
+        mvm.add("child.id", "99999999");
+        post(ModelParentWithBidirectionalRelationship.class, new Form(mvm));
+        wasPreConditionFailed();
+        logResponse();
+    }
+    
+    @Test
+//    @Ignore
+    public void postingModelWithBidirectionalRelatinshipWithExistentChild(){
+        MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
+        mvm.add("anyname", "Child Model");
+        post(ModelChildWithOneToOneRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
+        mvm.clear();
+        JSONObject jsonObject = new JSONObject(responseText);
+        long childId = jsonObject.getJSONObject("holder").getJSONArray("models").getJSONObject(0).getLong("id");
+        String stringChildId = String.valueOf(childId);
+        mvm.add("child.id", stringChildId);
+        post(ModelParentWithOneToOneRelationship.class, new Form(mvm));
+        wasCreated();
+        logResponse();
+    }
+    @Test
+//    @Ignore
     public void postingModelWithBidirectionalRelationshipAndSameClassType(){
         MultivaluedMap mvm = new MultivaluedHashMap();
         
         mvm.add("name", "Parent");
         mvm.add("child1.name", "My name is child 1");
         
-        Response response = postResponse(ModelWithBidirectionalRelationshipAndSameChildClassType.class, new Form(mvm));
+        post(ModelWithBidirectionalRelationshipAndSameChildClassType.class, new Form(mvm));
         
-        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+        wasInternalServerError();
+        logResponse();
     }
 }
