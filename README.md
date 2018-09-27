@@ -12,20 +12,18 @@ Any Java project has classes called model classes, or domain classes. These clas
 For example, in a library application, the `Book` class is a nice example of a model class. In a school application, `Student` is a great example of model class.
 
 In most cases, model classes have at least four basic operations associated to it:
-|Operations|
-|--|
-|**C**reate new model|
-|**R**ead one or more models|
-|**U**pdate an existent model|
-|**D**elete an existent model|
+
+- **C**reate new mode
+- **R**ead one or more models
+- **U**pdate an existent model
+- **D**elete an existent model
 
 In a restful webservice application, **CRUD** operations can be represented as the following *http verbs*:
-|Verbs |
-|--|
-|`POST`  for **C**|
-|`GET` for **R**|
-|`PUT` for **U**|
-|`DELETE` for **D**|
+
+- `POST`  for **C**
+- `GET` for **R**
+- `PUT` for **U**
+- `DELETE` for **D**
 
 Of course model classes could have more than four operations, in fact it's quite rare that model classes have ONLY four basic operations. It can have as many you want to.
 
@@ -35,10 +33,12 @@ Ribrest can scan your model classes and automatically generate valid endpoints!
 You don't need to worry about webservices architectures,  design patterns, data representation and other things anymore. Ribrest does all these things for you. Now you can focus on what is important to your project like domain classes, data validation and business logic.
 
 For example, in a library application, just to creating a `Book` class, Ribrest would generate the following endpoints:
-*http://localhost:2007/library/books/ - POST (To create a new Book)
-http://localhost:2007/library/books/ - GET (To read books)
-http://localhost:2007/library/books/{id} - PUT (To update an existent book)
-http://localhost:2007/library/books/{id} - DELETE (To delete an existent book)*
+
+ - *http://localhost:2007/library/books/ - POST (To create a new Book)*
+ - *http://localhost:2007/library/books/ - GET (To read books)*
+ - *http://localhost:2007/library/books/{id} - PUT (To update an existent book)*
+ - *http://localhost:2007/library/books/{id} - DELETE (To delete an
+   existent book)*
 
 These are valid endpoints! If you open your browser and type http://localhost:2007/library/books/, it will return a JSON representing all books stored in the database.
 
@@ -92,13 +92,17 @@ That's it. The minimal requirement to run Ribrest based projects :)
 Ok, making sure of above tenets, **you can now run** your Ribrest project and watch the following output log.
 
 > Ribrest INFO: *** INITIALIZING RIBREST FRAMEWORK ***
-Ribrest INFO: Application is up and running at: http://localhost:2007/myapp/
-Ribrest INFO: Static file server has been created at: http://localhost:2007/static
-Ribrest INFO: To shutdown Ribrest, type CTRL+C...
+
+> Ribrest INFO: Application is up and running at: http://localhost:2007/myapp/
+
+> Ribrest INFO: Static file server has been created at: http://localhost:2007/static
+
+> Ribrest INFO: To shutdown Ribrest, type CTRL+C...
+
+
 
 Try to request to `MyClass` endpoint that should be: http://localhost:2007/myapp/mymodelobjects
 
-;)
 
 ## Default operations supported
 
@@ -106,5 +110,6 @@ Try to request to `MyClass` endpoint that should be: http://localhost:2007/myapp
 |--|--|--|
 |GET|-|**Status**:200, **Content-Type**: *application/json* (when there are objects registered)<br/>**Status**:204 (when there aren't objects registered)|
 |POST|**Content-Type**: *application/x-www-form-urlencoded*|**Status**:201, **Content-Type**: *application/json* |
-|PUT|**Content-Type**: *application/x-www-form-urlencoded*|**Status**:200, **Content-Type**: *application/json* |
+|PUT|**Content-Type**: *application/x-www-form-
+urlencoded*|**Status**:200, **Content-Type**: *application/json* |
 |DELETE|**Content-Type**: *application/x-www-form-urlencoded*|**Status**:200, **Content-Type**: *application/json* |
