@@ -12,16 +12,16 @@ Any Java project has classes called model classes, or domain classes. These clas
 For example, in a library application, the `Book` class is a nice example of a model class. In a school application, `Student` is a great example of model class.
 
 In most cases, model classes have at least four basic operations associated to it:
-||
-|-|
+|Operations|
+|--|
 |**C**reate new model|
 |**R**ead one or more models|
 |**U**pdate an existent model|
 |**D**elete an existent model|
 
 In a restful webservice application, **CRUD** operations can be represented as the following *http verbs*:
-||
-|-|
+|Verbs |
+|--|
 |`POST`  for **C**|
 |`GET` for **R**|
 |`PUT` for **U**|
