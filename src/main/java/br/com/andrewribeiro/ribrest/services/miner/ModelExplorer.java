@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -75,17 +76,19 @@ public class ModelExplorer {
         Field attribute = attributeContainer.getAttribute();
         if (attribute.getType() == String.class) {
             fillString(attributeContainer);
-        } else if(attribute.getType() == Long.class){
+        } else if (attribute.getType() == Long.class) {
             fillLong(attributeContainer);
-        }else if (attribute.isAnnotationPresent(OneToOne.class)
+        } else if (attribute.isAnnotationPresent(OneToOne.class)
                 && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())) {
             fillModelAttribute(attributeContainer);
-
-        } else if(attribute.isAnnotationPresent(OneToMany.class)
+        } else if (attribute.isAnnotationPresent(OneToMany.class)
                 && "".equals(attribute.getAnnotation(OneToMany.class).mappedBy())) {
             fillCollectionOfModelAttribute(attributeContainer);
-        } else if(attribute.isAnnotationPresent(ManyToOne.class)){
+        } else if (attribute.isAnnotationPresent(ManyToOne.class)) {
             fillModelAttribute(attributeContainer);
+        } else if (attribute.isAnnotationPresent(ManyToMany.class)
+                && "".equals(attribute.getAnnotation(ManyToMany.class).mappedBy())) {
+            fillCollectionOfModelAttribute(attributeContainer);
         }
     }
 
@@ -93,11 +96,12 @@ public class ModelExplorer {
         attributeContainer.setParameterValue(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()));
         fill(attributeContainer);
     }
-    
+
     private void fillLong(RibrestAttributeContainer attributeContainer) {
         try {
             attributeContainer.setParameterValue(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName())));
-        }catch(NumberFormatException nfe){}
+        } catch (NumberFormatException nfe) {
+        }
         fill(attributeContainer);
     }
 
@@ -117,8 +121,8 @@ public class ModelExplorer {
             throw new RibrestDefaultException("error while filling model: " + e.getMessage());
         }
     }
-    
-    private void fillCollectionOfModelAttribute(RibrestAttributeContainer attributeContainer){
+
+    private void fillCollectionOfModelAttribute(RibrestAttributeContainer attributeContainer) {
         Field attribute = attributeContainer.getAttribute();
         Collection models = RibrestUtils.getCollectionInstance(attribute.getType());
         Class<Model> modelClass = RibrestUtils.extractCollectionTypedClassFromCollectionAttribute(attribute);
@@ -129,19 +133,19 @@ public class ModelExplorer {
                 Model modelInstance = modelClass.newInstance();
                 modelInstance.setId(Long.parseLong(stringModelId));
                 models.add(modelInstance);
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new RibrestDefaultException(new StringBuilder("error while filling model collection element: ").append(e.getMessage()).toString());
             }
         });
         try {
             attribute.setAccessible(true);
             attribute.set(attributeContainer.getParentInstance(), models);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new RibrestDefaultException(new StringBuilder("error while creating the collection attribute: ").append(e.getMessage()).toString());
         }
     }
-    
-    private void fill(RibrestAttributeContainer attributeContainer){
+
+    private void fill(RibrestAttributeContainer attributeContainer) {
         Field attribute = attributeContainer.getAttribute();
         try {
             attribute.setAccessible(true);
@@ -157,8 +161,8 @@ public class ModelExplorer {
     private boolean formContainsEntityModel(String parameterName) {
         return requestMaps.getFormMap().keySet().stream().anyMatch(key -> key.contains(parameterName));
     }
-    
-    private List<String> getAllChildIds(String childName){
+
+    private List<String> getAllChildIds(String childName) {
         return requestMaps.getFormMap().get(childName.concat(".").concat("id"));
     }
 

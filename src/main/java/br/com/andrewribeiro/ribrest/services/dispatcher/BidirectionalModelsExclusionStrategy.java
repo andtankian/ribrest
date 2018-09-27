@@ -3,6 +3,7 @@ package br.com.andrewribeiro.ribrest.services.dispatcher;
 import br.com.andrewribeiro.ribrest.core.model.Model;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -58,8 +59,17 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
     }
 
     private void clearCollectionModelCircularReferences(Model model) {
-        model.getAllOneToManyAttributes().forEach(attribute -> {
-            attribute.setAccessible(true);
+        model.getAllModelOneToManyAttributes().forEach(attribute -> {
+            clearAnyCollection(model, attribute);
+        });
+        model.getAllModelManyToManyAttributes().forEach(attribute -> {
+            clearAnyCollection(model, attribute);
+        });
+        
+    }
+    
+    private void clearAnyCollection(Model model, Field attribute){
+        attribute.setAccessible(true);
             try {
                 Collection<Model> collectionInstance = (Collection) attribute.get(model);
                 if (collectionInstance != null) {
@@ -79,11 +89,9 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
-        });
     }
 
     private void populateRepetiveModels(Model model) {
-
         addAllModelAttributesToRepetitiveModels(model);
         addAllModelCollectionAttributesToRepetitiveModels(model);
     }
@@ -100,11 +108,10 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
                         throw new RuntimeException(e);
                     }
                 }).collect(Collectors.toSet()));
-
     }
 
     private void addAllModelCollectionAttributesToRepetitiveModels(Model model) {
-        model.getAllOneToManyAttributes().stream()
+        model.getAllModelOneToManyAttributes().stream()
                 .forEach(attribute -> {
                     Collection tempCollection = null;
                     if (Collection.class.isAssignableFrom(attribute.getType())) {

@@ -3,6 +3,7 @@ package br.com.andrewribeiro.ribrest.services.command;
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.core.model.Model;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
+import java.lang.reflect.Field;
 import java.util.Collection;
 
 /**
@@ -20,40 +21,45 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
         getAllOneToManyPersistentChild();
         getAllManyToOnePersistentChild();
         getAllOneToOnePersistentChild();
+        getAllManyToManyPersistentChild();
 
     }
 
     private void getAllOneToManyPersistentChild() {
-        model.getAllOneToManyAttributes()
+        model.getAllModelOneToManyAttributes()
                 .forEach(attribute -> {
-                    try {
-                        attribute.setAccessible(true);
-                        Collection detachedModels = (Collection) attribute.get(model);
-                        Collection newPersistedModels = RibrestUtils.getCollectionInstance(attribute.getType());
-                        detachedModels.forEach(detachedModel -> {
-                            Object persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), ((Model) detachedModel).getId());
-                            if (persistedModel == null) {
-                                throw new RuntimeException(new StringBuilder("The child model ")
-                                        .append(detachedModel.getClass().getSimpleName())
-                                        .append(" identified by ")
-                                        .append(((Model) detachedModel).getId())
-                                        .append(" was not found.").toString());
-
-                            } else {
-                                ((Model) persistedModel).merge((Model) detachedModel);
-                                newPersistedModels.add(persistedModel);
-                            }
-                        });
-
-                        attribute.set(model, newPersistedModels);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e.getMessage());
-                    }
+                    getPersistentCollection(attribute);
                 });
     }
 
+    private void getPersistentCollection(Field attribute) {
+        try {
+            attribute.setAccessible(true);
+            Collection detachedModels = (Collection) attribute.get(model);
+            Collection newPersistedModels = RibrestUtils.getCollectionInstance(attribute.getType());
+            detachedModels.forEach(detachedModel -> {
+                Object persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), ((Model) detachedModel).getId());
+                if (persistedModel == null) {
+                    throw new RuntimeException(new StringBuilder("The child model ")
+                            .append(detachedModel.getClass().getSimpleName())
+                            .append(" identified by ")
+                            .append(((Model) detachedModel).getId())
+                            .append(" was not found.").toString());
+
+                } else {
+                    ((Model) persistedModel).merge((Model) detachedModel);
+                    newPersistedModels.add(persistedModel);
+                }
+            });
+
+            attribute.set(model, newPersistedModels);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     private void getAllManyToOnePersistentChild() {
-        model.getAllManyToOneAttributes().forEach(attribute -> {
+        model.getAllModelManyToOneAttributes().forEach(attribute -> {
             try {
                 attribute.setAccessible(true);
                 Model detachedModel = (Model) attribute.get(model);
@@ -73,27 +79,33 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
             }
         });
     }
-    
-    private void getAllOneToOnePersistentChild(){
-        model.getAllModelOneToOneAttributesNotMappedBy().forEach(attribute->{
+
+    private void getAllOneToOnePersistentChild() {
+        model.getAllModelOneToOneNotMappedByAttributes().forEach(attribute -> {
             try {
                 attribute.setAccessible(true);
                 Model detachedModel = (Model) attribute.get(model);
-                if(detachedModel != null && detachedModel.getId() != null){
+                if (detachedModel != null && detachedModel.getId() != null) {
                     Model persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), detachedModel.getId());
-                    if(persistedModel == null){
+                    if (persistedModel == null) {
                         throw new RibrestDefaultException(new StringBuilder("The child ").append(attribute.getName()).append(" wasn't found.").toString());
                     } else {
                         attribute.set(model, persistedModel);
                     }
                 }
-            } catch(Exception ex){
-                if(ex instanceof RibrestDefaultException){
-                    throw (RibrestDefaultException)ex;
+            } catch (Exception ex) {
+                if (ex instanceof RibrestDefaultException) {
+                    throw (RibrestDefaultException) ex;
                 }
-                
+
                 throw new RibrestDefaultException("Error while getting one to one persistent child.");
             }
+        });
+    }
+
+    private void getAllManyToManyPersistentChild() {
+        model.getAllModelManyToManyNotMappedAttributes().forEach(attribute -> {
+            getPersistentCollection(attribute);
         });
     }
 

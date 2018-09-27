@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -62,7 +63,7 @@ public interface Model {
                 .collect(Collectors.toList());
     }
 
-    default public List<Field> getAllModelOneToOneAttributesNotMappedBy() {
+    default public List<Field> getAllModelOneToOneNotMappedByAttributes() {
         return getAllModelAttributes().stream()
                 .filter(attribute -> {
                     return attribute.isAnnotationPresent(OneToOne.class) && attribute.getAnnotation(OneToOne.class).mappedBy().isEmpty();
@@ -76,17 +77,30 @@ public interface Model {
                 .collect(Collectors.toList());
     }
     
-    default public List<Field> getAllOneToManyAttributes(){
+    default public List<Field> getAllModelOneToManyAttributes(){
         return getAllAttributes().stream()
                 .filter(attribute -> attribute.isAnnotationPresent(OneToMany.class))
                 .collect(Collectors.toList());
     }
     
-    default public List<Field> getAllManyToOneAttributes(){
+    default public List<Field> getAllModelManyToOneAttributes(){
         return getAllAttributes().stream()
                 .filter(attribute -> attribute.isAnnotationPresent(ManyToOne.class))
                 .collect(Collectors.toList());
     }
+    
+    default public List<Field> getAllModelManyToManyAttributes(){
+        return getAllAttributes().stream()
+                .filter(attribute -> attribute.isAnnotationPresent(ManyToMany.class))
+                .collect(Collectors.toList());
+    }
+    
+    default public List<Field> getAllModelManyToManyNotMappedAttributes(){
+        return getAllAttributes().stream()
+                .filter(attribute -> attribute.isAnnotationPresent(ManyToMany.class) && "".equals(attribute.getAnnotation(ManyToMany.class).mappedBy()))
+                .collect(Collectors.toList());
+    }
+    
 
     default public List<Field> getIgnoredAttributes() {
 

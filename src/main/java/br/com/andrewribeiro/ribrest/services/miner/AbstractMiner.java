@@ -103,7 +103,7 @@ public abstract class AbstractMiner implements Miner {
     }
 
     private void fillChildModel(Model childModel, String parentAttributeName) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-        for (Field attribute : childModel.getAllModelOneToOneAttributesNotMappedBy()) {
+        for (Field attribute : childModel.getAllModelOneToOneNotMappedByAttributes()) {
             fillAttribute(new FieldHelper(attribute, childModel, parentAttributeName + "." + attribute.getName()));
         }
     }
@@ -145,7 +145,7 @@ public abstract class AbstractMiner implements Miner {
         }
 
         void fillInverseAttributeInRelationship(Model model) {
-            model.getAllManyToOneAttributes()
+            model.getAllModelManyToOneAttributes()
                     .forEach(attribute -> {
                         if (attribute.getType().getSimpleName().equals(this.model.getClass().getSimpleName())) {
                             attribute.setAccessible(true);
