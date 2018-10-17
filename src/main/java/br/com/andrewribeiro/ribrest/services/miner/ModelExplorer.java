@@ -28,6 +28,7 @@ import br.com.andrewribeiro.ribrest.core.model.Model;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import br.com.andrewribeiro.ribrest.utils.RibrestUtils;
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -78,7 +79,9 @@ public class ModelExplorer {
             fillString(attributeContainer);
         } else if (attribute.getType() == Long.class) {
             fillLong(attributeContainer);
-        } else if (attribute.isAnnotationPresent(OneToOne.class)
+        } else if(attribute.getType() == Timestamp.class){
+            fillTimestamp(attributeContainer);
+        }else if (attribute.isAnnotationPresent(OneToOne.class)
                 && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())) {
             fillModelAttribute(attributeContainer);
         } else if (attribute.isAnnotationPresent(OneToMany.class)
@@ -102,6 +105,15 @@ public class ModelExplorer {
             attributeContainer.setParameterValue(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName())));
         } catch (NumberFormatException nfe) {
         }
+        fill(attributeContainer);
+    }
+    
+    private void fillTimestamp(RibrestAttributeContainer attributeContainer){
+        try {
+            attributeContainer.setParameterValue(new Timestamp(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()))));
+        } catch(NumberFormatException nfe){
+        }
+        
         fill(attributeContainer);
     }
 

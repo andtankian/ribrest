@@ -29,7 +29,6 @@ import br.com.andrewribeiro.test.crud.models.ModelWithManyToOneRelationship;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
 import junit.framework.Assert;
 import org.json.JSONObject;
 import org.junit.Ignore;
