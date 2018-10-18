@@ -21,7 +21,7 @@ import org.junit.Test;
 public class SimpleCrudTest extends RibrestTest {
 
     @Test
-    @Ignore
+//    @Ignore
     public void testGetModelMapped() throws JSONException {
         get(ConcreteModel.class);
         wasNoContent();
@@ -29,7 +29,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testCreateModel() throws JSONException {
         post(ModelCrud.class, new Form("name", "Andrew Ribeiro"));
         wasCreated();
@@ -37,7 +37,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testUpdateModel() throws JSONException {
         MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
         mvm.add("name", "Andrew Ribeiro");
@@ -54,7 +54,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
     
     @Test
-    @Ignore
+//    @Ignore
     public void createModelWithTimestampField() {
         MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
         
