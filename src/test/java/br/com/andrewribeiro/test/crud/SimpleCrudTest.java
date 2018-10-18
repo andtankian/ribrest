@@ -3,6 +3,7 @@ package br.com.andrewribeiro.test.crud;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.structure.models.ConcreteModel;
 import br.com.andrewribeiro.test.crud.models.ModelCrud;
+import br.com.andrewribeiro.test.crud.models.ModelWithPrimitivesFields;
 import br.com.andrewribeiro.test.crud.models.ModelWithTimestampField;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -53,13 +54,37 @@ public class SimpleCrudTest extends RibrestTest {
     }
     
     @Test
-    //@Ignore
+    @Ignore
     public void createModelWithTimestampField() {
         MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
         
         mvm.add("dateReg", "1505242800000");
         
         post(ModelWithTimestampField.class, new Form(mvm));
+        
+        wasCreated();
+        
+        logResponse();
+    }
+    
+    @Test
+    //@Ignore
+    public void createModelWithManyPrimitiveFields() {
+        MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
+        
+        mvm.add("booleanObject", "false");
+        mvm.add("booleanPrimitive", "true");
+        
+        mvm.add("doubleObject", "42.32321");
+        mvm.add("doublePrimitive", "4324,32");
+        
+        mvm.add("floatObject", "42.32321");
+        mvm.add("floatPrimitive", "4324,32");
+        
+        mvm.add("integerObject", "42");
+        mvm.add("integerPrimitive", "43");
+        
+        post(ModelWithPrimitivesFields.class, new Form(mvm));
         
         wasCreated();
         

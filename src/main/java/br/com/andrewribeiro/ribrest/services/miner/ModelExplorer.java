@@ -74,86 +74,140 @@ public class ModelExplorer {
     }
 
     private void fillAttribute(RibrestAttributeContainer attributeContainer) {
-        Field attribute = attributeContainer.getAttribute();
-        if (attribute.getType() == String.class) {
-            fillString(attributeContainer);
-        } else if (attribute.getType() == Long.class) {
-            fillLong(attributeContainer);
-        } else if(attribute.getType() == Timestamp.class){
-            fillTimestamp(attributeContainer);
-        }else if (attribute.isAnnotationPresent(OneToOne.class)
-                && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())) {
-            fillModelAttribute(attributeContainer);
-        } else if (attribute.isAnnotationPresent(OneToMany.class)
-                && "".equals(attribute.getAnnotation(OneToMany.class).mappedBy())) {
-            fillCollectionOfModelAttribute(attributeContainer);
-        } else if (attribute.isAnnotationPresent(ManyToOne.class)) {
-            fillModelAttribute(attributeContainer);
-        } else if (attribute.isAnnotationPresent(ManyToMany.class)
-                && "".equals(attribute.getAnnotation(ManyToMany.class).mappedBy())) {
-            fillCollectionOfModelAttribute(attributeContainer);
-        }
+        fillString(attributeContainer);
+        fillLong(attributeContainer);
+        fillBoolean(attributeContainer);
+        fillInteger(attributeContainer);
+        fillDouble(attributeContainer);
+        fillFloat(attributeContainer);
+        fillTimestamp(attributeContainer);
+        fillModelAttribute(attributeContainer);
+        fillCollectionOfModelAttribute(attributeContainer);
+
     }
 
     private void fillString(RibrestAttributeContainer attributeContainer) {
-        attributeContainer.setParameterValue(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()));
-        fill(attributeContainer);
+        if (attributeContainer.getAttribute().getType() == String.class) {
+            attributeContainer.setParameterValue(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()));
+            fill(attributeContainer);
+        }
     }
 
     private void fillLong(RibrestAttributeContainer attributeContainer) {
-        try {
-            attributeContainer.setParameterValue(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName())));
-        } catch (NumberFormatException nfe) {
+        if (checkClassType(attributeContainer, Long.class)) {
+            try {
+                attributeContainer.setParameterValue(Long.parseLong(getFirstFormByParameterName(attributeContainer.getParameterName())));
+            } catch (NumberFormatException nfe) {
+                RibrestLog.log(getInonffensiveExceptionMessageWhileFilling(attributeContainer.getAttribute()));
+            }
+            fill(attributeContainer);
         }
-        fill(attributeContainer);
+    }
+
+    private void fillBoolean(RibrestAttributeContainer attributeContainer) {
+        if (checkClassType(attributeContainer, Boolean.class)) {
+            try {
+                attributeContainer.setParameterValue(Boolean.parseBoolean(getFirstFormByParameterName(attributeContainer.getParameterName())));
+            } catch (Exception e) {
+            }
+
+            fill(attributeContainer);
+        }
+    }
+
+    private void fillInteger(RibrestAttributeContainer attributeContainer) {
+        if (checkClassType(attributeContainer, Integer.class)) {
+            try {
+                attributeContainer.setParameterValue(Integer.parseInt(getFirstFormByParameterName(attributeContainer.getParameterName())));
+            } catch (NumberFormatException nfe) {
+            }
+
+            fill(attributeContainer);
+        }
+
+    }
+
+    private void fillDouble(RibrestAttributeContainer attributeContainer) {        
+        if (checkClassType(attributeContainer, Double.class)) {
+            try {
+                attributeContainer.setParameterValue(Double.parseDouble(getFirstFormByParameterName(attributeContainer.getParameterName())));
+            } catch (NumberFormatException nfe) {
+            }
+
+            fill(attributeContainer);
+        }
     }
     
-    private void fillTimestamp(RibrestAttributeContainer attributeContainer){
-        try {
-            attributeContainer.setParameterValue(new Timestamp(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()))));
-        } catch(NumberFormatException nfe){
+    
+
+    private void fillFloat(RibrestAttributeContainer attributeContainer) {
+        if (checkClassType(attributeContainer, Float.class)) {
+            try {
+                attributeContainer.setParameterValue(Float.parseFloat(getFirstFormByParameterName(attributeContainer.getParameterName())));
+            } catch (NumberFormatException nfe) {
+            }
+
+            fill(attributeContainer);
         }
-        
-        fill(attributeContainer);
+    }
+
+    private void fillTimestamp(RibrestAttributeContainer attributeContainer) {
+        if (attributeContainer.getAttribute().getType().equals(Timestamp.class)) {
+            try {
+                attributeContainer.setParameterValue(new Timestamp(Long.parseLong(requestMaps.getFormMap().getFirst(attributeContainer.getParameterName()))));
+            } catch (NumberFormatException nfe) {
+            }
+
+            fill(attributeContainer);
+        }
     }
 
     private void fillModelAttribute(RibrestAttributeContainer attributeContainer) {
         Field attribute = attributeContainer.getAttribute();
-        try {
-            attribute.setAccessible(true);
-            Object object = formContainsEntityModel(attribute.getName())
-                    ? attribute.getType().newInstance() : null;
-            if (object != null && object instanceof Model) {
-                fillModel((Model) object, attribute.getName());
-            } else if (!(object instanceof Model)) {
-                RibrestLog.log(new StringBuilder(object.getClass().getSimpleName()).append(" is not a model. It won't be filled in.").toString());
+        if (attribute.isAnnotationPresent(OneToOne.class)
+                && "".equals(attribute.getAnnotation(OneToOne.class).mappedBy())
+                || attribute.isAnnotationPresent(ManyToOne.class)) {
+            try {
+                attribute.setAccessible(true);
+                Object object = formContainsEntityModel(attribute.getName())
+                        ? attribute.getType().newInstance() : null;
+                if (object != null && object instanceof Model) {
+                    fillModel((Model) object, attribute.getName());
+                } else if (!(object instanceof Model)) {
+                    RibrestLog.log(new StringBuilder(object.getClass().getSimpleName()).append(" is not a model. It won't be filled in.").toString());
+                }
+                attribute.set(attributeContainer.getParentInstance(), object);
+            } catch (Exception e) {
+                throw new RibrestDefaultException("error while filling model: " + e.getMessage());
             }
-            attribute.set(attributeContainer.getParentInstance(), object);
-        } catch (Exception e) {
-            throw new RibrestDefaultException("error while filling model: " + e.getMessage());
         }
     }
 
     private void fillCollectionOfModelAttribute(RibrestAttributeContainer attributeContainer) {
         Field attribute = attributeContainer.getAttribute();
-        Collection models = RibrestUtils.getCollectionInstance(attribute.getType());
-        Class<Model> modelClass = RibrestUtils.extractCollectionTypedClassFromCollectionAttribute(attribute);
-        List<String> modelIds = getAllChildIds(attributeContainer.getParameterName());
-        modelIds = modelIds == null ? new ArrayList() : modelIds;
-        modelIds.forEach(stringModelId -> {
+        if ((attribute.isAnnotationPresent(OneToMany.class)
+                && "".equals(attribute.getAnnotation(OneToMany.class).mappedBy()))
+                || (attribute.isAnnotationPresent(ManyToMany.class)
+                && "".equals(attribute.getAnnotation(ManyToMany.class).mappedBy()))) {
+            Collection models = RibrestUtils.getCollectionInstance(attribute.getType());
+            Class<Model> modelClass = RibrestUtils.extractCollectionTypedClassFromCollectionAttribute(attribute);
+            List<String> modelIds = getAllChildIds(attributeContainer.getParameterName());
+            modelIds = modelIds == null ? new ArrayList() : modelIds;
+            modelIds.forEach(stringModelId -> {
+                try {
+                    Model modelInstance = modelClass.newInstance();
+                    modelInstance.setId(Long.parseLong(stringModelId));
+                    models.add(modelInstance);
+                } catch (Exception e) {
+                    throw new RibrestDefaultException(new StringBuilder("error while filling model collection element: ").append(e.getMessage()).toString());
+                }
+            });
             try {
-                Model modelInstance = modelClass.newInstance();
-                modelInstance.setId(Long.parseLong(stringModelId));
-                models.add(modelInstance);
+                attribute.setAccessible(true);
+                attribute.set(attributeContainer.getParentInstance(), models);
             } catch (Exception e) {
-                throw new RibrestDefaultException(new StringBuilder("error while filling model collection element: ").append(e.getMessage()).toString());
+                throw new RibrestDefaultException(new StringBuilder("error while creating the collection attribute: ").append(e.getMessage()).toString());
             }
-        });
-        try {
-            attribute.setAccessible(true);
-            attribute.set(attributeContainer.getParentInstance(), models);
-        } catch (Exception e) {
-            throw new RibrestDefaultException(new StringBuilder("error while creating the collection attribute: ").append(e.getMessage()).toString());
         }
     }
 
@@ -176,6 +230,18 @@ public class ModelExplorer {
 
     private List<String> getAllChildIds(String childName) {
         return requestMaps.getFormMap().get(childName.concat(".").concat("id"));
+    }
+
+    private String getFirstFormByParameterName(String parameterName) {
+        return requestMaps.getFormMap().getFirst(parameterName);
+    }
+
+    private boolean checkClassType(RibrestAttributeContainer attributeContainer, Class clazz) {
+        return attributeContainer.getAttribute().getType().equals(clazz);
+    }
+
+    private String getInonffensiveExceptionMessageWhileFilling(Field field) {
+        return new StringBuilder("An inoffensive exception occurred while filling ").append(field.getName()).append(" field in the ").append(model.getClass().getSimpleName()).append(" model.").toString();
     }
 
 }
