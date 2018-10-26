@@ -11,6 +11,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import br.com.andrewribeiro.ribrest.services.miner.Miner;
 import br.com.andrewribeiro.ribrest.core.model.Model;
 import br.com.andrewribeiro.ribrest.services.holder.Holder;
+import br.com.andrewribeiro.ribrest.services.miner.RequestMaps;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,12 +22,12 @@ import java.util.Map;
 public class FlowContainer {
 
     public FlowContainer() {
-        go = true;
         holder = new HolderImpl();
         result = new Result();
     }
 
     private Miner miner;
+    private RequestMaps requestMaps;
     private Holder holder;
     private Model model;
 
@@ -36,8 +37,6 @@ public class FlowContainer {
 
     @Inject
     private EntityManager entityManager;
-
-    private boolean go;
 
     ContainerRequestContext cr;
 
@@ -55,14 +54,6 @@ public class FlowContainer {
 
     public void setHolder(Holder holder) {
         this.holder = holder;
-    }
-
-    public boolean shouldGo() {
-        return go;
-    }
-
-    public void setGo(boolean go) {
-        this.go = go;
     }
 
     public Model getModel() {
@@ -111,13 +102,21 @@ public class FlowContainer {
     public Object getExtraObject(String key) {
         return this.extraObjects.get(key);
     }
-    
-    public void addExtraObject(String key, Object object){
+
+    public void addExtraObject(String key, Object object) {
         this.extraObjects.put(key, object);
     }
-    
-    public void removeExtraObject(String key){
+
+    public void removeExtraObject(String key) {
         this.extraObjects.remove(key);
+    }
+
+    public RequestMaps getRequestMaps() {
+        return requestMaps;
+    }
+
+    public void setRequestMaps(RequestMaps requestMaps) {
+        this.requestMaps = requestMaps;
     }
 
 }

@@ -33,25 +33,23 @@ public abstract class AbstractMiner implements Miner {
     @Inject
     protected FlowContainer flowContainer;
 
-    RequestMaps requestMaps;
     protected List accepts;
-
     private List ignored;
 
     @Override
     public void extractDataFromRequest(ContainerRequest containerRequest) throws RibrestDefaultException {
-        getRequestMaps(containerRequest);
+        flowContainer.setRequestMaps(getRequestMaps(containerRequest));
     }
 
     @Override
     public void mineRequest(ContainerRequest containerRequest) {
-        getRequestMaps(containerRequest);
+        flowContainer.setRequestMaps(getRequestMaps(containerRequest));
         Model model = null;
         try {
             model = flowContainer.getModel();
 
             ModelExplorer modelExplorer = new ModelExplorer(model);
-            modelExplorer.fillModelWithData(requestMaps);
+            modelExplorer.fillModelWithData(flowContainer.getRequestMaps());
         } catch (UnsupportedOperationException ex) {
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_DOESNT_IMPLEMENT_ABSTRACT_METHODS, RibrestUtils.getResourceName(model.getClass()));
         } catch (Exception e) {
@@ -68,7 +66,7 @@ public abstract class AbstractMiner implements Miner {
         return new ArrayList(ignored);
     }
 
-    private void getRequestMaps(ContainerRequest containerRequest) {
+    private RequestMaps getRequestMaps(ContainerRequest containerRequest) {
         Form form = containerRequest.readEntity(Form.class);
         MultivaluedMap<String, String> formMap = form.asMap();
 
@@ -87,7 +85,7 @@ public abstract class AbstractMiner implements Miner {
         flowContainer.getHolder().getSm().setLimit(limitAndOffset.get("limit"));
         flowContainer.getHolder().getSm().setOffset(limitAndOffset.get("offset"));
 
-        requestMaps =  new RequestMaps(formMap, queryMap, pathMap, headerMap);
+        return new RequestMaps(formMap, queryMap, pathMap, headerMap);
     }
 
     private void fillAttribute(FieldHelper fieldHelper) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
