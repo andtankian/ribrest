@@ -92,8 +92,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
     }
 
     private void populateRepetiveModels(Model model) {
-        addAllModelAttributesToRepetitiveModels(model);
-        addAllModelCollectionAttributesToRepetitiveModels(model);
+        repetitiveModels.add(model);
     }
 
     private void addAllModelAttributesToRepetitiveModels(Model model) {
