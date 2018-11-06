@@ -103,7 +103,6 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
 
     @Override
     public boolean shouldSkipField(FieldAttributes fa) {
-        System.out.println(fa.getName() +", " + rejectedFields.contains(fa.getName()));
         return rejectedFields.contains(fa.getName());
     }
 
