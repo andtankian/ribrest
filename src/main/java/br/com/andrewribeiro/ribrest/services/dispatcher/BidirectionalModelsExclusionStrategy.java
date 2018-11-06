@@ -2,15 +2,16 @@ package br.com.andrewribeiro.ribrest.services.dispatcher;
 
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.core.model.Model;
+import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -18,14 +19,18 @@ import java.util.stream.Collectors;
  */
 public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
 
-    public BidirectionalModelsExclusionStrategy(List<Model> models, List<String> ignoredFields) {
-        this.models = models;
-        this.ignoredFields = ignoredFields;
+    public BidirectionalModelsExclusionStrategy(FlowContainer flowContainer) {
+        models = flowContainer.getHolder().getModels() != null ? flowContainer.getHolder().getModels() : new ArrayList();
+        rejectedFields = flowContainer.getRequestMaps().getQueryMap().get("rejects");
+        rejectedFields = rejectedFields == null ? new ArrayList() : rejectedFields;
+        acceptedFields = flowContainer.getRequestMaps().getQueryMap().get("accepts");
+        acceptedFields = acceptedFields == null ? new ArrayList() : acceptedFields;
     }
 
-    private List<Model> models;
-    private List<String> ignoredFields;
-    private Set repetitiveReferences = new HashSet();
+    private final List<Model> models;
+    private List<String> rejectedFields;
+    private List<String> acceptedFields;
+    private final Set repetitiveReferences = new HashSet();
 
     public void removeCircularReferences() {
         models.forEach(model -> {
@@ -48,7 +53,7 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
             attribute.setAccessible(true);
             try {
                 Model modelInstance = (Model) attribute.get(model);
-                if (repetitiveReferences.contains(modelInstance) || modelInstance == null) {
+                if ((repetitiveReferences.contains(modelInstance) || modelInstance == null) && !acceptedFields.contains(attribute.getName().toLowerCase())) {
                     attribute.set(model, null);
                 } else {
                     clearAllModelCircularReferences(modelInstance);
@@ -92,47 +97,14 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
         }
     }
 
-    private void addAllModelAttributesToRepetitiveModels(Model model) {
-        repetitiveReferences.addAll(model.getAllModelAttributes().stream()
-                .map((attribute) -> {
-                    attribute.setAccessible(true);
-                    Model attributeInstance;
-                    try {
-                        attributeInstance = (Model) attribute.get(model);
-                        return attributeInstance;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }).collect(Collectors.toSet()));
-    }
-
-    private void addAllModelCollectionAttributesToRepetitiveModels(Model model) {
-        model.getAllModelOneToManyAttributes().stream()
-                .forEach(attribute -> {
-                    Collection tempCollection = null;
-                    if (Collection.class.isAssignableFrom(attribute.getType())) {
-                        attribute.setAccessible(true);
-                        try {
-                            tempCollection = (Collection) attribute.get(model);
-                            if (tempCollection != null) {
-                                repetitiveReferences.addAll((Set) tempCollection.stream().map(modelInstance -> {
-                                    return modelInstance;
-                                }).collect(Collectors.toSet()));
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException();
-                        }
-                    }
-                });
-    }
-
     private boolean isModelNull(Model model) {
         return model == null;
     }
 
     @Override
     public boolean shouldSkipField(FieldAttributes fa) {
-        return ignoredFields.contains(fa.getName());
+        System.out.println(fa.getName() +", " + rejectedFields.contains(fa.getName()));
+        return rejectedFields.contains(fa.getName());
     }
 
     @Override

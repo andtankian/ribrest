@@ -23,9 +23,8 @@ public class DispatcherImpl implements Dispatcher{
     
     @Override
     public Response send() {
-        Miner currentMiner = flowContainer.getMiner();
         setModelsToResult();
-        setupSerializationStrategy(currentMiner.extractIgnoredFields());
+        setupSerializationStrategy();
         return buildResultResponse();
     }
     
@@ -33,17 +32,13 @@ public class DispatcherImpl implements Dispatcher{
         return Response.status(flowContainer.getResult().getStatus()).entity(jsonBuilder.create().toJson(flowContainer.getResult())).build();
     }
     
-    private void setupSerializationStrategy(List ignoreFields){
-        BidirectionalModelsExclusionStrategy exclusionStrategy = new BidirectionalModelsExclusionStrategy(alwaysGetListOfModels(flowContainer.getResult()), ignoreFields);
+    private void setupSerializationStrategy(){
+        BidirectionalModelsExclusionStrategy exclusionStrategy = new BidirectionalModelsExclusionStrategy(flowContainer);
         exclusionStrategy.removeCircularReferences();
         jsonBuilder.addDeserializationExclusionStrategy(exclusionStrategy);
     }
     
     private void setModelsToResult(){
         flowContainer.getResult().setHolder(flowContainer.getHolder());
-    }
-    
-    private List<Model> alwaysGetListOfModels(Result result){
-        return result.getHolder() == null ? new ArrayList() : result.getHolder().getModels();
     }
 }

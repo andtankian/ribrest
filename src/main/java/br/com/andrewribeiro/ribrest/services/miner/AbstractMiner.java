@@ -1,6 +1,5 @@
 package br.com.andrewribeiro.ribrest.services.miner;
 
-import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,14 +32,6 @@ public abstract class AbstractMiner implements Miner {
     @Inject
     protected FlowContainer flowContainer;
 
-    protected List accepts;
-    private List ignored;
-
-    @Override
-    public void extractDataFromRequest(ContainerRequest containerRequest) throws RibrestDefaultException {
-        flowContainer.setRequestMaps(getRequestMaps(containerRequest));
-    }
-
     @Override
     public void mineRequest(ContainerRequest containerRequest) {
         flowContainer.setRequestMaps(getRequestMaps(containerRequest));
@@ -58,12 +49,7 @@ public abstract class AbstractMiner implements Miner {
 
     @Override
     public List extractIgnoredFields() {
-        ignored = ignored != null ? ignored : new ArrayList();
-        accepts = accepts != null ? accepts : new ArrayList();
-
-        ignored.removeAll(accepts);
-
-        return new ArrayList(ignored);
+        return null;
     }
 
     private RequestMaps getRequestMaps(ContainerRequest containerRequest) {
@@ -76,9 +62,6 @@ public abstract class AbstractMiner implements Miner {
         MultivaluedMap<String, String> pathMap = u.getPathParameters();
 
         MultivaluedMap<String, String> headerMap = containerRequest.getHeaders();
-
-        accepts = queryMap != null ? queryMap.get("accepts") : new ArrayList();
-        accepts = accepts != null ? accepts : new ArrayList();
 
         Map<String, Integer> limitAndOffset = new QueryMiner().extractLimitAndOffset(queryMap);
 
