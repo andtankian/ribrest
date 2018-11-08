@@ -21,9 +21,10 @@ public class BidirectionalModelsExclusionStrategy implements ExclusionStrategy {
 
     public BidirectionalModelsExclusionStrategy(FlowContainer flowContainer) {
         models = flowContainer.getHolder().getModels() != null ? flowContainer.getHolder().getModels() : new ArrayList();
-        rejectedFields = flowContainer.getRequestMaps().getQueryMap().get("rejects");
+        rejectedFields = flowContainer.getRequestMaps() != null && flowContainer.getRequestMaps().getQueryMap() != null ? 
+                flowContainer.getRequestMaps().getQueryMap().get("rejects") : null;
         rejectedFields = rejectedFields == null ? new ArrayList() : rejectedFields;
-        acceptedFields = flowContainer.getRequestMaps().getQueryMap().get("accepts");
+        acceptedFields = flowContainer.getRequestMaps() != null && flowContainer.getRequestMaps().getQueryMap() != null ? flowContainer.getRequestMaps().getQueryMap().get("accepts") : null;
         acceptedFields = acceptedFields == null ? new ArrayList() : acceptedFields;
     }
 
