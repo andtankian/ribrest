@@ -7,6 +7,7 @@ import br.com.andrewribeiro.test.crud.models.ModelCrud;
 import javax.ws.rs.core.Form;
 import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.Ignore;
 
 /**
  *
@@ -15,6 +16,7 @@ import org.junit.Assert;
 public class StructureTest extends RibrestTest{
 
     @Test
+    @Ignore
     public void limitAndOffset(){
         post(ModelCrud.class,new Form());
         wasCreated();     
@@ -30,4 +32,18 @@ public class StructureTest extends RibrestTest{
         logResponse();
     }
     
+    @Test
+    @Ignore
+    public void zeroLimitAndOffset() {
+        getWithQueryParameters(ModelCrud.class, "limit=0&offset=0");
+        wasNoContent();
+        logResponse();
+    }
+    
+    @Test
+    public void infinityLimit() {
+        getWithQueryParameters(ModelCrud.class, "limit=infinity");
+        wasOk();
+        logResponse();
+    }
 }

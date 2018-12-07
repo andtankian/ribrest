@@ -43,11 +43,15 @@ public class QueryMiner {
     private Integer getIntegerFromStringOrNumber(String stringInteger, Integer number){
         Integer integer;
         try {
-            integer = Integer.parseInt(stringInteger);
+            integer = isInfinity(stringInteger) ? -1 : Integer.parseInt(stringInteger);
         }catch(Exception e){
             integer = number;
         }
         
         return integer;
+    }
+    
+    private Boolean isInfinity(String stringInteger){
+        return "infinity".equalsIgnoreCase(stringInteger);
     }
 }
