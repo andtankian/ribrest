@@ -25,6 +25,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
     Resource.Builder resourceBuilder;
     Class currentClassResource;
     Class currentDao;
+    Class currentMiner;
     Class currentDispatcher;
     List requestFiltersNameBindings;
     List responseFiltersNameBindings;
@@ -48,6 +49,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
 
     private Facade produceValidFacade(String className) {
         Facade f = new Facade(className);
+        f.setMinerClass(currentMiner);
         f.setBeforeCommandsToCurrentRequest(beforeCommands);
         f.setAfterCommandsToCurrentRequest(afterCommands);
         f.setCurrentDAO(currentDao);
@@ -145,6 +147,7 @@ class RibrestResourceManager extends AbstractRibrestConfigurator {
     private void getDataFromEndpointConfiguratorAnnotation(RibrestEndpointConfigurator endpointConfigurator) {
         requestFiltersNameBindings = Arrays.asList(endpointConfigurator.requestFiltersNameBindings());
         responseFiltersNameBindings = Arrays.asList(endpointConfigurator.responseFiltersNameBindings());
+        currentMiner = endpointConfigurator.miner();
         beforeCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.beforeCommands()));
         afterCommands = getCommandInstancesFromCommandClassesList(Arrays.asList(endpointConfigurator.afterCommands()));
         currentDao = endpointConfigurator.dao();

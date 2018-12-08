@@ -5,7 +5,6 @@ import br.com.andrewribeiro.ribrest.services.orm.EMFFactory;
 import br.com.andrewribeiro.ribrest.services.orm.EMFactory;
 import br.com.andrewribeiro.ribrest.services.dtos.FlowContainer;
 import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
-import br.com.andrewribeiro.ribrest.services.miner.MinerFactoryImpl;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -15,7 +14,6 @@ import org.glassfish.hk2.api.DynamicConfiguration;
 import org.glassfish.hk2.api.DynamicConfigurationService;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.BuilderHelper;
-import br.com.andrewribeiro.ribrest.services.miner.MinerFactory;
 
 /**
  *
@@ -50,9 +48,6 @@ public class RibrestSLPopulator {
                 in(Singleton.class.getName()).
                 build());
 
-        config.bind(BuilderHelper.link(MinerFactoryImpl.class)
-                .to(MinerFactory.class)
-                .build());
 
         config.commit();
     }

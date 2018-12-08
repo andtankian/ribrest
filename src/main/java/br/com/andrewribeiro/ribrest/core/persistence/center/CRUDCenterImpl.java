@@ -1,7 +1,5 @@
 package br.com.andrewribeiro.ribrest.core.persistence.center;
 
-import br.com.andrewribeiro.ribrest.core.persistence.center.AbstractPersistenceCenter;
-import br.com.andrewribeiro.ribrest.core.persistence.DAO;
 import br.com.andrewribeiro.ribrest.core.persistence.DAO;
 
 /**

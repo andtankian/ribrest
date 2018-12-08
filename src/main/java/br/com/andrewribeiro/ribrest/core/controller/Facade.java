@@ -14,7 +14,6 @@ import br.com.andrewribeiro.ribrest.services.miner.Miner;
 import br.com.andrewribeiro.ribrest.core.persistence.PersistenceCenter;
 import br.com.andrewribeiro.ribrest.services.command.Command;
 import br.com.andrewribeiro.ribrest.services.dispatcher.Dispatcher;
-import br.com.andrewribeiro.ribrest.services.miner.MinerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +27,12 @@ public class Facade {
     private FlowContainer flowContainer;
 
     @Inject
-    private MinerFactory minerFactory;
-
-    @Inject
     private ServiceLocator serviceLocator;
 
     private ContainerRequest containterRequest;
     private final String modelClassName;
-    private Miner miner;
+    private Class<Miner> currentMinerClass;
+    private Miner currentMiner;
     private List<Command> beforeCommands, afterCommands;
     private Class currentDaoClass;
     private Class<Dispatcher> currentDispatcherClass;
@@ -64,14 +61,14 @@ public class Facade {
 
     private void prepareForMining() throws ClassNotFoundException, Exception {
         Class currentModelClass = Class.forName(modelClassName);
-        miner = minerFactory.getMinerInstance(currentModelClass);
-        injectDependency(miner);
-        flowContainer.setMiner(miner);
+        currentMiner = currentMinerClass.newInstance();
+        injectDependency(currentMiner);
+        flowContainer.setMiner(currentMiner);
         flowContainer.setModelFromClass(currentModelClass);
     }
 
     private void mine() throws RibrestDefaultException {
-        miner.mineRequest(containterRequest);
+        currentMiner.mineRequest(containterRequest);
     }
 
     private void injectDependency(Object dependency) {
@@ -171,6 +168,10 @@ public class Facade {
 
     public void setCurrentDispatcherClass(Class dispatcherClass) {
         currentDispatcherClass = dispatcherClass;
+    }
+
+    public void setMinerClass(Class minerClass) {
+        this.currentMinerClass = minerClass;
     }
 
     /**

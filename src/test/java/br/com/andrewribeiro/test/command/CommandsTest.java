@@ -1,12 +1,9 @@
 package br.com.andrewribeiro.test.command;
 
-import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.test.RibrestTest;
 import br.com.andrewribeiro.test.command.models.ModelWithAfterCommandsSucceed;
 import br.com.andrewribeiro.test.command.models.ModelWithBeforeCommandsFailure;
 import br.com.andrewribeiro.test.command.models.ModelWithBeforeCommandsSucceed;
-import javax.ws.rs.core.Response;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
