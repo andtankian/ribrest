@@ -16,7 +16,7 @@ import org.junit.Ignore;
 public class StructureTest extends RibrestTest{
 
     @Test
-//    @Ignore
+    @Ignore
     public void limitAndOffset(){
         post(ModelCrud.class,new Form());
         wasCreated();     
@@ -33,7 +33,7 @@ public class StructureTest extends RibrestTest{
     }
     
     @Test
-//    @Ignore
+    @Ignore
     public void zeroLimitAndOffset() {
         getWithQueryParameters(ModelCrud.class, "limit=0&offset=0");
         wasNoContent();
@@ -41,9 +41,22 @@ public class StructureTest extends RibrestTest{
     }
     
     @Test
+    @Ignore
     public void infinityLimit() {
         getWithQueryParameters(ModelCrud.class, "limit=infinity");
         wasOk();
         logResponse();
+    }
+    
+    @Test
+    public void negativeLimit() {
+        getWithQueryParameters(ModelCrud.class, "limit=-1");
+        wasOk();
+        logResponse();
+        
+        getWithQueryParameters(ModelCrud.class, "limit=-50");
+        wasOk();
+        logResponse();
+        
     }
 }
