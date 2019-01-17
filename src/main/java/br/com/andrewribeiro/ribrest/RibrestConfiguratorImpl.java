@@ -3,6 +3,7 @@ package br.com.andrewribeiro.ribrest;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import br.com.andrewribeiro.ribrest.services.cdi.RibrestSLPopulator;
 import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
+import java.io.File;
 import java.net.URI;
 import javax.persistence.EntityManagerFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -66,6 +67,10 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator {
     
     void setupStaticServer(HttpServer server){
         StaticHttpHandler httpHandler = new StaticHttpHandler(ribrest.getStaticSrc());
+        RibrestLog.log(new StringBuilder("Internal absolut path to static file is: ")
+                .append(System.getProperty("user.dir"))
+                .append(File.separator)
+                .append(ribrest.getStaticSrc()).toString());
         server.getServerConfiguration().addHttpHandler(httpHandler, "/" + ribrest.getStaticPath());
         RibrestLog.logForced(new StringBuilder("Static file server has been created at: ").append(ribrest.getCompleteStaticServerUrl()).toString());
     }
