@@ -1,9 +1,11 @@
 package br.com.andrewribeiro.ribrest;
 
+import br.com.andrewribeiro.ribrest.core.applisteners.AppListener;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import org.glassfish.hk2.api.ServiceLocator;
 
@@ -32,6 +34,7 @@ public class Ribrest {
     private boolean debug;
     private RibrestConfiguratorImpl ribrestConfigurator;
     private ResourceConfig resourceConfig;
+    private List<AppListener> appListeners;
 
     public Ribrest() {
         debug = false;
@@ -52,6 +55,7 @@ public class Ribrest {
     public void init() {
         RibrestLog.logForced("***INITIALIZING RIBREST FRAMEWORK***");
         setup();
+        initAppListeners();
     }
 
     /**
@@ -66,8 +70,10 @@ public class Ribrest {
         ribrestConfigurator.setupPersistence();
 
         server = ribrestConfigurator.getRunningGrizzlyServer();
-        
+
         ribrestConfigurator.setupStaticServer(server);
+        
+        ribrestConfigurator.setupAppListeners();
 
         RibrestLog.logForced(new StringBuilder("Application is up and running at: ")
                 .append(getCompleteAppUrl()).toString());
@@ -79,6 +85,14 @@ public class Ribrest {
     public void shutdown() {
         RibrestLog.logForced("Bye :)");
         System.exit(0);
+    }
+
+    private void initAppListeners() {
+        this.appListeners
+                .forEach(appListener->{
+                    appListener.setRibrestInstance(this);
+                    appListener.init();
+                });
     }
 
     void stop() {
@@ -118,38 +132,43 @@ public class Ribrest {
         this.staticPath = this.staticPath.startsWith("/") ? this.staticPath.substring(1) : this.staticPath;
         return instance;
     }
-    
-    public Ribrest staticSrc(String staticSrc){
+
+    public Ribrest staticSrc(String staticSrc) {
         this.staticSrc = staticSrc != null && !staticSrc.isEmpty() ? staticSrc : this.staticSrc;
         return instance;
     }
 
-    String getAppBaseUrl() {
+    public String getAppBaseUrl() {
         return appBaseUrl;
     }
 
-    String getAppName() {
+    public String getAppName() {
         return appName;
     }
 
-    String getPersistenceUnitName() {
+    public String getPersistenceUnitName() {
         return persistenceUnitName;
     }
 
-    String getCompleteAppUrl() {
+    public String getCompleteAppUrl() {
         completeAppUrl = completeAppUrl == null ? getAppBaseUrl() + getAppName() : completeAppUrl;
         return completeAppUrl;
     }
-    
-    String getCompleteStaticServerUrl(){
+
+    public String getCompleteStaticServerUrl() {
         return this.appBaseUrl + this.staticPath;
     }
-    String getStaticPath(){
+
+    public String getStaticPath() {
         return this.staticPath;
     }
-    
-    String getStaticSrc() {
+
+    public String getStaticSrc() {
         return this.staticSrc;
+    }
+
+    void setAppListeners(List<AppListener> appListeners) {
+        this.appListeners = appListeners;
     }
 
     public Ribrest resourceConfig(ResourceConfig resourceConfig) {

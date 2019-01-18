@@ -1,12 +1,15 @@
 package br.com.andrewribeiro.ribrest;
 
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestAppListener;
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestFilter;
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
+import br.com.andrewribeiro.ribrest.core.applisteners.AppListener;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.ws.rs.Path;
 
@@ -43,7 +46,7 @@ public class RibrestScanner {
 
         return packages;
     }
-    
+
     String[] getResourcesPackagesNames() {
         RibrestLog.log("Trying to scan independent resources annoted with @javax.ws.rs.Path...");
         List classesNames = getNamesOfClassesWithAnnotation(Path.class);
@@ -54,8 +57,8 @@ public class RibrestScanner {
                 .append(Arrays.toString(packageNames)).toString());
         return packageNames;
     }
-    
-    String[] getFiltersPackagesNames(){
+
+    String[] getFiltersPackagesNames() {
         RibrestLog.log("Trying to scan filters annoted with @RibrestFilter");
         List classesNames = getNamesOfClassesWithAnnotation(RibrestFilter.class);
         RibrestLog.log(new StringBuilder("Scanned ").append(classesNames.size()).append(" filters, they are: ")
@@ -65,18 +68,32 @@ public class RibrestScanner {
                 .append(Arrays.toString(packageNames)).toString());
         return packageNames;
     }
-    
-    String [] getAllPackagesToBeRegistered(){
+
+    String[] getAllPackagesToBeRegistered() {
         return Stream.concat(Arrays.stream(getResourcesPackagesNames()), Arrays.stream(getFiltersPackagesNames()))
-                      .toArray(String[]::new);
+                .toArray(String[]::new);
     }
-    
+
     List getModelClassesInstances() {
         RibrestLog.log("Trying to scan @RibrestModel annotated classes...");
         List modelClassesInstances = getClassesInstances(getNamesOfClassesWithAnnotation(RibrestModel.class));
         RibrestLog.log(new StringBuilder("Scanned ").append(modelClassesInstances.size()).append(" models, they are: ")
                 .append(modelClassesInstances).toString());
         return modelClassesInstances;
+    }
+
+    List<Class<AppListener>> getAppListenersClassesInstances() {
+        RibrestLog.log("Trying to scan @RibrestAppListener annotated classes...");
+        List appListenersClassesNames = getNamesOfClassesWithAnnotation(RibrestAppListener.class);
+        RibrestLog.log(new StringBuilder("Scanned ").append(appListenersClassesNames.size()).append(" applisteners, they are: ")
+                .append(appListenersClassesNames).toString());
+        return (List<Class<AppListener>>) appListenersClassesNames.stream().map((appListenerClassName) -> {
+            try {
+                return Class.forName((String) appListenerClassName);
+            } catch (ClassNotFoundException exception) {
+                throw new RuntimeException(new StringBuilder("AppListener class \"").append(appListenerClassName).append("\" was not found.").toString());
+            }
+        }).collect(Collectors.toList());
     }
 
 }

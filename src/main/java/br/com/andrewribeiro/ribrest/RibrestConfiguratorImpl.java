@@ -1,10 +1,15 @@
 package br.com.andrewribeiro.ribrest;
 
+import br.com.andrewribeiro.ribrest.core.annotations.RibrestAppListener;
+import br.com.andrewribeiro.ribrest.core.applisteners.AppListener;
 import br.com.andrewribeiro.ribrest.logs.RibrestLog;
 import br.com.andrewribeiro.ribrest.services.cdi.RibrestSLPopulator;
 import br.com.andrewribeiro.ribrest.services.orm.PersistenceUnitWrapper;
 import java.io.File;
 import java.net.URI;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManagerFactory;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.StaticHttpHandler;
@@ -73,6 +78,20 @@ class RibrestConfiguratorImpl extends AbstractRibrestConfigurator {
                 .append(ribrest.getStaticSrc()).toString());
         server.getServerConfiguration().addHttpHandler(httpHandler, "/" + ribrest.getStaticPath());
         RibrestLog.logForced(new StringBuilder("Static file server has been created at: ").append(ribrest.getCompleteStaticServerUrl()).toString());
+    }
+    
+    void setupAppListeners(){
+        List<Class<AppListener>> appListenersClasses = ribrestScanner.getAppListenersClassesInstances();
+        List<AppListener> appListeners = appListenersClasses.stream()
+                .sorted(Comparator.comparing(appListenerClass->appListenerClass.getAnnotation(RibrestAppListener.class).order()))
+                .map(appListenerClass->{
+                    try {
+                        return appListenerClass.newInstance();
+                    }catch(Exception exception){
+                        throw new RuntimeException(exception);
+                    }
+                }).collect(Collectors.toList());
+        ribrest.setAppListeners(appListeners);
     }
 
 }
