@@ -40,6 +40,7 @@ public class RibrestJWT {
                 .setAudience(payload.getAudience())
                 .setIssuer(payload.getIssuer())
                 .setSubject(payload.getSubject())
+                .signWith(API_SECRET_KEY)
                 .compact();
     }
 
