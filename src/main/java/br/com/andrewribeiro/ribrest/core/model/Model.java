@@ -3,6 +3,7 @@ package br.com.andrewribeiro.ribrest.core.model;
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestIgnoreField;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -118,5 +119,13 @@ public interface Model {
     public Long getId();
 
     public void setId(Long id);
+    
+    public void setDateReg(Timestamp dateReg);
+    
+    public Timestamp getDateReg();
+    
+    public void setCurrentStatus(String currentStatus);
+    
+    public String getCurrentStatus();
 
 }

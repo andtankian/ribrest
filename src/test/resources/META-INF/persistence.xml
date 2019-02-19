@@ -9,7 +9,7 @@
             <property name="javax.persistence.jdbc.driver" 
                       value="com.mysql.cj.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" 
-                      value="jdbc:mysql://localhost:3306/ribrest" />
+                      value="jdbc:mysql://0.0.0.0:3307/ribrest" />
             <property name="javax.persistence.jdbc.user" 
                       value="ribrest" />
             <property name="javax.persistence.jdbc.password" 

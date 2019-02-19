@@ -26,7 +26,6 @@ package br.com.andrewribeiro.test.crud.models;
 
 import br.com.andrewribeiro.ribrest.core.annotations.RibrestModel;
 import br.com.andrewribeiro.ribrest.core.model.AbstractModel;
-import java.sql.Timestamp;
 import javax.persistence.Entity;
 
 /**
@@ -36,7 +35,5 @@ import javax.persistence.Entity;
 @RibrestModel
 @Entity
 public class ModelWithTimestampField extends AbstractModel{
-    
-    Timestamp dateReg;
 
 }

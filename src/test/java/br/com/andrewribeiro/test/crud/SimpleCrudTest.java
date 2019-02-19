@@ -68,7 +68,7 @@ public class SimpleCrudTest extends RibrestTest {
     }
     
     @Test
-    //@Ignore
+//    @Ignore
     public void createModelWithManyPrimitiveFields() {
         MultivaluedMap<String, String> mvm = new MultivaluedHashMap<>();
         
