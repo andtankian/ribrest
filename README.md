@@ -62,7 +62,7 @@ Import the Ribrest as a maven dependency
      <dependency>
           <groupId>com.github.andtankian</groupId>
           <artifactId>Ribrest</artifactId>
-          <version>1.22.0</version>
+          <version>1.26.2</version>
       </dependency>
 
 

@@ -173,7 +173,7 @@ public class ModelExplorer {
                         ? attribute.getType().newInstance() : null;
                 if (object != null && object instanceof Model) {
                     fillModel((Model) object, attribute.getName());
-                } else if (!(object instanceof Model)) {
+                } else if (object != null && !(object instanceof Model)) {
                     RibrestLog.log(new StringBuilder(object.getClass().getSimpleName()).append(" is not a model. It won't be filled in.").toString());
                 }
                 attribute.set(attributeContainer.getParentInstance(), object);
