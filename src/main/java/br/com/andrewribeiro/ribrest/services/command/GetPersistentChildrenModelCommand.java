@@ -37,21 +37,22 @@ public class GetPersistentChildrenModelCommand extends AbstractCommand {
             attribute.setAccessible(true);
             Collection detachedModels = (Collection) attribute.get(model);
             Collection newPersistedModels = RibrestUtils.getCollectionInstance(attribute.getType());
-            detachedModels.forEach(detachedModel -> {
-                Object persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), ((Model) detachedModel).getId());
-                if (persistedModel == null) {
-                    throw new RuntimeException(new StringBuilder("The child model ")
-                            .append(detachedModel.getClass().getSimpleName())
-                            .append(" identified by ")
-                            .append(((Model) detachedModel).getId())
-                            .append(" was not found.").toString());
+            if (detachedModels != null) {
+                detachedModels.forEach(detachedModel -> {
+                    Object persistedModel = flowContainer.getEntityManager().find(detachedModel.getClass(), ((Model) detachedModel).getId());
+                    if (persistedModel == null) {
+                        throw new RuntimeException(new StringBuilder("The child model ")
+                                .append(detachedModel.getClass().getSimpleName())
+                                .append(" identified by ")
+                                .append(((Model) detachedModel).getId())
+                                .append(" was not found.").toString());
 
-                } else {
-                    ((Model) persistedModel).merge((Model) detachedModel);
-                    newPersistedModels.add(persistedModel);
-                }
-            });
-
+                    } else {
+                        ((Model) persistedModel).merge((Model) detachedModel);
+                        newPersistedModels.add(persistedModel);
+                    }
+                });
+            }
             attribute.set(model, newPersistedModels);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
