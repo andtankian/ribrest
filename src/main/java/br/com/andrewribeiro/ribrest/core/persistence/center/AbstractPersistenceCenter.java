@@ -1,8 +1,5 @@
 package br.com.andrewribeiro.ribrest.core.persistence.center;
 
-import br.com.andrewribeiro.ribrest.core.persistence.CRUD;
-import br.com.andrewribeiro.ribrest.core.persistence.DAO;
-import br.com.andrewribeiro.ribrest.core.persistence.PersistenceCenter;
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultException;
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultExceptionConstants;
 import br.com.andrewribeiro.ribrest.core.exceptions.RibrestDefaultExceptionFactory;
@@ -33,11 +30,11 @@ public abstract class AbstractPersistenceCenter implements PersistenceCenter {
     @Override
     public void perform() throws RibrestDefaultException{
         dao = this.create();
-        sl.inject(dao);
-        sl.postConstruct(dao);
         try {
+            sl.inject(dao);
+            sl.postConstruct(dao);
             dao.perform();
-        } catch(IllegalArgumentException e){
+        } catch(Exception e){
             throw RibrestDefaultExceptionFactory.getRibrestDefaultException(RibrestDefaultExceptionConstants.RESOURCE_ISNT_AN_ENTITY, RibrestUtils.getResourceName(fc.getModel().getClass()));
         }
     }

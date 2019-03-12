@@ -21,39 +21,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package br.com.andrewribeiro.ribrest.core.applisteners;
 
-import br.com.andrewribeiro.ribrest.core.annotations.RibrestAppListener;
-import br.com.andrewribeiro.ribrest.logs.RibrestLog;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.MediaType;
+package br.com.andrewribeiro.ribrest.core.persistence;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  *
  * @author Andrew Ribeiro
  */
-@RibrestAppListener(order = -1)
-public class RibrestAlarm extends AbstractAppListener{
+public class JPADataContainer {
+
+    public JPADataContainer() {
+    }
     
-    private final Timer timer = new Timer();
-    @Override
-    public void init() {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println(new StringBuilder(ribrestInstance.getCompleteAppUrl()).append("sleep").toString());
-                ClientBuilder.newClient().target(new StringBuilder(ribrestInstance.getCompleteAppUrl()).append("sleep").toString()).request(MediaType.APPLICATION_JSON).get();
-                RibrestLog.log("Alarming Ribrest to not fall in sleep.");
-            }
-        }, 1000*60, 1000*60*20);
+    public JPADataContainer(CriteriaBuilder criteriaBuilder, CriteriaQuery criteriaQuery, Root root) {
+        this.criteriaBuilder = criteriaBuilder;
+        this.criteriaQuery = criteriaQuery;
+        this.root = root;
+    }
+        
+    private CriteriaBuilder criteriaBuilder;
+    private CriteriaQuery criteriaQuery;
+    private Root root;
+
+    public CriteriaBuilder getCriteriaBuilder() {
+        return criteriaBuilder;
     }
 
-    @Override
-    public void destroy() {
-        RibrestLog.log("Destroying Ribrest Alarm...");
-        timer.cancel();
+    public void setCriteriaBuilder(CriteriaBuilder criteriaBuilder) {
+        this.criteriaBuilder = criteriaBuilder;
     }
-    
+
+    public CriteriaQuery getCriteriaQuery() {
+        return criteriaQuery;
+    }
+
+    public void setCriteriaQuery(CriteriaQuery criteriaQuery) {
+        this.criteriaQuery = criteriaQuery;
+    }
+
+    public Root getRoot() {
+        return root;
+    }
+
+    public void setRoot(Root root) {
+        this.root = root;
+    }
+
 }

@@ -7,9 +7,9 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <properties>
             <property name="javax.persistence.jdbc.driver" 
-                      value="com.mysql.cj.jdbc.Driver" />
+                      value="org.mariadb.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" 
-                      value="jdbc:mysql://0.0.0.0:3307/ribrest" />
+                      value="jdbc:mariadb://0.0.0.0:3307/ribrest" />
             <property name="javax.persistence.jdbc.user" 
                       value="ribrest" />
             <property name="javax.persistence.jdbc.password" 
@@ -19,6 +19,10 @@
             <property name="hibernate.show_sql" value="true" />
             <property name="hibernate.format_sql" value="true" />
             <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.connection.provider_class" value="org.hibernate.hikaricp.internal.HikariCPConnectionProvider" />
+            <property name="hibernate.hikari.minimumIdle" value="5" />
+            <property name="hibernate.hikari.maximumPoolSize" value="10" />
+            <property name="hibernate.hikari.idleTimeout" value="30000" />
         </properties>
     </persistence-unit>
 </persistence>
